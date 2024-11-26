@@ -1,5 +1,4 @@
 Week 1
-
 ## Write a program to find the sum of numbers from 1 to 10
 ```c
 ~ Question 1:
@@ -8,7 +7,7 @@ Week 1
 
 int one(){
     int sum = 0;
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i <= 10; i++) {
         sum += i;
     }
     return sum;
@@ -60,7 +59,7 @@ int main(){
 ~ Question 3
 
 #include<stdio.h>
-#define TRIANGULATE(n) (n * ((n) + 1) / 2)
+#define TRIANGULATE(n) (n * (n + 1) / 2)
 
 int main(){
     int n = 5;
@@ -89,51 +88,64 @@ int main(){
 ~ Question 4
 
 #include<stdio.h>
-#include <ctype.h>
 
 int main(){
     char n;
     printf("Enter a character: ");
     scanf("%c",&n);
-    printf("%c\n",tolower(n));
+    if (n >=65 && n <= 90){
+        printf("%c",n+32);
+        return 0; 
+    }
+    printf("%c",n);
 }
+
 ```
 ```
 ~
-
-[wizard@archlinux w1]$ gcc main.c 
 [wizard@archlinux w1]$ ./a.out 
 Enter a character: A
+a
+[wizard@archlinux w1]$ ./a.out 
+Enter a character: a
 a
 [wizard@archlinux w1]$ 
 ```
 
 ## Make changes in the program of Question Number 4. Ask characters from the user until an enter key is pressed.
-:warning: ==(Continuously ask user for input? To register a input we need an enter key so like ...?)==
 ```c
 ~  Question 5 
+#include <stdio.h>
+int main() {
+    while (1) {
+        char n;
+        printf("Enter character: ");
+        n = getchar();
 
-#include<stdio.h>
-#include <ctype.h>
+        if (n == '\n') {
+            return 0;
+        }
 
-int main(){
-    char n[100];
-    printf("Enter characters: ");
-    fgets(n,sizeof(n),stdin);
-    for(int i = 0;n[i] != '\0';i++) {
-        n[i]= tolower(n[i]);
+        if (n >= 'A' && n <= 'Z') {
+            printf("%c\n", n + 32);
+        } else {
+            printf("%c\n", n);
+        }
+
+        while (getchar() != '\n');
     }
-    printf("%s",n);
-
     return 0;
 }
+
 ```
 ```
 ~
-
-Enter characters: a b c d e f g H I J K L M
-a b c d e f g h i j k l m
-[wizard@archlinux w1]$ 
+[wizard@archlinux w1]$ ./a.out 
+Enter character: a
+a
+Enter character: A
+a
+Enter character: 
 ```
 
 ## Print the following pattern using nested loop:
@@ -142,10 +154,9 @@ a b c d e f g h i j k l m
 
 #include<stdio.h>
 int main(){
-    char s[] = {'A','B','C','D','E'};
-    for (int i = 0 ; i <= 5; i++) {
-        for (int j = 0; j <= i; j++) {
-                printf("%c",s[i]);
+    for (char i = 'A' ; i <= 'E'; i++) {
+        for (int j = 'A'; j <= i; j++) {
+                printf("%c",i);
          } 
         printf("\n") ;
     }
