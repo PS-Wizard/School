@@ -1,9 +1,9 @@
 #include<stdio.h>
+
 int main(){
-    for (char i = 'A' ; i <= 'E'; i++) {
-        for (int j = 'A'; j <= i; j++) {
-                printf("%c",i);
-         } 
-        printf("\n") ;
-    }
+    float a,b, c;
+    printf("Enter p,t,r: ");
+    scanf("%f,%f,%f",&a,&b,&c);
+    printf("%f",(a*b*c)/100);
 }
+

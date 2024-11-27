@@ -172,3 +172,84 @@ CCC
 DDDD
 EEEEE
 ```
+
+# Fibonacci series
+```c
+~
+
+#include<stdio.h>
+int main(){
+    int a = 0, b = 1;
+    int c = a+b;
+    for (int i=0;i<=5;i++){
+        printf("%d ",c);
+        a = b;
+        b = c;
+        c = a+b;
+
+    }
+}
+
+```
+```
+~
+[wizard@archlinux w1]$ ./a.out 
+1 2 3 5 8 13 
+[wizard@archlinux w1]$ 
+```
+
+# Prime Between 2 numbers:
+```c
+~
+
+#include<stdio.h>
+
+int isPrime(int n){
+    for (int i = 2; i <= n; i++) {
+        if (n % i == 0 && i != n){
+            return 0;
+        }
+    }
+    printf("%d ",n);
+}
+
+int main(){
+    int a,b;
+    printf("Enter 2 numbers comma seperated: ");
+    scanf("%d,%d",&a,&b);
+    for (int i=a;i<=b;i++){
+        isPrime(i);
+    }
+}
+```
+```
+~
+
+[wizard@archlinux w1]$ gcc main.c 
+[wizard@archlinux w1]$ ./a.out 
+Enter 2 numbers comma seperated: 1,5
+1 2 3 5 
+[wizard@archlinux w1]$ 
+```
+
+# Compound interest:
+```c
+~
+
+#include<stdio.h>
+
+int main(){
+    float a,b, c;
+    printf("Enter p,t,r: ");
+    scanf("%f,%f,%f",&a,&b,&c);
+    printf("%f",(a*b*c)/100);
+}
+```
+
+```
+~
+
+Enter p,t,r: 1.3,5.3,9.0
+0.620100
+[wizard@archlinux w1]$ 
+```
