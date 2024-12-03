@@ -304,3 +304,5 @@ int main(void)
 --- 
 
 # Gold Nuggets:
+
+## `getch()`: Takes input without requiring the user to press enter.
