@@ -88,7 +88,7 @@ double calcVelocity(double v, double u, double a, double t) {
     if (isnan(u)) return v - a * t;
     if (isnan(a)) return (v - u) / t;
     if (isnan(t)) return (v - u) / a;
-    return NAN;
+    return 0;
 }
 
 int main(){
@@ -106,4 +106,35 @@ The calculated value is: 5.00
 [wizard@archlinux w2]$ 
 ```
 
+# Write a void function named “equations” which solves simultaneous equations. Your program will take six parameters. E.g. function(double a, double b, double c, double d, double e, double f){}. By solving simultaneous equations, you are finding where the two lines cross each other, so your function should print an x and y coordinate.
 
+- ax+by=c ... (i)
+- dx+ey=f ... (ii)
+- a = number in front of x of equation one
+- b = number in front of y of equation one
+- c = constant of equation one
+- d = number in front of x of equation two
+- e = number in front of y of equation two
+- f = constant of equation two
+
+```c
+~
+
+#include <stdio.h>
+
+void equations(double a, double b, double c, double d, double e, double f) {
+    double x = (e*c - b*f) / (a*e - b*d);
+    double y = (a*f-d*c) / (a*e - b*d);
+    printf("x: %f, y: %f",x,y);
+}
+
+int main(){
+    equations(5.0,6.0,7.0,8.0,9.0,10.0);
+}
+```
+```
+~
+[wizard@archlinux w2]$ ./a.out 
+x: -1.000000, y: 2.000000
+[wizard@archlinux w2]$ 
+```

@@ -1,18 +1,11 @@
 #include <stdio.h>
-#include <math.h>
 
-
-double calcVelocity(double v, double u, double a, double t) {
-    if (isnan(v)) return u + a * t;
-    if (isnan(u)) return v - a * t;
-    if (isnan(a)) return (v - u) / t;
-    if (isnan(t)) return (v - u) / a;
-    return NAN;
+void equations(double a, double b, double c, double d, double e, double f) {
+    double x = (e*c - b*f) / (a*e - b*d);
+    double y = (a*f-d*c) / (a*e - b*d);
+    printf("x: %f, y: %f",x,y);
 }
 
 int main(){
-    double v = NAN, u = 5.0, a = 0, t = 3.0;
-    printf("The calculated value is: %.2lf\n", calcVelocity(v, u, a, t));
-    return 0;
+    equations(5.0,6.0,7.0,8.0,9.0,10.0);
 }
-
