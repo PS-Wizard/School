@@ -1,66 +1,49 @@
-class BankAccount {
-    private String accountNumber;
-    private double balance;
-
-    public BankAccount(String accountNumber, double balance) {
-        this.accountNumber = accountNumber;
-        if (balance >= 0) {
-            this.balance = balance;
-        } else {
-            this.balance = 0;
-        }
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        if (balance >= 0) {
-            this.balance = balance;
-        }
-    }
-
-    public void deposit(double amount) {
-        if (amount > 0) {
-            balance += amount;
-        }
-    }
-
-    public boolean withdraw(double amount) {
-        if (amount > 0 && amount <= balance) {
-            balance -= amount;
-            return true;
-        }
-        return false; 
-    }
+interface Shape {
+    void calculateArea(int radius); 
+    void calculatePerimeter(int radius); 
+    
+    void calculateArea(int length, int breadth); 
+    void calculatePerimeter(int length, int breadth); 
 }
 
+class Circle implements Shape{
+    public static final double PI = 3.141592653; 
+
+    public void calculateArea(int radius) {
+        System.out.println("Area of Circle: " + PI * radius * radius);
+    }
+
+    public void calculatePerimeter(int radius) {
+        System.out.println("Perimeter of Circle: " + 2 * PI * radius);
+    }
+
+    public void calculatePerimeter(int l,int b){}
+    public void calculateArea(int l,int b){}
+
+}
+
+class Rectangle implements Shape{
+    public void calculateArea(int length, int breadth) {
+        System.out.println("Area of Rectangle: " + length * breadth);
+    }
+
+    public void calculatePerimeter(int length, int breadth) {
+        System.out.println("Perimeter of Rectangle: " + 2 * (length + breadth));
+    }
+    public void calculatePerimeter(int r){}
+    public void calculateArea(int r){}
+}
 
 public class main {
     public static void main(String[] args) {
-        BankAccount account = new BankAccount("123456789", 500.00); 
-        System.out.println("account number: " + account.getAccountNumber());
-        System.out.println("balance: " + account.getBalance());
-        account.deposit(200);
-        System.out.println("balance: " + account.getBalance());
-        if (account.withdraw(100)) {
-            System.out.println("successful, balance: " + account.getBalance());
-        } else {
-            System.out.println("withdrawal failed, insufficient ");
-        }
-
-        if (account.withdraw(700)) {
-            System.out.println("successful, Balance: " + account.getBalance());
-        } else {
-            System.out.println("withdrawal failed, insufficient .");
-        }
-
-        account.setBalance(1000);
-        System.out.println("balance: " + account.getBalance());
+        Circle obj1 = new Circle();
+        Rectangle obj2 = new Rectangle();
+        
+        obj1.calculatePerimeter(5); 
+        obj1.calculateArea(5); 
+        
+        obj2.calculatePerimeter(5, 5);
+        obj2.calculateArea(5, 5); 
     }
 }
+
