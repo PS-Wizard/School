@@ -7,31 +7,86 @@
 ```java
 ~
 
-class BankAccount{
-    private int accNumber;
+class BankAccount {
+    private String accountNumber;
+    private double balance;
 
-    public int getAcc(){
-        return accNumber;
-    }
-
-    public void setAcc(int acc) {
-        if (acc < 0) {
-            return;
+    public BankAccount(String accountNumber, double balance) {
+        this.accountNumber = accountNumber;
+        if (balance >= 0) {
+            this.balance = balance;
+        } else {
+            this.balance = 0;
         }
-        this.accNumber = acc;
     }
 
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        if (balance >= 0) {
+            this.balance = balance;
+        }
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            return true;
+        }
+        return false; 
+    }
 }
+
+
 public class main {
-
     public static void main(String[] args) {
-        BankAccount obj1 = new BankAccount();
-        obj1.setAcc(123123);
-        System.out.println(obj1.getAcc());
+        BankAccount account = new BankAccount("123456789", 500.00); 
+        System.out.println("account number: " + account.getAccountNumber());
+        System.out.println("balance: " + account.getBalance());
+        account.deposit(200);
+        System.out.println("balance: " + account.getBalance());
+        if (account.withdraw(100)) {
+            System.out.println("successful, balance: " + account.getBalance());
+        } else {
+            System.out.println("withdrawal failed, insufficient ");
+        }
 
+        if (account.withdraw(700)) {
+            System.out.println("successful, Balance: " + account.getBalance());
+        } else {
+            System.out.println("withdrawal failed, insufficient .");
+        }
+
+        account.setBalance(1000);
+        System.out.println("balance: " + account.getBalance());
     }
 }
 ```
+```
+~
+
+[wizard@archlinux tuto1]$ java main
+account number: 123456789
+balance: 500.0
+balance: 700.0
+successful, balance: 600.0
+withdrawal failed, insufficient .
+balance: 1000.0
+[wizard@archlinux tuto1]$ 
+```
+
 ---
 
 ## Task 2
@@ -76,14 +131,14 @@ abstract class Employee {
     }
 }
 
-class FullTimeEmployee{
+class FullTimeEmployee extends Employee{
 
     public void calculateSalary(){
         System.out.println(3000 * 30);
     }
 }
 
-class PartTimeEmployee{
+class PartTimeEmployee extends Employee{
     public void calculateSalary(int hRate, int hWorked){
         System.out.println(hRate * hWorked);
     }
@@ -136,13 +191,13 @@ abstract class Vehicle {
 }
 
 
-class Car{
+class Car extends Vehicle{
     public void fuelEffeciency(){
         System.out.println("Some value for car");
     }
 }
 
-class Bike {
+class Bike extends Vehicle{
     public void fuelEffeciency(){
         System.out.println("Some value for Bike");
     }
@@ -245,6 +300,7 @@ Some perimeter for rectangle
 interface Drivable {
     void start();
     void accelerate();
+    void brake();
 }
 
 ```
@@ -260,6 +316,9 @@ class  Truck implements Drivable{
     public void accelerate(){
         System.out.println("Truck accelerated");
     }
+    public void brake(){
+        System.out.println("Truck braked");
+    }
 
 }
 
@@ -269,6 +328,10 @@ class Car implements Drivable{
     }
     public void accelerate(){
         System.out.println("Car accelerated");
+    }
+
+    public void brake(){
+        System.out.println("Car braked");
     }
 
 }
