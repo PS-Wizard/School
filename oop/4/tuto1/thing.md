@@ -195,11 +195,19 @@ class Car extends Vehicle{
     public void fuelEffeciency(){
         System.out.println("Some value for car");
     }
+
+    public void topSpeed(){
+        System.out.println("Some Top Speed");
+    }
 }
 
 class Bike extends Vehicle{
     public void fuelEffeciency(){
         System.out.println("Some value for Bike");
+    }
+
+    public void topSpeed(){
+        System.out.println("Some Top Speed");
     }
 
 }

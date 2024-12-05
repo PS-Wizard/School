@@ -305,4 +305,45 @@ int main(void)
 
 # Gold Nuggets:
 
-## `getch()`: Takes input without requiring the user to press enter.
+## I. `getch()`: 
+Takes input without requiring the user to press enter. ==Sadly Not Available On Linux / Unix Systems==
+
+>
+
+## II. Using XOR to swap 2 variables without neeeding a temporary variable.
+```c
+~
+
+#include<stdio.h>
+int main(){
+    int a=5,b=3;
+    printf("a: %d, b: %d\n", a,b);
+    a = a ^ b;
+    b = a ^ b;
+    a = a ^ b;
+    printf("a: %d, b: %d\n", a,b);
+}
+```
+
+>
+
+## III. Assigments return values too
+
+```c
+~
+
+#include <stdio.h>
+
+int main() {
+    int a;
+    int b = (a = 5);  // a is assigned 5, and b gets the value of a (which is 5)
+    
+    for (char something; (something = getchar()) != '\n';) {
+        printf("You entered: %c\n", something);
+    }
+
+    int c;
+    printf("Assignments return the value declared: %d\n", (c = 5)); // c is assigned 5, and 5 is printed
+}
+```
+
