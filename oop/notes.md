@@ -279,3 +279,94 @@ public class Main {
 - __Static methods and variables__ belong to the __class itself__ rather than to individual instances.
 
 
+## `abstract` and `interface`:
+
+They Both Are Basically prototyping things. `abstract` can have both prototypes and like fully implemented functions, `interface`  can only have abstracts (prototypes). Any Other class that `extends` or `implements` them needs to overwrite the abstract (or again prototyped) methods.
+
+so say
+```java
+~
+
+abstract class Employee {
+    abstract void calculateSalary();
+    void getDetails() {
+        System.out.println("Some Details");
+    }
+}
+```
+
+There, we have an abstract (or just a prototype) of a method `calculateSalary()`, but we also have a fully implemented `getDetails()` ( i mean fully is a lil subjective lmao its just 1 line but still). So any other method, that `extends` of this `Employee` class (`extends` because its an `abstract` class ) needs to overwrite the un-implemented method `calculateSalary()`. It can still override the `getDetails` method but its not mandatory.
+```java
+~ FullTimeEmployee needs to provide an implementation for the abstract function calculateSalary().
+
+class FullTimeEmployee extends Employee{
+
+    public void calculateSalary(){
+        System.out.println(3000 * 30);
+    }
+}
+```
+>
+
+__Whats up with interfaces then?__
+
+Interfaces are basically the same thing as an `abstract` class except that they can't have implementations. So just pure prototyping.
+```java
+~
+
+interface Shape {
+    void calculateArea(int radius); 
+    void calculatePerimeter(int radius); 
+    
+    void calculateArea(int length, int breadth); 
+    void calculatePerimeter(int length, int breadth); 
+}
+```
+
+In this case we have an `interface Shape` and every method inside that `interface block` is implicitly converted into an `public abstract ...` method so it becomes:
+
+```java
+~
+
+interface Shape {
+    public abstract void calculateArea(int radius); 
+    public abstract void calculatePerimeter(int radius); 
+
+    public abstract void calculateArea(int length, int breadth); 
+    public abstract void calculatePerimeter(int length, int breadth); 
+}
+```
+
+And, the same rule applies , every `abstract` method needs to have an implementation, so any class that `implements` (`implements` because its an `interface`) this interface needs to provide an implementation for those abstract methods.
+```java
+~
+
+class Circle implements Shape{
+    public static final double PI = 3.141592653; 
+
+    public void calculateArea(int radius) {
+        System.out.println("Area of Circle: " + PI * radius * radius);
+    }
+
+    public void calculatePerimeter(int radius) {
+        System.out.println("Perimeter of Circle: " + 2 * PI * radius);
+    }
+
+    public void calculatePerimeter(int l,int b){}
+    public void calculateArea(int l,int b){}
+
+}
+```
+
+__Random Note__:
+
+In the circle class we cant simply do  say :
+```java
+~
+
+void calculatePerimeter(int radius) {
+    System.out.println("Perimeter of Circle: " + 2 * PI * radius);
+}
+```
+
+because if we dont have an access modifier, compiler implicitly adds  `default` as the access modifier, but since interface has `public abstract` , we cant use a `default` in place for a method that has a `public` access modifier.
