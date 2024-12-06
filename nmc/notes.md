@@ -324,9 +324,7 @@ int main(){
     printf("a: %d, b: %d\n", a,b);
 }
 ```
-
 >
-
 ## III. Assigments return values too
 
 ```c
@@ -346,4 +344,40 @@ int main() {
     printf("Assignments return the value declared: %d\n", (c = 5)); // c is assigned 5, and 5 is printed
 }
 ```
+>
+
+## IV. Calculate The Length Of A Digit Using `log10()`:
+
+```c
+~ The Snippet:
+length = (int)log10(n) + 1
+```
+
+```c
+~ Full Blown Example:
+
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    
+    // Handle case for 0, since log10(0) is undefined
+    if (n == 0) {
+        printf("Length: 1\n");
+    } else {
+        int length = (int)log10(n) + 1;
+        printf("Length: %d\n", length);
+    }
+    
+    return 0;
+}
+```
+
+__Explanation:__
+- `log10(n) `calculates the base-10 logarithm of `n`. This gives the highest power of 10 that's less than or equal to `n`.
+- Adding 1 gives the total number of digits in the number.
+- Special case for `n = 0`: `log10(0)` is undefined, so we handle it separately and print `1` for its length.
 
