@@ -419,3 +419,74 @@ Enter input: a,b: 3,2
 The Miniumum Is 2
 [wizard@archlinux workshop]$ 
 ```
+>
+
+## 2. Write a program to count and find the sum of all the numbers in the array, which are exactly divisible by 5 and not divisible by 2 and 3. Assign an array to a pointer. Print out address of pointer, array and first element of an array using “%p” formatter.
+```c
+~
+
+#include <stdio.h>
+int main(){
+    int a[] = {7, 14, 21, 28, 35, 42, 49, 63, 70, 77};
+    int sum = 0;
+    for (int i = 0; i < (sizeof(a)/sizeof(a[0])); i++){
+        if (a[i] % 5 == 0 && a[i] %2 != 0 && a[i] % 3 != 0) {
+            sum += a[i];
+        }
+    }
+    int *p = a;
+    printf("Adress of pointer %p\n",&p);
+    printf("Adress of  array %p\n", p);
+    printf(" Address First Element of array %p\n", p+1);
+
+    printf("%d\n", sum);
+}
+```
+```
+~
+
+[wizard@archlinux workshop]$ gcc main.c 
+[wizard@archlinux workshop]$ ./a.out 
+Adress of pointer 0x7ffc739e3ec8
+Adress of  array 0x7ffc739e3ed0
+Address First Element of array 0x7ffc739e3ed4
+35
+[wizard@archlinux workshop]$ 
+```
+##  3. Write a program to initialize an integer array with values {20, 15, 87, 71, 24, 34}. Pass this array to a function. Take input from a user to search a number from an array. If element is found, print out its index number and if element is not found then display the message “Element Not found” in the function.
+```c
+~
+
+#include <stdio.h>
+
+int find(int *arr, int Size, int toFind){
+    for (int i = 0; i < Size; i++) {
+        if (arr[i] == toFind){
+            return i;
+        }
+    }
+    printf("Element Not Found ");
+    return -1;
+}
+
+int main(){
+    int a[] = {20, 15, 87, 71, 24, 34};
+    int toFind;
+    printf("Enter thing to search for: ");
+    scanf("%d",&toFind);
+    printf("%d\n", find(a, (sizeof(a)/sizeof(a[0])), toFind));
+}
+```
+```
+~
+
+[wizard@archlinux workshop]$ gcc main.c 
+[wizard@archlinux workshop]$ ./a.out 
+Enter thing to search for: 5
+Element Not Found -1
+[wizard@archlinux workshop]$ ./a.out 
+Enter thing to search for: 20
+0
+[wizard@archlinux workshop]$ 
+```
+>
