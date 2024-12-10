@@ -275,8 +275,9 @@ Where v is the final velocity, u is the initial velocity, a is the acceleration 
 ~
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
-
+#include <string.h>
 
 double calcVelocity(double v, double u, double a, double t) {
     if (isnan(v)) return u + a * t;
@@ -286,19 +287,33 @@ double calcVelocity(double v, double u, double a, double t) {
     return 0;
 }
 
-int main(){
-    double v = NAN, u = 5.0, a = 0, t = 3.0;
-    printf("The calculated value is: %.2lf\n", calcVelocity(v, u, a, t));
+void parseInput(char *input, double *value) {
+    char *token = strtok(input, ",");
+    *value = (strcmp(token, "_") == 0) ? NAN : atof(token);
+}
+
+int main() {
+    char input[50];
+    double v, u, a, t;
+
+    printf("Enter v,u,a,t (use _ for unknowns): ");
+    scanf("%s", input);
+
+    parseInput(input, &v);
+    parseInput(NULL, &u);
+    parseInput(NULL, &a);
+    parseInput(NULL, &t);
+
+    if (isnan(v) + isnan(u) + isnan(a) + isnan(t) != 1) {
+        printf("Can't have more than 1 unknown.\n");
+        return 1;
+    }
+
+    double result = calcVelocity(v, u, a, t);
+    printf("Result: %f\n", result);
     return 0;
 }
 
-```
-```
-~
-
-[wizard@archlinux w2]$ ./a.out 
-The calculated value is: 5.00
-[wizard@archlinux w2]$ 
 ```
 
 >
