@@ -1,5 +1,5 @@
 ## Write a program to store elements in an array and print them using pointer
-```
+```c
 ~
 
 #include <stdio.h>
@@ -62,9 +62,8 @@ Value: 50[wizard@archlinux w4]$
 ```
 >
 ## Write a C program to demonstrate a pointer to a pointer (double pointer) by declaring an integer variable int num = 100;, a pointer to num, and a double pointer to the pointer. Use these to print the value of num through the double pointer
-```
+```c
 ~
-
 
 #include <stdio.h>
 int main(){
@@ -141,7 +140,7 @@ int main(){
 ```
 >
 ## Write a C program to allocate memory for an integer array of size 5 using malloc(). Assign values to the array elements, print them, and then use free() to deallocate the memory
-```
+```c
 ~
 
 #include <stdio.h>
