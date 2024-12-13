@@ -17,6 +17,55 @@ int main(){
 12345[wizard@archlinux w4]$ 
 ```
 >
+
+## WRite a program to sum all elements in an array
+```c
+~
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int arr[] = {1,2,3,4,5,6}, sum=0;
+    for(int i = 0; i<sizeof(arr)/sizeof(arr[0]);i++) sum += *(arr+i);
+    printf("%d",sum);
+    
+}
+
+
+```
+```
+~
+
+[wizard@archlinux tutorial]$ gcc main.c 
+[wizard@archlinux tutorial]$ ./a.out 
+21
+```
+>
+
+## Write a c program to search for an element in an array using pointers;
+```c
+~
+
+#include <stdio.h>
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6}, toSearch = 6, i = 0;
+    for (; i < 6 && arr[i] != toSearch; i++);
+    printf("%d\n", i < 6 ? i : -1);
+    return 0;
+}
+```
+```
+~
+
+[wizard@archlinux tutorial]$ gcc main.c 
+[wizard@archlinux tutorial]$ ./a.out 
+5
+[wizard@archlinux tutorial]$ 
+```
+
+
 ## Write a C program to declare a pointer to an integer, assign the address of an integer variable int a = 25; to the pointer, and use the pointer to print both the address and the value of the variable.
 
 ```c

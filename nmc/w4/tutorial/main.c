@@ -1,12 +1,9 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 int main() {
-    int *arr = malloc(3 * sizeof(int));
-    arr = realloc(arr, 6 * sizeof(int));
-    for (int i = 0; i < 6; i++) scanf("%d", &arr[i]);
-    for (int i = 0; i < 6; i++) printf("%d\n", arr[i]);
-    free(arr);
+    int arr[] = {1, 2, 3, 4, 5, 6}, toSearch = 6, i = 0;
+    for (; i < 6 && arr[i] != toSearch; i++);
+    printf("%d\n", i < 6 ? i : -1);
     return 0;
 }
 
