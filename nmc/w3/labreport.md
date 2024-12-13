@@ -156,4 +156,49 @@ int main() {
     return 0;
 }
 ```
+>
+## WAP reads two 2-D arrays of user defined dimensions, adds the corresponding elements and displays the result on the screen. Include error handling for unequal dimensions. (For eg: a 2x2 array and 2x3 array cannot be added because of unequal dimensions.)
 
+```c
+~
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int r, c;
+    printf("Enter rows and cols: ");
+    scanf("%d-%d", &r, &c);
+    int *arr1 = malloc(r * c * sizeof(int)), *arr2 = malloc(r * c * sizeof(int));
+
+    printf("First matrix: \n");
+    for (int i = 0; i < r * c; i++) scanf("%d", &arr1[i]);
+
+    printf("second matrix: \n");
+    for (int i = 0; i < r * c; i++) scanf("%d", &arr2[i]);
+
+    for (int i = 0; i < r * c; i++) 
+        printf("%d%c", arr1[i] + arr2[i], (i + 1) % c == 0 ? '\n' : ' ');
+
+    free(arr1), free(arr2);
+    return 0;
+}
+```
+```
+~
+
+Enter rows and cols: 2-2
+First matrix: 
+1
+2
+3
+4
+second matrix: 
+5
+6
+7
+8
+6 8
+10 12
+[wizard@archlinux w3]$ 
+```
