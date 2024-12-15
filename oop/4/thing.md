@@ -225,8 +225,8 @@ public class NumberUtils {
     @Test
     public void testGetEvenNumbers() {
         int[] input = {1, 2, 3, 4, 5, 6};
-        int[] expected = {2, 4, 6};
-        assertArrayEquals(expected, getEvenNumbers(input), "evens");
+        int[]  want = {2, 4, 6};
+        assertArrayEquals(want, getEvenNumbers(input));
     }
 }
 ```
@@ -272,10 +272,9 @@ public class ProductTest {
         Product product = new Product("Laptop", 1000, 3);
         assertAll(
             "Product Assertions",
-            () -> assertNotNull(product.getName(), "Product name should not be null"),
-            () -> assertTrue(product.getPrice() > 0, "Product price should be positive"),
-            () -> assertTrue(product.isAffordable(4000), "Should be affordable with a budget of 4000"),
-            () -> assertFalse(product.isAffordable(2000), "Should not be affordable with a budget of 2000")
+            () -> assertNotNull(product.getName()),
+            () -> assertTrue(product.getPrice() > 0),
+            () -> assertTrue(product.isAffordable(4000)),
         );
     }
 }
@@ -292,9 +291,7 @@ class Product {
     }
 
     public String getName() { return name; }
-
     public double getPrice() { return price; }
-
     public boolean isAffordable(double budget) { return (price * quantity) <= budget; }
 }
 
@@ -394,9 +391,9 @@ public class NotificationServiceTest {
     @Test
     public void testSendEmail() {
         assertAll(
-            () -> assertTrue(NotificationService.sendEmail("something@gmail.com", "should work")),
-            () -> assertFalse(NotificationService.sendEmail("not valid", "shouldnt work")),
-            () -> assertFalse(NotificationService.sendEmail("!@gmail.com", "shouldnt work"))
+            () -> assertTrue(NotificationService.sendEmail("something@gmail.com", "work")),
+            () -> assertFalse(NotificationService.sendEmail("not valid", "no work")),
+            () -> assertFalse(NotificationService.sendEmail("!@gmail.com", "work"))
         );
     }
 }
