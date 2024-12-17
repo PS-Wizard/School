@@ -1,17 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
-int sum(int *a, int size){
-    int sum = 0;
-    for (int i = 0; i < size; i++) sum += a[i];
-    return sum;
-}
-int main(){
-    int leng=0;
+
+int main() {
+    int len;
     printf("Enter the length of the arrays: ");
-    scanf("%d",&leng);
-    int *ptr = malloc(leng * sizeof(int));
-    printf("Enter array: \n");
-    for (int i = 0; i < leng; i++) scanf("%d",ptr+i);
-    printf("Sum is %d",sum(ptr,leng));
-    free(ptr);
+    scanf("%d", &len);
+    int *arr1 = malloc(len * sizeof(int));
+    int *arr2 = malloc(len * sizeof(int));
+    int *arr3 = malloc(len * sizeof(int));
+    
+    printf("enter array 1: \n");
+    for (int i = 0; i < len; i++) scanf("%d", arr1 + i);
+    printf("array 2: \n");
+    for (int i = 0; i < len; i++) scanf("%d", arr2 + i);
+
+    for (int i = 0; i < len; i++) arr3[i] = arr1[i] + arr2[i];
+    for (int i = 0; i < len; i++) printf("%d ", arr3[i]);
+    
+    free(arr1);
+    free(arr2);
+    free(arr3);
+    
+    return 0;
 }
+

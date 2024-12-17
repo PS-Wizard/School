@@ -10,10 +10,7 @@ int main() {
     char *charPtr = (char *)malloc(sizeof(char));
     float *floatPtr = (float *)malloc(sizeof(float));
 
-    *intPtr = 42;
-    *charPtr = 'A';
-    *floatPtr = 3.14f;
-
+    scanf("%d, %c, %f",intPtr,charPtr,floatPtr);
     printf("Value of int: %d\n", *intPtr);
     printf("Value of char: %c\n", *charPtr);
     printf("Value of float: %.2f\n", *floatPtr);
@@ -24,6 +21,18 @@ int main() {
 
     return 0;
 }
+
+```
+```
+~
+
+[wizard@archlinux workshop]$ gcc main.c 
+[wizard@archlinux workshop]$ ./a.out 
+1,c,2
+Value of int: 1
+Value of char: c
+Value of float: 2.00
+[wizard@archlinux workshop]$ 
 ```
 >
 ## Finding the maxium in an array using dynamic memory allocation.
@@ -34,12 +43,7 @@ int main() {
 #include <stdlib.h>
 int main(){
     int *ptr = malloc(5 * sizeof(int)),max=0;
-    for (int i = 0; i < 5; i++) scanf("%d",ptr+i);
-    for (int i = 0; i < 5; i++) {
-        if(ptr[i] > max){
-            max = ptr[i];
-        }
-    }
+    for (int i = 0; i < 5; i++){ scanf("%d",ptr+i); max = (ptr[i] > max)? ptr[i]:max; } 
     printf("Max is %d",max);
     free(ptr);
 }
@@ -63,20 +67,48 @@ Max is 5
 
 #include <stdio.h>
 #include <stdlib.h>
-int main(){
-    int len=0;
+
+int main() {
+    int len;
     printf("Enter the length of the arrays: ");
-    scanf("%d",&len);
-    int *ptr = malloc(len * sizeof(int));
-    int *ptr1 = malloc(len * sizeof(int));
-    printf("Enter array 1: \n");
-    for (int i = 0; i < len; i++) scanf("%d",ptr+i);
-    printf("Enter array 2\n");
-    for (int i = 0; i < len; i++) scanf("%d",ptr1+i);
-    for (int i = 0; i < len; i++) printf("%d, ",ptr1[i]+ptr[i]);
-    free(ptr);
-    free(ptr1);
+    scanf("%d", &len);
+    int *arr1 = malloc(len * sizeof(int));
+    int *arr2 = malloc(len * sizeof(int));
+    int *arr3 = malloc(len * sizeof(int));
+    
+    printf("enter array 1: \n");
+    for (int i = 0; i < len; i++) scanf("%d", arr1 + i);
+    printf("array 2: \n");
+    for (int i = 0; i < len; i++) scanf("%d", arr2 + i);
+
+    for (int i = 0; i < len; i++) arr3[i] = arr1[i] + arr2[i];
+    for (int i = 0; i < len; i++) printf("%d ", arr3[i]);
+    
+    free(arr1);
+    free(arr2);
+    free(arr3);
+    
+    return 0;
 }
+
+```
+```
+~
+
+[wizard@archlinux workshop]$ ./a.out 
+Enter the length of the arrays: 4
+enter array 1: 
+1
+2
+3
+4
+array 2: 
+5
+6
+7
+8
+6 8 10 12 
+[wizard@archlinux workshop]$ 
 ```
 ## Write a program that reads ‘n’ from the user and allocates memory to hold n integer numbers. Pass these numbers to a function that returns the sum.
 ```c
