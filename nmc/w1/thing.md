@@ -1,3 +1,8 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+--- 
+
+
 Week 1
 ## Write a program to find the sum of numbers from 1 to 10
 ```c
@@ -253,3 +258,4 @@ Enter p,t,r: 1.3,5.3,9.0
 0.620100
 [wizard@archlinux w1]$ 
 ```
+

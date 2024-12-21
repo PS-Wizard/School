@@ -1,3 +1,7 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
 ## Create a simple test method using @test for the class MathUtilsTest
 ```java
 ~

@@ -1,3 +1,7 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
 ## WAP to find the largest element of an array:
 ```c
 ~

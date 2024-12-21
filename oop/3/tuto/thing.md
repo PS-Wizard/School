@@ -1,3 +1,7 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
 ## Task 1:
 
 ### Create a class BankAccount with private fields accountNumber and balance.

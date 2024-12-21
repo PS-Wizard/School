@@ -1,3 +1,7 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
 # How is code reuse achieved through inheritance?
 It is because the parent properties are inherited by the child's so that code is resued.
 

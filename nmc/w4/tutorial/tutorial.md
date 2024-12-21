@@ -1,3 +1,8 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
+
 ## Write a program to store elements in an array and print them using pointer
 ```c
 ~

@@ -1,3 +1,7 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+--- 
+
 ## Write a program in C to take two numbers from the user and print the maximum between two numbers using a pointer.
 
 ```c

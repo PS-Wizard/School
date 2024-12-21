@@ -1,3 +1,8 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
+
 ## Write a program to create memory for int, char and float variables at run time.
 ```c
 ~

@@ -1,3 +1,7 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
 ## Create a class Student with private fields id, name, age, and grade(A, B, C, D, E, F). Provide getter and setter methods to access and modify these fields.
 ```java
 ~

@@ -1,3 +1,8 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+--- 
+# Labreport
+
 ## Write a program to find both the largest and smallest elements of an array using only one traversal (both in one loop).
 ```c
 ~

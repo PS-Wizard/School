@@ -1,3 +1,7 @@
+### Homework Hustlers: https://discord.gg/aJ55rZBV
+### - Wizard.
+
+--- 
 ##  Write tests for converting temperatures from Celsius to Fahrenheit and vice versa.
 ```java
 ~
