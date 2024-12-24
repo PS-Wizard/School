@@ -1,8 +1,3 @@
-### Homework Hustlers: https://discord.gg/aJ55rZBV
-### - Wizard.
-
---- 
-
 ## Create a structure to hold any complex number x+iy. Write a program that uses the structure to read two complex numbers and display a third complex number. 
 ```c
 ~
