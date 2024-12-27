@@ -3,9 +3,9 @@
 
 # AI Ethics Assessment Progress
 Need to cover:
-- [ ] Ethical dilemmas.
+- [x] Ethical dilemmas.
 - [ ] National/international initiatives for ethical AI.
-- [ ] Propose a general ethical framework for your topic.
+- [x] Propose a general ethical framework for your topic.
 
 ## Abstract
 - [ ] 100-150 words
@@ -15,19 +15,6 @@ Need to cover:
     - [x] Explainability & Transparency  
     - [x] Bias and Discrimination  
     - [x] Copyright Infringement and Privacy Concerns  
-- [ ] Principles / Regulations  (National/international initiatives for ethical AI.)
-    - [ ] European Union Guidelines  
-    - [ ] AI HLEG Principles  
-- [x] What makes AI ethical?  
-    - [x] Fairness  
-    - [x] Explainability  
-    - [x] Transparency  
-    - [x] Accountability  
-- [x] How can ethical AI be built and maintained?  
-    - [x] Incorporating Ethical Principles  
-    - [x] Continuous Monitoring  
-    - [x] User Education  
-    - [x] Stakeholder Involvement  
 
 ## Review: Major Ethical Dilemmas (550-650 words) (Covers Ethical Dilemmas)
 - [x] LLMs and Education  
@@ -36,8 +23,8 @@ Need to cover:
         - [x] Stereotypes  
     - [x] Automating Teacher-Student Interactions  
         - [x] Reduced Human Involvement  
-        - [ ] Lack of Empathy  
         - [x] One-size-fits-all issues  
+        - [ ] Lack of creativity and like emotional understanding and like idk whats the fucking word im looking for
         - [x] Knowledge gaps from outdated data  
 - [x] AI in Assessment and Grading  
     - [ ] Fairness  
@@ -52,6 +39,19 @@ Need to cover:
     - [ ] Cost-Effectiveness  
 
 - [x] Strategies for Mitigating Ethical Concerns  (Propose a general ethical framework for your topic.)
+    - [x] What makes AI ethical?  
+        - [x] Fairness  
+        - [x] Explainability  
+        - [x] Transparency  
+        - [x] Accountability  
+    - [x] How can ethical AI be built and maintained?  
+        - [x] Incorporating Ethical Principles  
+        - [x] Continuous Monitoring  
+        - [x] User Education  
+        - [x] Stakeholder Involvement  
+    - [ ] Principles / Regulations  (National/international initiatives for ethical AI.)
+        - [ ] European Union Guidelines  
+        - [ ] AI HLEG Principles  
     - [x] Diverse Training Data  
     - [x] Human-AI Collaboration  
     - [x] Regular Updates  
