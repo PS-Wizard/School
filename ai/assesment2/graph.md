@@ -24,19 +24,12 @@ Need to cover:
     - [x] Automating Teacher-Student Interactions  
         - [x] Reduced Human Involvement  
         - [x] One-size-fits-all issues  
-        - [ ] Lack of creativity and like emotional understanding and like idk whats the fucking word im looking for
         - [x] Knowledge gaps from outdated data  
 - [x] AI in Assessment and Grading  
-    - [ ] Fairness  
+    - [x] Fairness  
+    - [x] Lack of creativity and like emotional understanding and like idk whats the fucking word im looking for
     - [x] Errors and Bias  
-    - [ ] Transparency  
-- [ ] Accessibility and Inclusion  
-    - [ ] Improvements for disabilities (e.g., text-to-speech)  
-    - [ ] Specific needs not addressed (e.g., simplified language)  
-- [ ] Data Privacy  
-- [ ] Benefits  
-    - [ ] Efficiency  
-    - [ ] Cost-Effectiveness  
+    - [x] Transparency  
 
 - [x] Strategies for Mitigating Ethical Concerns  (Propose a general ethical framework for your topic.)
     - [x] What makes AI ethical?  
