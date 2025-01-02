@@ -41,7 +41,6 @@ Need to cover:
         - [x] Incorporating Ethical Principles  
         - [x] Continuous Monitoring  
         - [x] User Education  
-        - [x] Stakeholder Involvement  
     - [ ] Principles / Regulations  (National/international initiatives for ethical AI.)
         - [ ] European Union Guidelines  
         - [ ] AI HLEG Principles  
