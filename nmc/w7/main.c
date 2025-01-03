@@ -17,6 +17,16 @@ int main() {
 
     printf("Decoded PNG: %ux%u pixels\n", width, height);
 
+    for(int ros = 0; ros < height; ros++) {
+        for (int col = 0; col < width * 4; col++) {
+            printf("%d", image[ros*width*4+col]);
+            if((col + 1) %4 == 0){
+                printf("| ");
+            }
+        }
+        printf("\n");
+    }
+
     error = lodepng_encode32_file(output_filename, image, width, height);
     if (error) {
         printf("Encoder error %u: %s\n", error, lodepng_error_text(error));
