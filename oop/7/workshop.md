@@ -24,7 +24,7 @@ class Student extends Person {
 }
 
 class Professor extends Person {
-    private int salary;
+    protected int salary;
     public int staffNumber, yearsOfService, numberOfClasses;
     
     public Professor(int salary, int staffNumber, int yearsOfService, int numberOfClasses) {
