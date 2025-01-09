@@ -14,10 +14,10 @@ int main() {
     }
 
     for (size_t i = 0; i < width * height * 4; i += 4) {
-        int grey = (image[i] + image[i+1] + image[i+2])/3;
-        image[i] = grey;
-        image[i + 1] = grey;
-        image[i + 2] = grey;
+        image[i] = 255 - image[i];
+        image[i + 1] = 255 - image[i + 1];
+        image[i + 2] = 255 - image[i + 2];
+        // transparency stays as is
     }
 
     error = lodepng_encode32_file("output.png", image, width, height);
