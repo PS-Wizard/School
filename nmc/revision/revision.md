@@ -89,7 +89,7 @@ int main(){
 >
 # Week 2: nvm too ez.
 >
-# Week 3:
+# Week 3: nvm too reduant ez stuff.
 
 
 
