@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+
 struct Thread {
     pthread_t id;
     uint16_t start;    
@@ -39,6 +40,10 @@ void readnumbers(struct Files* f_info) {
 }
 
 int main() {
+    /*
+     * TODO:
+     * Range is fucked start is greater than the end
+     * */
     struct Files datasets[3] = { 
         {"./files/PrimeData1.txt"}, 
         {"./files/PrimeData2.txt"}, 
