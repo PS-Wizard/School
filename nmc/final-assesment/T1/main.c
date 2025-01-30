@@ -13,7 +13,6 @@ struct FileData {
     double A, B;
 };
 
-// Prototypes
 void PopulateStruct(struct FileData* dt, const char* filename); 
 void CalculateA(struct FileData* dt);
 void CalculateB(struct FileData* dt);
