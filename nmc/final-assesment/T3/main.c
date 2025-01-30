@@ -57,14 +57,15 @@ void* readnumbers(void* arg) {
 void* check_prime(void* arg) {
     struct ThreadData* data = (struct ThreadData*) arg;
     struct Files* f_info = data->f_info;
+    uint32_t local_prime_count = 0;
     
     for (uint32_t i = data->start_index; i < data->end_index; i++) {
         if (is_prime(f_info->numbers[i])) {
             f_info->prime_index[i] = 1;
-            f_info->prime_count++;
+            local_prime_count++;
         }
     }
-
+    __atomic_add_fetch(&f_info->prime_count, local_prime_count, __ATOMIC_RELAXED);
     free(data);
     return NULL;
 }
