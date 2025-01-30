@@ -110879,3 +110879,6 @@
 86197
 63709
 63499
+Total Primes in file PrimeData1: 932
+Total Primes in file PrimeData2: 17183
+Total Primes in file PrimeData3: 92766
