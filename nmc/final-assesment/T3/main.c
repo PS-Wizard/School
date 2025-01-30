@@ -78,6 +78,16 @@ void write_primes_to_file(struct Files* f_info,FILE* prime_file) {
 }
 
 int main() {
+    /*
+     * TODO:
+     *
+     * -[x] Ask Sir If I Can Use openMP instead of POSIX threads
+     * -[x]Read Data From Files Concurrently
+     * -[x] Buffered Write To prime_text to avoid I/O bottleneck
+     * -[x] One Pass func to count numbers And store them in the array
+     * -[x] Acheive Millisecond runtimes.
+     *
+     * */
     int n_threads;
     struct Files datasets[3] = {
         {"./files/PrimeData1.txt"},
