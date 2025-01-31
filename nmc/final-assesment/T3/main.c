@@ -140,9 +140,12 @@ int main() {
         free(datasets[i].prime_index);  
         free(datasets[i].numbers);      
     }
+    uint64_t total = 0;
     for (int i = 0; i < 3; i++) {
+        total += datasets[i].prime_count;
         fprintf(prime_file,"Total Primes in file PrimeData%d: %lu\n",(i+1),datasets[i].prime_count);
     }
+    fprintf(prime_file,"Total Primes Across everything: %lu\n",total);
     fclose(prime_file);
     return 0;
 }
