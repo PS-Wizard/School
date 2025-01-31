@@ -10,8 +10,8 @@ public class TestCompetitor {
 
     @Test
     public void testCompetitorConstructor() {
-        Competitor competitor = new Competitor(1, "John Doe", 25, 2);
-        
+        int[] scores = {10, 20, 30, 40, 50};
+        Competitor competitor = new Competitor(1, "John Doe", 25, 2,scores);
         // Test Competitor ID
         assertCompetitorID(competitor);
 
@@ -24,16 +24,11 @@ public class TestCompetitor {
         // Test Short Details
         assertShortDetails(competitor);
 
-        // Test Level
-        assertCompetitorLevel(competitor);
+        assertGetScoreArray(competitor,scores);
+
+        assertTestOverallScore(competitor);
     }
    
-    @Test
-    public void testGetOverallScore() {
-        Competitor competitor = new Competitor(1, "John Doe", 25, 1);
-        assertEquals(5, competitor.getOverallScore());
-    }
-
     // Helper functions to split up the tests:
     private void assertCompetitorID(Competitor competitor) {
         assertEquals(1, competitor.getCompetitorID());
@@ -48,23 +43,23 @@ public class TestCompetitor {
 
     private void assertFullDetails(Competitor competitor) {
         String expected = String.format(
-            "Competitor number: %d, Name: %s\n%s is a %s aged %d and has an overall score of %d", 
+            "Competitor number: %d, Name: %s\n%s is a %s aged %d and has an overall score of %.2f", 
             1, 
             "John Doe", 
             "J. D.", 
             "Expert", 
             25, 
-            5
+            30.0
         );
         assertEquals(expected, competitor.getFullDetails());
     }
 
     private void assertShortDetails(Competitor competitor) {
         String short_expected = String.format(
-            "CN %d (%s) has overall score of %d", 
+            "CN %d (%s) has overall score of %.2f", 
             1, 
             "J. D.", 
-            5
+            30.0
         );
         assertEquals(short_expected, competitor.getShortDetails());
     }
@@ -72,4 +67,13 @@ public class TestCompetitor {
     private void assertCompetitorLevel(Competitor competitor) {
         assertEquals("Expert", competitor.getCompetitorLevel());
     }
+
+    public void assertTestOverallScore(Competitor competitor) {
+        assertEquals(30.0, competitor.getOverallScore());
+    }
+
+    public void assertGetScoreArray(Competitor competitor,int[] scores) {
+        assertArrayEquals(scores, competitor.getScoreArray());
+    }
+
 }

@@ -1,13 +1,18 @@
 package backend.models.competitor;
+import java.util.Arrays;
 public class Competitor {
-    int ID;
-    Name CompetitorName;
-    String Level;
-    int Age;
+    private int ID;
+    private Name CompetitorName;
+    private String Level;
+    private int Age;
+    private int[] Scores;
 
-    public Competitor(int id, String name, int age, int level){
+
+    public Competitor(int id, String name, int age, int level, int[] scores){
         this.ID = id;
         this.CompetitorName = new Name(name);
+        this.Scores = scores != null ? scores : new int[5];
+
         switch (level){
             case 0:
                 this.Level = "Beginner";
@@ -51,7 +56,7 @@ public class Competitor {
 
     public String getFullDetails(){
         return String.format(
-                "Competitor number: %d, Name: %s\n%s is a %s aged %d and has an overall score of %d", 
+                "Competitor number: %d, Name: %s\n%s is a %s aged %d and has an overall score of %.2f", 
                 ID, 
                 CompetitorName.getFullName(), 
                 CompetitorName.getInitials(),  
@@ -61,11 +66,24 @@ public class Competitor {
                 );
     }
 
+
+    public int getAge(){
+        return this.Age;
+    }
     public String getShortDetails(){
-        return String.format("CN %d (%s) has overall score of %d",ID,CompetitorName.getInitials(),getOverallScore());
+        return String.format("CN %d (%s) has overall score of %.2f",ID,CompetitorName.getInitials(),getOverallScore());
     }
 
-    public int getOverallScore(){
-        return 5;
+    public double getOverallScore(){
+        Arrays.sort(Scores);
+        double total = 0;
+        for (int i = 1; i < Scores.length - 1; i++) { 
+            total += Scores[i];
+        }
+        return total / (Scores.length - 2);
+    }
+    
+    public int[] getScoreArray(){
+        return Scores;
     }
 }
