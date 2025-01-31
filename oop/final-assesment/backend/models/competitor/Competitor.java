@@ -1,6 +1,71 @@
 package backend.models.competitor;
 public class Competitor {
-    public static void SomeCompetitor(){
-        System.out.println("Competitor here");
+    int ID;
+    Name CompetitorName;
+    String Level;
+    int Age;
+
+    public Competitor(int id, String name, int age, int level){
+        this.ID = id;
+        this.CompetitorName = new Name(name);
+        switch (level){
+            case 0:
+                this.Level = "Beginner";
+                break;
+            case 1:
+                this.Level = "Intermediate";
+                break;
+            case 2:
+                this.Level = "Expert";
+                break;
+            default:
+                this.Level = "Beginner";
+                break;
+        }
+        this.Age = age;
+    }
+
+    public int getCompetitorID(){
+        return this.ID;
+    }
+
+    public String getCompetitorName(int type){
+        // 0: first name
+        // 1: last name
+        // Default: Full name
+        switch (type){
+            case 0:
+                return CompetitorName.getFName();
+            case 1:
+                return CompetitorName.getLName();
+            case 2:
+                return CompetitorName.getInitials();
+            default:
+                return CompetitorName.getFullName();
+        }
+    }
+
+    public String getCompetitorLevel(){
+        return this.Level; 
+    }
+
+    public String getFullDetails(){
+        return String.format(
+                "Competitor number: %d, Name: %s\n%s is a %s aged %d and has an overall score of %d", 
+                ID, 
+                CompetitorName.getFullName(), 
+                CompetitorName.getInitials(),  
+                Level, 
+                Age, 
+                getOverallScore() 
+                );
+    }
+
+    public String getShortDetails(){
+        return String.format("CN %d (%s) has overall score of %d",ID,CompetitorName.getInitials(),getOverallScore());
+    }
+
+    public int getOverallScore(){
+        return 5;
     }
 }
