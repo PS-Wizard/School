@@ -8,8 +8,7 @@ public class Competitor {
     private int[] Scores;
 
 
-    public Competitor(int id, String name, int age, int level, int[] scores){
-        this.ID = id;
+    public Competitor(String name, int age, int level, int[] scores){
         this.CompetitorName = new Name(name);
         this.Scores = scores != null ? scores : new int[5];
 
@@ -32,6 +31,10 @@ public class Competitor {
 
     public int getCompetitorID(){
         return this.ID;
+    }
+
+    public void setCompetitorID(int id){
+        this.ID = id;
     }
 
     public String getCompetitorName(int type){

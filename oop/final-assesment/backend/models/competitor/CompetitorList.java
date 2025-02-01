@@ -20,7 +20,8 @@ public class CompetitorList {
             String level = rs.getString("Level");
             int age = rs.getInt("Age");
             int[] scores = { rs.getInt("Score1"), rs.getInt("Score2"), rs.getInt("Score3"), rs.getInt("Score4"), rs.getInt("Score5") };
-            Competitor competitor = new Competitor(id, name, age, getLevelIndex(level), scores);
+            Competitor competitor = new Competitor(name, age, getLevelIndex(level), scores);
+            competitor.setCompetitorID(id);
             competitors.add(competitor);
         } catch (SQLException e) {
             e.printStackTrace();

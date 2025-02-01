@@ -11,7 +11,7 @@ public class TestCompetitor {
     @Test
     public void testCompetitorConstructor() {
         int[] scores = {10, 20, 30, 40, 50};
-        Competitor competitor = new Competitor(1, "John Doe", 25, 2,scores);
+        Competitor competitor = new Competitor("John Doe", 25, 2,scores);
         // Test Competitor ID
         assertCompetitorID(competitor);
 
