@@ -47,4 +47,18 @@ public class database {
         }
         return questions;
     }
+
+    public void setQuestion(Question q){
+        String sql = "INSERT INTO Questions (Question, CorrectAnswer, Category, Options) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = connectQuiz(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, q.question);
+            pstmt.setString(2, q.correctAnswer);
+            pstmt.setString(3, q.category);
+            pstmt.setString(4, q.options);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,13 +1,16 @@
 import java.util.Scanner;
+import java.sql.*;
 public class Manager {
     private static database db = new database();
     private static Scanner scanner = new Scanner(System.in);
+    private static final String ADMIN_PASSWORD = "Banana4President";
 
     public static void startUserInputCycle() {
         while (true) {
             System.out.println("\n1: Register New User");
             System.out.println("2: View Scores");
             System.out.println("3: Quit");
+            System.out.println("4: Admin View");
             System.out.print("Select an option: ");
 
             int choice = scanner.nextInt();
@@ -23,6 +26,9 @@ public class Manager {
                 case 3:
                     System.out.println("Exiting program...");
                     return;
+                case 4:
+                    adminView();
+                    break;
                 default:
                     System.out.println("Invalid choice, try again!");
             }
@@ -44,9 +50,10 @@ public class Manager {
             for (int i = 0; i < 5; i++) {
                 System.out.println("\nStarting Round " + (i + 1) + " of the quiz.");
                 // Start the quiz game (GUI)
-                Quiz quiz = new Quiz();
-                // Get the score from the Quiz game after submission
-                int score = quiz.getScore();
+                Questions questions = db.getAllQuestions();
+                Quiz quiz = new Quiz(questions);
+                quiz.setVisible(true); // This will block until the quiz is closed
+                int score = quiz.getFinalScore(); // Now score is correctly retrieved
 
                 // Store the score in the corresponding slot in the scores array
                 scores[i] = score;
@@ -73,7 +80,6 @@ public class Manager {
         }
     }
 
-
     private static void viewScores() {
         System.out.println("\n1: Everyone");
         System.out.println("2: Individual");
@@ -99,6 +105,58 @@ public class Manager {
             System.out.println("Competitor not found!");
         } else {
             System.out.println("Invalid option!");
+        }
+    }
+
+    private static void adminView() {
+        System.out.print("Enter admin password: ");
+        String password = scanner.nextLine();
+
+        if (!ADMIN_PASSWORD.equals(password)) {
+            System.out.println("Access Denied: Incorrect Password");
+            return;
+        }
+
+        while (true) {
+            System.out.println("\nAdmin Panel:");
+            System.out.println("1: View All Questions");
+            System.out.println("2: Set Question");
+            System.out.println("3: Quit");
+            System.out.print("Select an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    Questions questions = db.getAllQuestions();
+                    for (Question q : questions.getQuestions()) {
+                        System.out.println("Question: " + q.question);
+                        System.out.println("Correct Answer: " + q.correctAnswer);
+                        System.out.println("Category: " + q.category);
+                        System.out.println("Options: " + q.options);
+                        System.out.println("-----------------------------");
+                    }
+                    break;
+                case 2:
+                    System.out.print("Enter question: ");
+                    String question = scanner.nextLine();
+                    System.out.print("Enter correct answer: ");
+                    String correctAnswer = scanner.nextLine();
+                    System.out.print("Enter category: ");
+                    String category = scanner.nextLine();
+                    System.out.print("Enter options (comma-separated): ");
+                    String options = scanner.nextLine();
+
+                    Question newQuestion = new Question(question, correctAnswer, category, options);
+                    db.setQuestion(newQuestion);
+                    System.out.println("Question added successfully!");
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("Invalid option!");
+            }
         }
     }
 }
