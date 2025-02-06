@@ -26,7 +26,7 @@ public class CompetitorList {
 
     public void printCompetitorList() {
         for (Competitor competitor : competitors) {
-            System.out.println(competitor);
+            System.out.println(competitor.getShortDetails());
         }
     }
 

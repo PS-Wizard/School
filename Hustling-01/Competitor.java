@@ -1,3 +1,4 @@
+import java.util.Arrays; // Import this at the top
 class Name{
 
     private String fName;
@@ -17,8 +18,8 @@ class Name{
         return lName;
     }
 
-    public String getInitials(){
-        return fName.charAt(0) + " " + lName.charAt(0);
+    public String getInitials() {
+        return (!fName.isEmpty() ? fName.charAt(0) : '-') + " " + (!lName.isEmpty() ? lName.charAt(0) : '-');
     }
 }
 public class Competitor {
@@ -55,7 +56,21 @@ public class Competitor {
         return Scores;
     }
 
-    public String toString(){
-        return "Competitor ID: " + ID + ", Name: " + name.getFirstName() + " " + name.getLastName() + ", Age: " + Age + ", Level: " + Level;
+    public int getOverallScores() {
+        int sum = 0;
+        for (int score : Scores) {
+            sum += score;
+        }
+        return Scores.length > 0 ? sum / Scores.length : 0; // Avoid division by zero
+    }
+
+    public String getShortDetails() {
+        return String.format("Competitor ID: %d; %s ; Overall Scores: %d", ID, name.getInitials(), getOverallScores());
+    }
+
+    public String toString() {
+        return "Competitor ID: " + ID + ", Name: " + name.getFirstName() + " " + name.getLastName() + 
+            ", Age: " + Age + ", Level: " + Level + ", Scores: " + Arrays.toString(Scores) + 
+            ", Overall Score: " + getOverallScores();
     }
 }
