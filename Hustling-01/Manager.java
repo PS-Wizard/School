@@ -1,10 +1,19 @@
 import java.util.Scanner;
 import java.sql.*;
+
+/**
+ * Manages the user interaction cycle for registering users, viewing scores, and administering quiz content.
+ * This class provides both user and admin views for interacting with the system.
+ */
 public class Manager {
     private static database db = new database();
     private static Scanner scanner = new Scanner(System.in);
     private static final String ADMIN_PASSWORD = "Banana4President";
 
+    /**
+     * Starts the user input cycle, presenting various options like registering users,
+     * viewing scores, or accessing the admin panel.
+     */
     public static void startUserInputCycle() {
         while (true) {
             System.out.println("\n1: Register New User");
@@ -35,6 +44,10 @@ public class Manager {
         }
     }
 
+    /**
+     * Registers a new user by prompting for their name, age, level, and quiz scores.
+     * Users can either play the quiz or enter scores manually.
+     */
     private static void registerUser() {
         System.out.println("\n1: Play Now");
         System.out.println("2: Enter Scores Only");
@@ -80,6 +93,9 @@ public class Manager {
         }
     }
 
+    /**
+     * Allows the user to view scores either for all competitors or a specific competitor.
+     */
     private static void viewScores() {
         System.out.println("\n1: Everyone");
         System.out.println("2: Individual");
@@ -108,6 +124,10 @@ public class Manager {
         }
     }
 
+    /**
+     * Allows the admin to view all quiz questions, add new questions, or quit the admin view.
+     * Admin access is protected by a password.
+     */
     private static void adminView() {
         System.out.print("Enter admin password: ");
         String password = scanner.nextLine();

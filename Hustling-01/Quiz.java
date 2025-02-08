@@ -1,9 +1,13 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.*;
+import java.sql.*;
 
+/**
+ * Represents a simple quiz game using a dialog window.
+ */
 public class Quiz extends JDialog {
     private List<Question> questions;
     private int currentQuestionIndex = 0;
@@ -13,6 +17,11 @@ public class Quiz extends JDialog {
     private ButtonGroup group;
     private JButton nextButton;
 
+    /**
+     * Constructs a Quiz dialog with a list of questions.
+     * 
+     * @param questions The {@link Questions} object containing the quiz questions.
+     */
     public Quiz(Questions questions) {
         this.questions = questions.getQuestions();
         
@@ -57,6 +66,9 @@ public class Quiz extends JDialog {
         setVisible(true);
     }
 
+    /**
+     * Loads the current question and its answer choices into the UI.
+     */
     private void loadQuestion() {
         Question q = questions.get(currentQuestionIndex);
         questionLabel.setText(q.question);
@@ -67,6 +79,9 @@ public class Quiz extends JDialog {
         }
     }
 
+    /**
+     * Checks the selected answer against the correct answer and updates the score.
+     */
     private void checkAnswer() {
         if (currentQuestionIndex >= questions.size()) return;
         String correctAnswer = questions.get(currentQuestionIndex).correctAnswer;
@@ -76,6 +91,11 @@ public class Quiz extends JDialog {
         }
     }
 
+    /**
+     * Gets the final score after the quiz is completed.
+     * 
+     * @return The final score of the quiz.
+     */
     public int getFinalScore() {
         return score;
     }
