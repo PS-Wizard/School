@@ -4,7 +4,7 @@ import backend.models.*;
 import java.sql.*;
 
 /**
- * Handles database operations related to competitors.
+ * Handles database operations related to competitors and questions.
  */
 public class DB_API {
     private String URL;
@@ -27,17 +27,16 @@ public class DB_API {
     /**
      * Clears all rows in the competitors table.
      */
-    public void clearTable() {
-        String sql = "DELETE FROM competitors"; // SQL DELETE query to clear the table
-
+    public void clearCompetitorTable() {
+        String sql = "DELETE FROM Competitors";
         try (Connection conn = DriverManager.getConnection(URL, USER, password);
                 Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(sql);  // Execute the DELETE statement to remove all records
-            System.out.println("All competitors have been removed.");
+            stmt.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Stores a Competitor's data in the database.
@@ -55,13 +54,28 @@ public class DB_API {
 
         // Fill the scores, use -69 for missing values
         for (int i = 0; i < scores.length && i < 5; i++) {
-            filledScores[i] = (scores[i] != 0) ? scores[i] : -69; // Only assign valid scores
+            // Only replace missing values with -69, leave valid ones as is
+            filledScores[i] = (scores[i] != 0) ? scores[i] : -69;
         }
 
-        // SQL Insert Query
-        String sql = "INSERT INTO competitors (CompetitorID, name, level, age, score1, score2, score3, score4, score5) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        System.out.println("DB_API: Storing");
+        System.out.println(String.format("%s %s %d %d ", name, level, age, id));
+        System.out.println(scores);
 
-        // Connect to the database and insert the competitor data
+        // SQL Insert or Update Query
+        String sql = "INSERT INTO Competitors (CompetitorID, name, level, age, score1, score2, score3, score4, score5) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+            "ON DUPLICATE KEY UPDATE " +
+            "name = VALUES(name), " +
+            "level = VALUES(level), " +
+            "age = VALUES(age), " +
+            "score1 = CASE WHEN score1 = -69 THEN VALUES(score1) ELSE score1 END, " +
+            "score2 = CASE WHEN score2 = -69 THEN VALUES(score2) ELSE score2 END, " +
+            "score3 = CASE WHEN score3 = -69 THEN VALUES(score3) ELSE score3 END, " +
+            "score4 = CASE WHEN score4 = -69 THEN VALUES(score4) ELSE score4 END, " +
+            "score5 = CASE WHEN score5 = -69 THEN VALUES(score5) ELSE score5 END";
+
+        // Connect to the database and insert/update the competitor data
         try (Connection conn = DriverManager.getConnection(URL, USER, password);
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -76,7 +90,7 @@ public class DB_API {
             ps.setInt(8, filledScores[3]);        // Set Score 4
             ps.setInt(9, filledScores[4]);        // Set Score 5
 
-            // Execute the update (insert)
+            // Execute the update (insert or update)
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,7 +103,7 @@ public class DB_API {
      * @param competitorList The CompetitorList to which competitors will be added.
      */
     public void getAllCompetitors(CompetitorList competitorList) {
-        String query = "SELECT * FROM competitors";
+        String query = "SELECT * FROM Competitors";
 
         try (Connection conn = DriverManager.getConnection(URL, USER, password);
                 Statement stmt = conn.createStatement();

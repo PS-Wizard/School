@@ -10,12 +10,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.*;
 
 public class TestDB_API {
-    private DB_API dbApi = new DB_API("jdbc:mysql://localhost:3306/TestCompetitionDB", "wizard", "Banana4President");
+    private DB_API dbApi = new DB_API("jdbc:mysql://localhost:3306/TestJavaAssesment", "wizard", "Banana4President");
 
     @BeforeEach
     public void setUp() {
         // Clear the competitors table before each test
-        dbApi.clearTable();
+        dbApi.clearCompetitorTable();
     }
 
     @Test
@@ -56,8 +56,8 @@ public class TestDB_API {
     @Test
     public void testAddCompetitorFromResultSet() {
         // Manually insert a competitor to check the result set
-        String query = "INSERT INTO competitors (CompetitorID, name, level, age, score1, score2, score3, score4, score5) VALUES (1, 'John Doe', 'Intermediate', 25, 85, 90, 92, 88, 79)";
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/TestCompetitionDB", "wizard", "Banana4President");
+        String query = "INSERT INTO Competitors (CompetitorID, name, level, age, score1, score2, score3, score4, score5) VALUES (1, 'John Doe', 'Intermediate', 25, 85, 90, 92, 88, 79)";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/TestJavaAssesment", "wizard", "Banana4President");
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(query);  // Insert the competitor
         } catch (SQLException e) {
@@ -66,8 +66,8 @@ public class TestDB_API {
         }
 
         // Now test adding the competitor from the result set
-        String selectQuery = "SELECT * FROM competitors WHERE CompetitorID = 1";
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/TestCompetitionDB", "wizard", "Banana4President");
+        String selectQuery = "SELECT * FROM Competitors WHERE CompetitorID = 1";
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/TestJavaAssesment", "wizard", "Banana4President");
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(selectQuery)) {
 
