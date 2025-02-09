@@ -18,7 +18,7 @@ int main() {
     int num, total_primes = 0;
 
     // Open the files
-    file1 = fopen("PrimeData1.txt", "r");
+    file1 = fopen("../prime_numbers.txt", "r");
     file2 = fopen("PrimeData2.txt", "r");
     file3 = fopen("PrimeData3.txt", "r");
 
