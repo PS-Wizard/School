@@ -14,7 +14,7 @@ import backend.db.DB_API;
 public class WordGame extends JPanel implements ActionListener, KeyListener {
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
-    private static final int FALLING_SPEED = 5;
+    private static final int MOVING_SPEED = 5; // Speed at which words move from right to left
     private static final int INITIAL_DELAY = 50;
     private static final int SCORE_INCREASE_INTERVAL = 2;
     private static final int METEOR_WIDTH = 50; 
@@ -26,7 +26,7 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
     private ArrayList<Integer> wordY;
     private Random random;
     private int score;
-    private int fallingRate;
+    private int movingRate;
     private String currentWord;
     private Image backgroundImage;
     private Image meteorImage;
@@ -34,7 +34,7 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
     private DB_API database;
     private String selected;
 
-    public WordGame(Competitor comp,String selected) {
+    public WordGame(Competitor comp, String selected) {
         this.comp = comp;
         this.selected = selected;
         this.database = new DB_API("jdbc:mysql://localhost:3306/JavaAssessment","wizard","Banana4President");
@@ -55,7 +55,7 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
         wordY = new ArrayList<>();
         random = new Random();
         score = 0;
-        fallingRate = FALLING_SPEED;
+        movingRate = MOVING_SPEED;
         currentWord = "";
 
         // Start the game loop
@@ -70,8 +70,8 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
         String[] wordList = {"apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew"};
         String word = wordList[random.nextInt(wordList.length)];
         words.add(word);
-        wordX.add(random.nextInt(WIDTH - 100));
-        wordY.add(0);
+        wordX.add(WIDTH); // Start at the right edge of the screen
+        wordY.add(random.nextInt(HEIGHT - 100)); // Random Y position
     }
 
     @Override
@@ -82,11 +82,11 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
 
         // Draw words and meteors
         g.setColor(Color.WHITE);
-        //Font font = new Font("JetBrains Mono", Font.BOLD, 24);
-        //g.setFont(font);
+        Font font = new Font("Arial", Font.PLAIN, 24);
+        g.setFont(font);
         for (int i = 0; i < words.size(); i++) {
-            // Draw meteor image below the word
-            g.drawImage(meteorImage, wordX.get(i), wordY.get(i) + 30, null);
+            // Draw meteor image to the left of the word
+            g.drawImage(meteorImage, wordX.get(i) - METEOR_WIDTH, wordY.get(i), null);
             // Draw word
             g.drawString(words.get(i), wordX.get(i), wordY.get(i));
         }
@@ -100,10 +100,10 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Move words and meteors down
-        for (int i = 0; i < wordY.size(); i++) {
-            wordY.set(i, wordY.get(i) + fallingRate);
-            if (wordY.get(i) > HEIGHT) {
+        // Move words from right to left
+        for (int i = 0; i < wordX.size(); i++) {
+            wordX.set(i, wordX.get(i) - movingRate);
+            if (wordX.get(i) < 0) {
                 gameOver();
                 return;
             }
@@ -118,7 +118,7 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
             currentWord = "";
 
             if (score % SCORE_INCREASE_INTERVAL == 0) {
-                fallingRate++;
+                movingRate++;
             }
 
             addWord();
@@ -143,6 +143,7 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
         }
 
         database.store(comp);
+        JOptionPane.showMessageDialog(this, "Game Over! Your score is: " + score, "Game Over", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
