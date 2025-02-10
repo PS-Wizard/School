@@ -198,4 +198,211 @@ int main(){
 
 >
 
-##
+## Wap to calculate v=u+at depending on which is nan:
+```c
+~
+
+#include <stdio.h>
+#include <math.h>
+
+float velocityCalc(float u, float a, float t, float v) {
+    if (isnan(v)) return u + (a * t);
+    if (isnan(u)) return v - (a * t);
+    if (isnan(a)) return (v - u) / t;
+    if (isnan(t)) return (v - u) / a;
+    return NAN; // Should never reach here
+}
+
+int main() {
+    float u, a, t, v;
+    int nanCount = 0;
+    char unknown;
+
+    printf("Enter 'N' for the unknown variable (u, a, t, v): \n");
+    printf("Initial velocity (u): ");
+    if (scanf("%f", &u) != 1) { u = NAN; nanCount++; getchar(); }
+    
+    printf("Acceleration (a): ");
+    if (scanf("%f", &a) != 1) { a = NAN; nanCount++; getchar(); }
+    
+    printf("Time (t): ");
+    if (scanf("%f", &t) != 1) { t = NAN; nanCount++; getchar(); }
+    
+    printf("Final velocity (v): ");
+    if (scanf("%f", &v) != 1) { v = NAN; nanCount++; getchar(); }
+
+    if (nanCount != 1) {
+        printf("Error: Exactly one variable must be unknown.\n");
+        return 1;
+    }
+
+    float result = velocityCalc(u, a, t, v);
+    printf("Calculated value: %.2f\n", result);
+    return 0;
+}
+```
+---
+Week 3 type shi
+## Find Smallest And Largest
+==Note== the only real important thing here is the `-INFINITY` and `INFINITY`
+```c
+~
+
+#include <stdio.h>
+#include <math.h>
+
+
+int main(){
+    int arr[] = {1,2,3,4,5,6,7};
+    float smallest=INFINITY, largest=-INFINITY;
+    for (int i = 0; i < sizeof(arr)/sizeof(arr[0]); i++) {
+        if (arr[i] < smallest){ smallest = arr[i]; }
+        if (arr[i] > largest) { largest = arr[i]; }
+    }
+
+    printf("%f, %f",smallest,largest);
+}
+```
+
+## check anagram
+==Key Takeaway: ==  the main thing here is just the `str[i] || str2[i]` which is a clever way of looping till the end of the string as `\0` is a falsey value
+```c
+~
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+int main() {
+    char str1[100], str2[100]; int sum = 0;
+    printf("String 1: "); fgets(str1,sizeof(str1),stdin);
+    printf("String 2: "); fgets(str2,sizeof(str1),stdin);
+    for (int i = 0; str1[i] || str2[i] ; i++) {
+        sum += str1[i];
+        sum -= str2[i];
+    }
+    if (sum == 0) {
+        printf("is anagram");
+        return 0;
+    }
+    printf("Aint anagram");
+
+}
+```
+
+>
+
+## Print uniques
+
+```
+~
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+int main() {
+    int arr[] = {3,1,2,3,4,6,2,1,3,4,6};
+    int* uniques = calloc(sizeof(arr)/sizeof(arr[0]),sizeof(int));
+    for (int i = 0; i <sizeof(arr)/sizeof(arr[0]); i++) (!uniques[arr[i]])? (uniques[arr[i]] = 1, printf("%d",arr[i])): 0;
+    free(uniques);
+}
+```
+>
+
+## Sort an array in ascending order
+```
+~
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+int main() {
+    int arr[] = {3,10,2,3,4,6,2,1,3,4,6};
+    int smallest,tmp;
+    int arrSize = sizeof(arr)/sizeof(arr[0]);
+    for (int i = 0; i < arrSize - 1; i++) {
+        smallest = i;
+        for(int j = i+1 ; j < arrSize; j++){
+            if (arr[j] < arr[smallest]){
+                smallest = j;
+            }
+        }
+        tmp = arr[i];
+        arr[i] = arr[smallest];
+        arr[smallest] = tmp;
+    }
+
+    for (int i = 0; i < arrSize; i++) {
+        printf("%d, ",arr[i]);
+    }
+}
+
+```
+
+## divisible by 5 but nah by 2 or 3, print count and sum
+```c
+~
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+int main() {
+    int arr[] = {25,25,25,25,25,25};
+    int sum,count;
+    int arrSize = sizeof(arr)/sizeof(arr[0]);
+    for (int i = 0; i < arrSize; i++) {
+        sum += (arr[i] % 5 == 0 && arr[i] % 3 !=0 && arr[i] % 2 != 0)? (count++,arr[i]) : 0;
+
+    }
+    printf("%d %d",sum,count);
+}
+```
+> 
+
+Week 4 type shi
+## Reallocate
+
+```c
+~
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+int main() {
+    int size = 0,extra = 0;
+    scanf("%d",&size);
+    int* arr = malloc(size * sizeof(int));
+
+    for (int i = 0; i < size; i++) {
+        scanf("%d",arr+i);
+    } 
+
+    for (int i = 0; i < size; i++) {
+        printf("%d, \n",arr[i]);
+    } 
+
+    printf("realloc: ");
+    scanf("%d",&extra);
+    arr = realloc(arr,(size+extra) * sizeof(int));
+    for (int j = size; j < extra; j++) {
+        scanf("%d",arr+j);
+    } 
+
+    for (int i = 0; i < size+(extra-size); i++) {
+        printf("%d, ",arr[i]);
+    } 
+
+    free(arr);
+
+}
+```
+
+

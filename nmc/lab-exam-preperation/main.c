@@ -1,27 +1,33 @@
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 
-void checkArmstrong(){
-    int n,sum,tmp;
-    printf("Enter a number: ");
-    scanf("%d", &n);
-    tmp = n;
-    int exp = log10(n)+ 1;
-    while(tmp){
-        sum += pow(tmp % 10,exp);
-        tmp /= 10;
+struct Student {
+    char name[100];
+    int roll,marks;
+};
+
+
+void read(struct Student* a,int size){
+    for (int i = 0; i < size; i++) {
+        printf("Enter Name Roll Marks: ");
+        /*scanf("%s %d %d",(*(a+i)->name), &((*a+i).name), &((*a+i).marks));*/
+        scanf("%s %d %d", a[i].name,&(a[i].roll),&(a[i].marks));
     }
-    printf("The Number Is %s Armstrong ",(sum == n)? "an":"not an");
 }
 
-void checkPerfect(){
-    int n,sum;
-    printf("Enter a number: ");
-    scanf("%d", &n);
-    for (int i = 1; i < n ; sum += (n % i == 0)? i:0, i++); 
-    printf("The Number Is %s Perfect number",(sum == n)? "a":"not a");
+void print(struct Student* a, int size){
+    for (int i = 0; i < size; i++) {
+        printf("%s %d %d",a[i].name, a[i].roll, a[i].marks);
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d",&n);
+    struct Student* a = malloc(n*sizeof(struct Student));
+    read(a,n);
+    print(a,n);
+
 
 }
-int main(){
-    checkPerfect(500);
-}
+
