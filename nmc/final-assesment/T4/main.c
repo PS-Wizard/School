@@ -1,121 +1,105 @@
-#include <stdio.h>
+#include "../../lib/lodepng.h"
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include "../../lib/lodepng.h"
+#include <stdio.h>
+unsigned char* image, *imageCopy;
+unsigned height,width;
 
 typedef struct {
-    int dx, dy;
+    int dx, dy;  
+    int weight;   
 } Neighbor;
 
+/*Neighbor neighbors[] = {*/
+/*    {-1, -1, 1}, {0, -1, 2}, {1, -1, 1},  */
+/*    {-1, 0, 2}, {0, 0, 4}, {1, 0, 2},       */
+/*    {-1, 1, 1}, {0, 1, 2}, {1, 1, 1}        */
+/*};*/
+
+// 5x5 Kernel Size with appropriate weights because the 3x3 is barely noticable
 Neighbor neighbors[] = {
-    {-1, -1}, {0, -1}, {1, -1}, {-1, 0},{1, 0}, {-1, 1}, {0, 1}, {1, 1}
+    {-2, -2, 1}, {-1, -2, 4}, {0, -2, 6}, {1, -2, 4}, {2, -2, 1},
+    {-2, -1, 4}, {-1, -1, 16}, {0, -1, 24}, {1, -1, 16}, {2, -1, 4},
+    {-2, 0, 6}, {-1, 0, 24}, {0, 0, 36}, {1, 0, 24}, {2, 0, 6},
+    {-2, 1, 4}, {-1, 1, 16}, {0, 1, 24}, {1, 1, 16}, {2, 1, 4},
+    {-2, 2, 1}, {-1, 2, 4}, {0, 2, 6}, {1, 2, 4}, {2, 2, 1}
 };
 
-typedef struct {
-    unsigned char* image;
-    unsigned width;
-    unsigned height;
-    int start_row;
-    int end_row;
-} ThreadData;
+struct thread_info {
+    unsigned start;
+    unsigned end;
+    pthread_t id;
+};
 
-int is_valid_pixel(int x, int y, unsigned width, unsigned height) {
-    return x >= 0 && x < width && y >= 0 && y < height;
+int isValid(unsigned row, unsigned col){
+    return (row >= 0 && row < height && col >= 0 && col < width);
 }
 
-int pixel_index(int x, int y, unsigned width) {
-    return (y * width + x) * 4;
-}
-
-void* apply_gaussian_blur(void* arg) {
-    ThreadData* data = (ThreadData*)arg;
-    unsigned char* image = data->image;
-    unsigned width = data->width;
-    unsigned height = data->height;
-    int start_row = data->start_row;
-    int end_row = data->end_row;
-
-    for (int y = start_row; y < end_row; ++y) {
-        for (int x = 0; x < width; ++x) {
-            unsigned r_sum = 0, g_sum = 0, b_sum = 0;
-            int valid_neighbors = 0;
-
-            for (int i = 0; i < 8; ++i) {
-                int nx = x + neighbors[i].dx;
-                int ny = y + neighbors[i].dy;
-
-                if (is_valid_pixel(nx, ny, width, height)) {
-                    int idx = pixel_index(nx, ny, width);
-                    r_sum += image[idx];
-                    g_sum += image[idx + 1];
-                    b_sum += image[idx + 2];
-                    valid_neighbors++;
+void* applyBlur(void* args){
+    struct thread_info* ranges = (struct thread_info*)args;
+    printf("Start: %u\n End:%u\n",ranges->start,ranges->end);
+    for(unsigned row = ranges->start;  row < ranges->end; row++ ){
+        for(unsigned col = 0 ; col<width; col++ ){
+            unsigned r_sum = 0, g_sum = 0, b_sum = 0, kernel_sum = 0;
+            unsigned our_index = 4 * (row * width + col);
+            for(int i = 0; i < 25; i++){
+                int n_row = row + neighbors[i].dx;
+                int n_col = col + neighbors[i].dy;
+                if (isValid(n_row, n_col)){
+                    unsigned possible_neighbour = 4*(n_row * width + n_col);
+                    r_sum += image[possible_neighbour] * neighbors[i].weight;
+                    g_sum += image[possible_neighbour + 1] * neighbors[i].weight;
+                    b_sum += image[possible_neighbour + 2] * neighbors[i].weight;
+                    kernel_sum += neighbors[i].weight;
                 }
             }
-
-            if (valid_neighbors > 0) {
-                int idx = pixel_index(x, y, width);
-                image[idx] = r_sum / valid_neighbors;
-                image[idx + 1] = g_sum / valid_neighbors;
-                image[idx + 2] = b_sum / valid_neighbors;
-            }
+            imageCopy[our_index] = r_sum / kernel_sum;
+            imageCopy[our_index + 1] = g_sum / kernel_sum;
+            imageCopy[our_index + 2] = b_sum / kernel_sum;
         }
     }
-
-    return NULL;
 }
 
-void apply_gaussian_blur_threaded(unsigned char* image, unsigned width, unsigned height, int num_threads) {
-    pthread_t* threads = malloc(num_threads * sizeof(pthread_t));
-    ThreadData* thread_data = malloc(num_threads * sizeof(ThreadData));
 
-    // Divide the work among threads
-    int rows_per_thread = height / num_threads;
-
-    for (int i = 0; i < num_threads; ++i) {
-        thread_data[i].image = image;
-        thread_data[i].width = width;
-        thread_data[i].height = height;
-        thread_data[i].start_row = i * rows_per_thread;
-        thread_data[i].end_row = (i == num_threads - 1) ? height : (i + 1) * rows_per_thread;
-
-        pthread_create(&threads[i], NULL, apply_gaussian_blur, &thread_data[i]);
-    }
-
-    for (int i = 0; i < num_threads; ++i) {
-        pthread_join(threads[i], NULL);
-    }
-
-    free(threads);
-    free(thread_data);
-}
-
-int main() {
+int main(){
     const char* input = "./background.png";
-    const char* output = "./gaussian_blurred.png";
+    unsigned err;
+    err = lodepng_decode32_file(&image,&width,&height,input);
 
-    unsigned char* image;
-    unsigned width, height;
-
-    unsigned error = lodepng_decode32_file(&image, &width, &height, input);
-    if (error) {
-        printf("Decoder error %u: %s\n", error, lodepng_error_text(error));
+    if (err){
+        printf("Error %u: %s\n",err,lodepng_error_text(err));
         return 1;
     }
 
-    int num_threads;
-    printf("Enter the number of threads: ");
-    scanf("%d", &num_threads);
+    imageCopy = malloc(width*height*4);
+    memcpy(imageCopy,image,width*height*4);
 
-    apply_gaussian_blur_threaded(image, width, height, num_threads);
+    printf("%u %u",width,height);
 
-    error = lodepng_encode32_file(output, image, width, height);
-    if (error) {
-        printf("Encoder error %u: %s\n", error, lodepng_error_text(error));
+    struct thread_info* thread_info = malloc(height / 4 * sizeof(struct thread_info));
+    if (!thread_info){
+        printf("Thread info allocation failed\n");
         return 1;
     }
 
+    int numThreads = height/4;
+    for (int i = 0; i < numThreads ; i++ ) {
+        thread_info[i].start = i*4;
+        thread_info[i].end = (i == numThreads - 1)? height: (i+1) * 4;
+        pthread_create(&thread_info[i].id,NULL,applyBlur,(void*)&thread_info[i]);
+    }
+
+    for (int i = 0; i < height / 4; i++) {
+        pthread_join(thread_info[i].id,NULL);
+    }
+
+    err = lodepng_encode32_file("./gaussian_blurred_hopefully.png",imageCopy,width,height);
     free(image);
-    return 0;
+    free(imageCopy);
+    free(thread_info);
+
+
 }
+
+/*w*r + c*/
