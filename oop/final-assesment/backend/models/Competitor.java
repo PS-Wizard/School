@@ -88,12 +88,15 @@ public class Competitor {
      *
      * @return The overall score (mean) of the competitor.
      */
-    public int getOverallScore() {
+    public String getOverallScore() {
         int sum = 0;
         for (int score : this.scores) {
+            if (score < 0) {
+                return "Scores Aren't Fully Filled";
+            }
             sum += score;
         }
-        return sum / this.scores.length; // Calculate the mean
+        return (sum / this.scores.length) + ""; // Calculate the mean
     }
 
     /**
@@ -101,10 +104,25 @@ public class Competitor {
      *
      * @return A formatted string with the competitor's full details.
      */
+
     public String getFullDetails() {
+        StringBuilder scoreDetails = new StringBuilder();
+
+        for (int i = 0; i < this.scores.length; i++) {
+            if (this.scores[i] < 0) {
+                scoreDetails.append(String.format("Score%d: -", i + 1));
+            } else {
+                scoreDetails.append(String.format("Score%d: %d", i + 1, this.scores[i]));
+            }
+            if (i < this.scores.length - 1) {
+                scoreDetails.append(", ");
+            }
+        }
+
         return String.format(
-                "ID: %d, %s is %d years old, and is a %s scoring Score1: %d, Score2: %d, Score3: %d, Score4: %d, Score5: %d ; With an Overall Score of %d",
-                this.ID, this.name.getFullName(), getAge() , this.level, this.scores[0], this.scores[1], this.scores[2], this.scores[3], this.scores[4], getOverallScore());
+                "ID: %d, %s is %d years old, and is a %s scoring %s ; With an Overall Score of %s",
+                this.ID, this.name.getFullName(), getAge(), this.level, scoreDetails.toString(), getOverallScore()
+                );
     }
 
     /**
@@ -113,8 +131,9 @@ public class Competitor {
      * @return A formatted string with the competitor's short details.
      */
     public String getShortDetails() {
-        return String.format("ID: %d ; Initials: %s ; Overall Score: %d", this.ID, this.name.getInitials(), getOverallScore());
+        return String.format("ID: %d ; Initials: %s ; Overall Score: %s", this.ID, this.name.getInitials(), getOverallScore());
     }
+
 
     /**
      * Returns the string representation of the competitor.

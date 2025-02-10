@@ -14,7 +14,7 @@ import backend.db.DB_API;
 public class WordGame extends JPanel implements ActionListener, KeyListener {
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
-    private static final int MOVING_SPEED = 5; // Speed at which words move from right to left
+    private int MOVING_SPEED;
     private static final int INITIAL_DELAY = 50;
     private static final int SCORE_INCREASE_INTERVAL = 2;
     private static final int METEOR_WIDTH = 50; 
@@ -37,6 +37,13 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
     public WordGame(Competitor comp, String selected) {
         this.comp = comp;
         this.selected = selected;
+        if (comp.getLevel().equalsIgnoreCase("Intermediate")) {
+            this.MOVING_SPEED = 10;
+        } else if (comp.getLevel().equalsIgnoreCase("Expert")) {
+            this.MOVING_SPEED = 15;
+        } else {
+            this.MOVING_SPEED = 5; 
+        }
         this.database = new DB_API("jdbc:mysql://localhost:3306/JavaAssessment","wizard","Banana4President");
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setFocusable(true);
@@ -67,7 +74,10 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
     }
 
     private void addWord() {
-        String[] wordList = {"apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew"};
+        String[] wordList = {
+            "abstract", "class", "constructor", "interface", "method", "package", "inheritance", "polymorphism", "encapsulation", "exception",
+            "thread", "synchronization", "lambda", "stream", "map", "set", "list", "static", "JVM", "JDK" 
+        };
         String word = wordList[random.nextInt(wordList.length)];
         words.add(word);
         wordX.add(WIDTH); // Start at the right edge of the screen
@@ -143,7 +153,7 @@ public class WordGame extends JPanel implements ActionListener, KeyListener {
         }
 
         database.store(comp);
-        JOptionPane.showMessageDialog(this, "Game Over! Your score is: " + score, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, String.format("Game Over! You played in an %s level and achieved a final score of: %d", this.comp.getLevel(), score), "Game Over", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
