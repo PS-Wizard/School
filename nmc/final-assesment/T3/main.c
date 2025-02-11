@@ -36,13 +36,13 @@ void* readnumbers(void* arg) {
         return NULL;
     }
 
-    int def_capacity = 50000;
+    int def_capacity = 9648;
     f_info->numbers = malloc(def_capacity * sizeof(uint32_t));
     uint32_t count = 0, num;
 
     while (fscanf(file, "%d", &num) == 1) {
         if (count >= def_capacity) {
-            def_capacity += 50000;
+            def_capacity = def_capacity * 1.5;
             f_info->numbers = realloc(f_info->numbers, def_capacity * sizeof(uint32_t));
         }
         f_info->numbers[count++] = num;
@@ -65,7 +65,7 @@ void* check_prime(void* arg) {
             local_prime_count++;
         }
     }
-    __atomic_add_fetch(&f_info->prime_count, local_prime_count, __ATOMIC_RELAXED);
+    __atomic_add_fetch(&f_info->prime_count, local_prime_count, __ATOMIC_RELAXED); 
     free(data);
     return NULL;
 }

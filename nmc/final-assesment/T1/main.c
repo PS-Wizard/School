@@ -33,10 +33,10 @@ void PopulateStruct(struct FileData* dt, const char* filename){
     }
 
     while (fscanf(file, "%d,%d", &x, &y) == 2) {
-        dt->sum_x += (double)x;
-        dt->sum_y += (double)y;
-        dt->sum_x_squared += (double)(x * x);
-        dt->sum_xy += (double)(x * y);
+        dt->sum_x += x;
+        dt->sum_y += y;
+        dt->sum_x_squared += (x * x);
+        dt->sum_xy += (x * y);
         dt->N_datapoints++;
 
         if (LOG) {
@@ -79,6 +79,7 @@ int main(){
         "./data/datasetLR3.txt",
         "./data/datasetLR4.txt"
     };
+
     int numFiles = sizeof(files) / sizeof(files[0]);
 
     struct FileData fd = {0}; 

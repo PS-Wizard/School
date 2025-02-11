@@ -32,7 +32,7 @@ int main() {
     for (int i = 0; i < n_threads; i++) {
         threads[i].start = i * division;
         threads[i].end = (i == n_threads - 1) ? n_iterations - 1 : (i + 1) * division - 1;  // -1 here to make the number of iterations correct cause we are counting from 0
-        threads[i].partial_sum = 0;
+        threads[i].partial_sum = 0; // because additions are commutative
         printf("Start: %d, end: %d \n", threads[i].start, threads[i].end);
         pthread_create(&threads[i].id, NULL, Leibniz, (void*)(&threads[i]));
     }
@@ -47,6 +47,5 @@ int main() {
 
     printf("Pi approximation: %.20Lf\n", pi_4 * 4);
     free(threads);
-
     return 0;
 }

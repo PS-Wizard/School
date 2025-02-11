@@ -11,6 +11,7 @@ typedef struct {
     int weight;   
 } Neighbor;
 
+// 3x3 kernel default
 /*Neighbor neighbors[] = {*/
 /*    {-1, -1, 1}, {0, -1, 2}, {1, -1, 1},  */
 /*    {-1, 0, 2}, {0, 0, 4}, {1, 0, 2},       */
@@ -38,7 +39,6 @@ int isValid(unsigned row, unsigned col){
 
 void* applyBlur(void* args){
     struct thread_info* ranges = (struct thread_info*)args;
-    printf("Start: %u\n End:%u\n",ranges->start,ranges->end);
     for(unsigned row = ranges->start;  row < ranges->end; row++ ){
         for(unsigned col = 0 ; col<width; col++ ){
             unsigned r_sum = 0, g_sum = 0, b_sum = 0, kernel_sum = 0;
@@ -63,7 +63,7 @@ void* applyBlur(void* args){
 
 
 int main(){
-    const char* input = "./background.png";
+    const char* input = "./original.png";
     unsigned err;
     err = lodepng_decode32_file(&image,&width,&height,input);
 
@@ -75,7 +75,7 @@ int main(){
     imageCopy = malloc(width*height*4);
     memcpy(imageCopy,image,width*height*4);
 
-    printf("%u %u",width,height);
+    printf("%u %u\n",width,height);
 
     struct thread_info* thread_info = malloc(height / 4 * sizeof(struct thread_info));
     if (!thread_info){
@@ -94,7 +94,7 @@ int main(){
         pthread_join(thread_info[i].id,NULL);
     }
 
-    err = lodepng_encode32_file("./gaussian_blurred_hopefully.png",imageCopy,width,height);
+    err = lodepng_encode32_file("./gaussian_blurred_5x5_kernel.png",imageCopy,width,height);
     free(image);
     free(imageCopy);
     free(thread_info);

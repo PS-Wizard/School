@@ -404,5 +404,132 @@ int main() {
 
 }
 ```
+---
+Week 10 type shi:
 
+```c
+~ 3 threads all adding to counter, check which one made it 50 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+int counter = 0;
+int finalAdd = -1;
+pthread_mutex_t lock;
+
+
+void* count_thread(void* args){
+    while(1){
+        pthread_mutex_lock(&lock);
+        if (counter >= 50){
+            pthread_mutex_unlock(&lock);
+            break;
+        }
+        counter++;
+        if (counter == 50 && finalAdd == -1){
+            finalAdd = 0;
+        }
+        pthread_mutex_unlock(&lock);
+    }
+}
+
+void* count_thread1(void* args){
+    while(1){
+        pthread_mutex_lock(&lock);
+        if (counter >= 50){
+            pthread_mutex_unlock(&lock);
+            break;
+        }
+        counter++;
+        if (counter == 50 && finalAdd == -1){
+            finalAdd = 1;
+        }
+        pthread_mutex_unlock(&lock);
+    }
+}
+
+void* count_thread2(void* args){
+    while(1){
+        pthread_mutex_lock(&lock);
+        if (counter >= 50){
+            pthread_mutex_unlock(&lock);
+            break;
+        }
+        counter++;
+        if (counter == 50 && finalAdd == -1){
+            finalAdd = 2;
+        }
+        pthread_mutex_unlock(&lock);
+    }
+}
+
+
+int main() {
+    pthread_mutex_init(&lock,NULL);
+    pthread_t ids[3];
+    pthread_create(&ids[0],NULL,count_thread,NULL);
+    pthread_create(&ids[1],NULL,count_thread,NULL);
+    pthread_create(&ids[2],NULL,count_thread,NULL);
+    pthread_join(ids[0],NULL);
+    pthread_join(ids[1],NULL);
+    pthread_join(ids[2],NULL);
+
+    printf("Counter: %d, Final Add From thread :%d",counter,finalAdd);
+    pthread_mutex_destroy(&lock);
+    
+}
+
+```
+
+```
+~
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+int sum = 0;
+int i = 1;
+int userin;
+int finalAdd = -1;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+void add_natural(){
+    sum += i;
+    i++;
+}
+
+void* thingy(void* args){
+    int* threadID = (int*)args;
+    while(1){
+        pthread_mutex_lock(&lock);
+        if (i > userin ){
+            pthread_mutex_unlock(&lock);
+            break;
+        }
+        add_natural();
+        if ( i == userin && finalAdd == -1){
+            finalAdd = *threadID;
+        }
+        pthread_mutex_unlock(&lock);
+    }
+}
+
+int main() {
+    scanf("%d",&userin);
+    pthread_t threadIds[2];
+    int Ids[] = {1,2};
+    for (int i = 0; i < 2; i++) {
+        pthread_create(&threadIds[i],NULL,thingy,(void*)&Ids[i]);
+    }
+    for (int i = 0; i < 2; i++) {
+        pthread_join(threadIds[i],NULL);
+    }
+    printf("Sum: %d, Final Add: %d",sum,finalAdd);
+}
+```
+>
 
