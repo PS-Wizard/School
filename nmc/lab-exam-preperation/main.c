@@ -1,30 +1,37 @@
+#include "../lib/lodepng.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
 
-struct pthread_info {
-    unsigned start;
-    unsigned end;
-    pthread_t id;
-};
-
-void* printStuff(void* args){
-    struct pthread_info* ranges = (struct pthread_info*)args;
-    for (int i = ranges->start; i < ranges->end; i++) {
-       printf("Thread: %p: %d\n",ranges->id,i); 
-    }
-}
+unsigned char* image;
+unsigned char* imageCopy;
+unsigned width,height;
+unsigned dx, dy;
 
 int main(){
-    struct pthread_info threads[2];
-    for (int i = 0; i < 2; i++) {
-        threads[i].start = (i * 500)+1;
-        threads[i].end = (i+1)*500;
-        pthread_create(&(threads[i].id),NULL,printStuff,(void*)&threads[i]);
+    unsigned error; 
+    error = lodepng_decode32_file(&image,&width,&height,"./original.png");
+    if (error){
+        printf("%s",lodepng_error_text(error));
+        return 1;
+    }
+    imageCopy = malloc(width*height*4);
+    printf("%d %d\n",width,height);
+    scanf("%u %u",&dx,&dy);
+
+    for (int row = 0; row  < height-dy; row ++) {
+        for (int col = 0; col < width-dx; col++) {
+            imageCopy[4*(row*width + col)] = image[4*(row*width + col)];
+            imageCopy[4*(row*width + col)+1] = image[4*(row*width + col)+1];
+            imageCopy[4*(row*width + col)+2] = image[4*(row*width + col)+2];
+            imageCopy[4*(row*width + col)+3] = image[4*(row*width + col)+3];
+        }
+    }
+    error = lodepng_encode32_file("blacked.png",imageCopy,width-dx,height-dy);
+    if (error){
+        printf("%s",lodepng_error_text(error));
+        return 1;
     }
 
-    for (int i = 0; i < 2; i++) {
-        pthread_join(threads[i].id,NULL);
-    }
+    free(image);
+    free(imageCopy);
 }
