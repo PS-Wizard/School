@@ -108,7 +108,7 @@ int main() {
     }
 
     printf("Enter the number of threads: ");
-    scanf("%d", &n_threads);
+    scanf("%d", &n_threads); 
 
     for (int i = 0; i < 3; i++) {
         datasets[i].prime_index = calloc(datasets[i].num_count, sizeof(uint32_t));

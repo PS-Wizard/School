@@ -52,7 +52,8 @@ void CalculateA(struct FileData* dt){
 }
 
 void CalculateB(struct FileData* dt){
-    dt->B = ((dt->N_datapoints * dt->sum_xy) - (dt->sum_x * dt->sum_y)) / ((dt->N_datapoints * dt->sum_x_squared) - (dt->sum_x * dt->sum_x));
+    dt->B = ((dt->Near
+                datapoints * dt->sum_xy) - (dt->sum_x * dt->sum_y)) / ((dt->N_datapoints * dt->sum_x_squared) - (dt->sum_x * dt->sum_x));
 }
 
 void DisplayStruct(struct FileData* dt){

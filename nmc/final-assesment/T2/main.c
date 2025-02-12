@@ -24,7 +24,9 @@ void* Leibniz(void* args) {
 int main() {
     int n_iterations, n_threads, division;
     printf("Enter number of iterations and number of threads to perform those iterations: ");
-    scanf("%d %d", &n_iterations, &n_threads);
+    /*scanf("%d %d", &n_iterations, &n_threads);*/
+    n_iterations = 100000;
+    n_threads = 100;
     division = n_iterations / n_threads;
     struct info* threads = malloc(n_threads * sizeof(struct info));
     long double pi_4 = 0;

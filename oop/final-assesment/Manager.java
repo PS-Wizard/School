@@ -17,11 +17,10 @@ public class Manager {
     public void createAndShowGUI() {
         this.database = new DB_API("jdbc:mysql://localhost:3306/JavaAssessment", "wizard", "Banana4President");
         JFrame frame = new JFrame("Manager");
-        frame.setSize(500, 600); // Adjusted for image and buttons
+        frame.setSize(500, 600); 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout(10, 10));
 
-        // Add image at the top
         try {
             Image spaceshipImage = ImageIO.read(new File("./frontend/logo.png"));
             ImageIcon spaceshipIcon = new ImageIcon(spaceshipImage);
@@ -31,98 +30,85 @@ public class Manager {
             e.printStackTrace();
         }
 
-        // Button panel with padding
         JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 10, 10));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Padding around buttons
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
 
         JButton playGameButton = new JButton("Play Game");
         JButton viewScoresButton = new JButton("View Scores");
         JButton adminViewButton = new JButton("Admin View");
         JButton quitButton = new JButton("Quit");
 
-        // Add action listeners
+        
         playGameButton.addActionListener(e -> showGameInputDialog(frame));
         viewScoresButton.addActionListener(e -> showScores(frame));
         adminViewButton.addActionListener(e -> showAdminView(frame));
         quitButton.addActionListener(e -> frame.dispose());
 
-        // Add buttons to the panel
         buttonPanel.add(playGameButton);
         buttonPanel.add(viewScoresButton);
         buttonPanel.add(adminViewButton);
         buttonPanel.add(quitButton);
 
-        // Add button panel to the center
         frame.add(buttonPanel, BorderLayout.CENTER);
 
-        frame.setLocationRelativeTo(null); // Center the frame
+        frame.setLocationRelativeTo(null); 
         frame.setVisible(true);
     }
 
 
-
-
     private void showAdminView(JFrame parent) {
-        // Create main panel with a GridBagLayout for better control over component placement
+        
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);  // Add padding between components
+        gbc.insets = new Insets(10, 10, 10, 10);  
 
-        // Create text fields and set their preferred size
         JTextField idField = new JTextField();
         JTextField nameField = new JTextField();
         JTextField levelField = new JTextField();
         JTextField ageField = new JTextField();
         JTextField scoreField = new JTextField();
 
-        // Set preferred size for better visibility
         idField.setPreferredSize(new Dimension(200, 30));
         nameField.setPreferredSize(new Dimension(200, 30));
         levelField.setPreferredSize(new Dimension(200, 30));
         ageField.setPreferredSize(new Dimension(200, 30));
         scoreField.setPreferredSize(new Dimension(200, 30));
 
-        // Add ID field
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(new JLabel("ID:"), gbc);
         gbc.gridx = 1;
         panel.add(idField, gbc);
 
-        // Add Name field
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(new JLabel("Name:"), gbc);
         gbc.gridx = 1;
         panel.add(nameField, gbc);
 
-        // Add Level field
         gbc.gridx = 0;
         gbc.gridy = 2;
         panel.add(new JLabel("Level:"), gbc);
         gbc.gridx = 1;
         panel.add(levelField, gbc);
 
-        // Add Age field
         gbc.gridx = 0;
         gbc.gridy = 3;
         panel.add(new JLabel("Age:"), gbc);
         gbc.gridx = 1;
         panel.add(ageField, gbc);
 
-        // Add Scores field
         gbc.gridx = 0;
         gbc.gridy = 4;
         panel.add(new JLabel("Scores (comma separated):"), gbc);
         gbc.gridx = 1;
         panel.add(scoreField, gbc);
 
-        // Create button panel for alignment of buttons
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));  // Buttons centered with spacing
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));  
 
-        // Create, Update, and Delete buttons
+        
         JButton createButton = new JButton("Create");
         createButton.addActionListener(e -> createCompetitor(idField, nameField, levelField, ageField, scoreField));
 
@@ -132,18 +118,15 @@ public class Manager {
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(e -> deleteCompetitor(idField));
 
-        // Add buttons to the button panel
         buttonPanel.add(createButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
 
-        // Add button panel to main panel
         gbc.gridx = 0;
         gbc.gridy = 5;
-        gbc.gridwidth = 2; // Make buttons span the entire width
+        gbc.gridwidth = 2; 
         panel.add(buttonPanel, gbc);
 
-        // Show the dialog
         int result = JOptionPane.showConfirmDialog(null, panel, "Admin View - Manage Competitors", JOptionPane.OK_CANCEL_OPTION);
 
         if (result == JOptionPane.OK_OPTION) {
@@ -369,12 +352,12 @@ public class Manager {
         JPanel expertPanel = createTablePanel("Expert", expertTable);
 
         tablePanel.add(beginnerPanel);
-        tablePanel.add(Box.createVerticalStrut(20));  // Add space between sections
+        tablePanel.add(Box.createVerticalStrut(20));  
         tablePanel.add(intermediatePanel);
         tablePanel.add(Box.createVerticalStrut(20));
         tablePanel.add(expertPanel);
 
-        // Buttons for details
+        
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton fullDetailsButton = new JButton("Get Full Details");
@@ -382,7 +365,6 @@ public class Manager {
         buttonPanel.add(fullDetailsButton);
         buttonPanel.add(shortDetailsButton);
         fullDetailsButton.addActionListener(e -> {
-            // Handle showing full details of the selected competitor
             StringBuilder fullDetails = new StringBuilder();
             for (Competitor competitor : competitors) {
                 fullDetails.append(competitor.getFullDetails()).append("\n");
@@ -391,7 +373,6 @@ public class Manager {
         });
 
         shortDetailsButton.addActionListener(e -> {
-            // Handle showing short details of the selected competitor
             StringBuilder shortDetails = new StringBuilder();
             for (Competitor competitor : competitors) {
                 shortDetails.append(competitor.getShortDetails()).append("\n");
@@ -399,13 +380,11 @@ public class Manager {
             JOptionPane.showMessageDialog(parent, shortDetails.toString(), "Short Details", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        // Create the frame
         JFrame scoresFrame = new JFrame("Scores");
         scoresFrame.setSize(1000, 600);
         scoresFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         scoresFrame.setLayout(new BorderLayout(20, 20));
 
-        // Main panel layout
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout(20, 20));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -433,7 +412,6 @@ public class Manager {
         }
         return data;
     }
-    // Helper method to create a JTable
     private JTable createTable(Object[][] data, String[] columnNames) {
         JTable table = new JTable(data, columnNames);
         table.setEnabled(false);
@@ -443,7 +421,7 @@ public class Manager {
         return table;
     }
 
-    // Helper method to create a JPanel for each table
+    
     private JPanel createTablePanel(String title, JTable table) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(10, 10));
