@@ -1,6 +1,0 @@
-Name: a, Age: 1, Salary: 100
-Name: b, Age: 1, Salary: 100
-Name: c, Age: 1, Salary: 100
-Name: d, Age: 1, Salary: 100
-Name: e, Age: 1, Salary: 100
-Name: f, Age: 1, Salary: 100
