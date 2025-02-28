@@ -30,6 +30,22 @@ I am 2 of 4
 I am 3 of 4
 [wizard@archlinux w1]$
 ```
+
+==Running with max number of processes (252)==
+
+```
+~
+
+[wizard@archlinux w1]$ mpirun -np 252 ./a.out
+I am 0 of 252
+I am 1 of 252
+I am 2 of 252
+I am 3 of 252
+...
+I am 252 of 252
+[wizard@archlinux w1]$
+```
+
 ---
 
 ***++Compile and run the program mpi02.c. Try running it with 2, 3 and 4 processes. Eg.:++***
@@ -129,10 +145,11 @@ Please see the FAQ page for debugging suggestions
 
 ***++When you try to run it with 4 or more processes, it probably runs and appears to work, but never ends. You will have to end with &quot;Ctrl-C&quot;. Why do you think it doesn't end when you run it with more than 3 processes? Change it so that it will work with any number of processes.++***
 
-It never ends because the root thread `0` sends messages to `Ranks: {1,2}`, those 2 work fine; buuut the last process `Rank: 3` waits for a message From the root thread `0`:
-which never happens.
+It never ends because the root thread `0` sends messages to `Ranks: {1,2}`, those 2 work fine; but the last process `Rank: 3` waits for a message From the root thread `0`:
 
 `MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);`
+
+which never happens. `MPI_Recv` is a blocking operation so it just ... blocks.
 
 ==The Fix?==
 ```c
@@ -181,38 +198,43 @@ Process 3 received 9
 ***++Build and run the program mpi03.c. In this program Process 0 will wait for messages from Process 1 and Process 2. However, Process 1 ends up blocking Process 2 because it sleeps for 5 seconds.++***
 
 ```c
+~
 
 #include <stdio.h>
 #include <mpi.h>
+#include <unistd.h>
 
 int main(int argc, char** argv) {
-    int size, rank;
+  int size, rank;
 
-    MPI_Init(NULL, NULL);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if(rank ==0){
-        int x = 9;
-        int y = 17;
-        for (int i = 1; i < size; i++) {
-            if (i % 2 != 0){
-                MPI_Send(&x, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-            }else{
-                MPI_Send(&y, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-            }
-        }
-    } else {
-        int number;
-        MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        printf("Process %d received %d\n", rank, number); 
+  MPI_Init(NULL, NULL);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if(size != 3) {
+    if(rank == 0) {
+      printf("This program needs to run on exactly 3 processes\n");
     }
-    MPI_Finalize(); 
+  } else {
+    if(rank ==0){
+      int x, y;
+      MPI_Recv(&x, 1, MPI_INT, 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      printf("Received %d from process %d\n", x, 1); 
+      MPI_Recv(&y, 1, MPI_INT, 2, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      printf("Received %d from process %d\n", y, 2); 
+    } else {
+      if(rank == 1){
+        usleep(5000000);
+      }
+      int number = rank + 10;
+      MPI_Send(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    }
+  }
+  MPI_Finalize(); 
 
-    return 0;
+  return 0;
 }
-
-
 ```
+
 ```
 ~ Can't See in the output below, but the command takes 5 seconds to run. (Source: Trust me bro.)
 
@@ -221,6 +243,7 @@ Received 11 from process 1
 Received 12 from process 2
 
 ```
+This happens because again `MPI_Recv` is a blocking operation,  So when thread 2 sleeps for 5 seconds, the root thread `0` waits for its response 
 
 ---
 
