@@ -70,55 +70,52 @@
 ---
 
 
-# Usability Review of Learning Websites  
+# Usability Review of Learning Management Platforms
 
-# W3Schools  
+## 1. Introduction
 
+### 1.1 Usability
+- Define usability.
+- Reference Jakob Nielsen’s and/or Shneiderman’s principles.
+- Discuss how usability applies broadly in web interfaces.
 
-### Good:
-- **Visibility of System Status** – Instant feedback on button clicks, live code editor shows changes immediately.  
-- **Recognition Over Recall** – Code examples are visible no need to memorize syntax ?
-- **User Control & Freedom** – The "Try it Yourself" editor allows unlimited experimentation.  
-- **Minimal Memory Load** – Step-by-step explanations and examples for concepts.
+### 1.2 Importance of Usability
+- Why does usability matter? (Efficiency, user satisfaction, accessibility, etc.)
+- Real-world impacts (e.g., user retention, conversion rates, etc.)
+- Reference a study or usability guideline.
 
->
-~
->
-![w3clutter](assets/cluttered.png)
->
-![noErrorManagement](assets/error.png)
->
-~
->
-### Bad:
-- **Aesthetic & Minimalist Design** – The site is functional, but visually outdated and cluttered.  
-- **Flexibility & Efficiency** – No real shortcuts or advanced tools for power users.  
-- **Error Prevention** – The live editor doesn’t warn about common mistakes; users just see errors.  
+## 2. Literature Review
 
->
+### 2.1 Academic Research on Usability
+- Discuss at least **two** usability-related academic journal articles.
+- Summarize their key findings.
+- Relate these findings to web usability.
 
-# MST
+### 2.2 Usability in Web Design
+- Discuss general web usability best practices.
+- Reference established frameworks or guidelines (Nielsen, Shneiderman, WCAG, etc.).
 
-### Good:
-- **User Control & Freedom** – They Have over 4000 interactive videos; user can pick; pause, rewind, playback ...
-- **Good Feedback, Fast** – Interactive quizzes give instant results and diagnostics.
-- **Match Between System & Real World** – The platform uses straightforward language and familiar educational structures, ensuring content is relatable and easy to understand.
+### 2.3 Overview of Selected Learning Management Platforms
+- Brief introduction to the **two** learning management systems (LMS) being reviewed.
+- Why these platforms were chosen.
 
->
-~
->
-![mst unusable](assets/mst_unusable_section.png)
->
-![unusable 2](assets/unusable_2.png)
->
-![search doesnt work](assets/search_dont_work.png)
->
-~
->
-### Bad:
-- **Shortcuts for Pros** – No real way to speed up navigation or customize the learning experience.  
-    - Search Doesn't Work
-- **Error Prevention** – Some questions don't guide users on how to fix mistakes.  
-- **Aesthetic & Minimalist Design** – The site is functional, but visually outdated and cluttered. Random Notifications. 
-    - Unusable sections
+## 3. Analysis
 
+### 3.1 Evaluation of Website 1
+- **Use a table to compare usability principles** (Shneiderman & Nielsen combined).
+- Discuss how well the website meets each principle.
+- Provide real-world examples from the website (e.g., "This platform lacks an undo button").
+- Discuss any usability issues found.
+
+### 3.2 Evaluation of Website 2
+- Same structure as 3.1.
+- Compare findings with Website 1.
+
+## 4. Conclusion
+- Summarize key findings.
+- Which website performed better and why?
+- How can these platforms improve usability?
+
+## 5. References
+- List all journal articles, books, and web resources used.
+- Follow citation guidelines (APA, MLA, or any required format).
