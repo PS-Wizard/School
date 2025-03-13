@@ -1,17 +1,5 @@
 # Usability Review of Learning Management Platforms
 
-## 1. Introduction
-
-### 1.1 Usability
-- Define usability.
-- Reference Jakob Nielsen’s and/or Shneiderman’s principles.
-- Discuss how usability applies broadly in web interfaces.
-
-### 1.2 Importance of Usability
-- Why does usability matter? (Efficiency, user satisfaction, accessibility, etc.)
-- Real-world impacts (e.g., user retention, conversion rates, etc.)
-- Reference a study or usability guideline.
-
 ## 2. Literature Review
 
 ### 2.1 Academic Research on Usability
