@@ -38,6 +38,7 @@ Overall, the design is clean, consistent, and free from clutter, aligning well w
 
 **Good:**  
 - Easy navigation with the tab based layout on desktop, and hamburger menu on smaller screens.
+- The well thought out navigation act as clear exit paths.
 - The settings and preferences are clearly accessible via the profile page.
 - There are no forced actions
 
@@ -68,10 +69,9 @@ Overall, the platform aligns well with Easy Recovery & Error Handling, providing
 ---
 
 ### Error Prevention  
-
 | Bob Shneiderman | Jakob Nielsen |
 |---|---|
-| Prevent Errors Like a Pro | Error Prevention |
+| Prevent Errors| Error Prevention |
 | Design should minimize the chance of user mistakes by guiding them correctly. | Systems should be built to prevent errors before they happen through validation and constraints. |
 
 
@@ -130,7 +130,6 @@ Overall, the platform follows the principle of reducing cognitive load well, wit
 | Shortcuts for Pros | Flexibility & Efficiency |
 | Experienced users should have faster ways to complete tasks, like shortcuts. | The system should cater to both beginners and experts by allowing customization and efficiency tools. |
 
-
 ![loadTimes](../assets/loadTimes.png)
 ![notWorkingSearch](../assets/notWorkingSearch.png)
 
@@ -175,7 +174,7 @@ Overall, the platform aligns well with Clear Feedback & System Status, providing
 | Bob Shneiderman | Jakob Nielsen |
 |---|---|
 | Consistency is Key | Consistency & Standards |
-| Elements should behave predictably and follow a uniform design. | The system should align with established design patterns and not force users to learn new behaviors. |
+ Elements should behave predictably and follow a uniform design.  The system should align with established design patterns and not force users to learn new behaviors. |
 
 ![notWorkingSearch](../assets/notWorkingSearch.png)
 ![classroom](../assets/iconClassroom.png)
@@ -245,3 +244,4 @@ Overall, the platform aligns well with Match Between System & Real World, using 
 - Real time communication with an human representative
 
 Overall, the platform provides easy access to help and documentation, with a searchable FAQ section and real-time communication with friendly human representatives. The guidance is clear, making it easy for users to get assistance when needed.
+
