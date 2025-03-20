@@ -169,6 +169,17 @@ public class Main {
 ```
 ~
 
+[wizard@archlinux workshop]$ java Main
+Picked up _JAVA_OPTIONS: -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+ActorB received: 2, sleeping for 2 seconds
+ActorB finished sleeping for 2 seconds
+ActorB timed out, notifying ActorA
+ActorB timed out, creating new one
+ActorB timed out, notifying ActorA
+ActorB timed out, creating new one
 
 ```
 
