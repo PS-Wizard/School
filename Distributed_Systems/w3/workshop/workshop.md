@@ -111,32 +111,33 @@ Received Char: A
 ```
 
 3. Create 2 Akka Actor classes "ActorA" and "ActorB" to demonstrate the Akka API setReceiveTimeout().ActorA will generate a random integer number from 1 to 5 in a loop for 100 times, and send this integer as a message to ActorB, which would then call Thread.sleep() that many seconds. Set the receive timeout to 2 seconds, and when the timeout triggers, send ActorB a stop() message, and then create a new instance of ActorB to process the next number.
-```
-~
+```java
 import akka.actor.*;
-import java.util.concurrent.TimeUnit;
 import java.util.Random;
 
 public class Main {
     static class ActorA extends AbstractActor {
+        private ActorRef currentActorB;
+
         @Override
         public Receive createReceive() {
             return receiveBuilder()
                     .matchEquals("start", msg -> {
-                        for (int i = 0; i < 100; i++) {
-                            int number = new Random().nextInt(5) + 1; 
-                            getContext().actorOf(Props.create(ActorB.class)).tell(number, getSelf());
-                            Thread.sleep(1000); 
-                        }
+                        int number = new Random().nextInt(5) + 1;
+                        currentActorB = getContext().actorOf(Props.create(ActorB.class));
+                        currentActorB.tell(number, getSelf());
+                    })
+                    .match(ActorBTimeout.class, msg -> {
+                        System.out.println("ActorB timed out, creating new one");
+                        currentActorB = getContext().actorOf(Props.create(ActorB.class));
                     })
                     .build();
         }
     }
 
     static class ActorB extends AbstractActor {
-
         {
-            getContext().setReceiveTimeout(java.time.Duration.ofSeconds(2)); 
+            getContext().setReceiveTimeout(java.time.Duration.ofSeconds(2));
         }
 
         @Override
@@ -144,54 +145,31 @@ public class Main {
             return receiveBuilder()
                     .match(Integer.class, num -> {
                         System.out.println("ActorB received: " + num + ", sleeping for " + num + " seconds");
-                        Thread.sleep(num * 1000); 
+                        Thread.sleep(num * 1000);
                         System.out.println("ActorB finished sleeping for " + num + " seconds");
                     })
                     .match(ReceiveTimeout.class, msg -> {
-                        System.out.println("ActorB timed out, stopping");
-                        getContext().stop(self()); 
-                        getContext().actorOf(Props.create(ActorB.class)); 
+                        System.out.println("ActorB timed out, notifying ActorA");
+                        getContext().getParent().tell(new ActorBTimeout(), getSelf());
+                        getContext().stop(self());
                     })
                     .build();
         }
     }
 
+    static class ActorBTimeout {}
+
     public static void main(String[] args) {
         ActorSystem system = ActorSystem.create("ActorTimeoutSystem");
         ActorRef actorA = system.actorOf(Props.create(ActorA.class));
-        actorA.tell("start", ActorRef.noSender()); 
+        actorA.tell("start", ActorRef.noSender());
     }
 }
 ```
 ```
 ~
 
-[wizard@archlinux workshop]$ java Main
-Picked up _JAVA_OPTIONS: -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel
-SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-SLF4J: Defaulting to no-operation (NOP) logger implementation
-SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-ActorB received: 5, sleeping for 5 seconds
-ActorB received: 4, sleeping for 4 seconds
-ActorB received: 1, sleeping for 1 seconds
-ActorB received: 2, sleeping for 2 seconds
-ActorB finished sleeping for 1 seconds
-ActorB received: 1, sleeping for 1 seconds
-ActorB finished sleeping for 4 seconds
-ActorB finished sleeping for 2 seconds
-ActorB received: 1, sleeping for 1 seconds
-ActorB finished sleeping for 1 seconds
-ActorB finished sleeping for 5 seconds
-ActorB timed out, stopping
-ActorB finished sleeping for 1 seconds
-ActorB received: 3, sleeping for 3 seconds
-ActorB received: 3, sleeping for 3 seconds
-ActorB timed out, stopping
-ActorB timed out, stopping
-ActorB timed out, stopping
-ActorB timed out, stopping
-ActorB received: 5, sleeping for 5 seconds
-ActorB timed out, stopping
+
 ```
 
 1. Create 3 Akka Actor classes called "Producer", "Supervisor" and "Worker". The "Producer" will generate 1000 random long integer numbers between 10000 and 100000. The "Producer" will send each number as a message to "Supervisor". At start-up, the Supervisor will create 10 "Worker" Actors. When the "Supervisor" receives a number from the "Producer", it will use the API forward() to forward that message to one of the "Worker" actors, in a round-robin fashion. The "Worker" actor will determine if the number in the message is a prime number. If it is a prime number, it will then send a string/text message to the "Producer", saying that "The number XXX is a prime number." And the Producer will print out the message on the standard output. When the 1000 numbers have been produced and checked, the "Producer" actor will terminate the Actor system.
