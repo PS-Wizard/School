@@ -65,3 +65,6 @@ Public IP: 52.255.206.99
 
 
 ![httpsworking](assets/httpsworking.png)
+
+
+![stopped](assets/stopped.png)
