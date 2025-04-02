@@ -5,3 +5,8 @@
 - Human Computer Interaction
 - Collaborative Development
 - Distributed Systems
+
+## Things i have that i dont want
+`RDP` the gnome-connections thing
+`pip` : python-pip
+`chromium`
