@@ -67,7 +67,7 @@ So this goes without saying that, all other processes get the same data.
 This splits an array into chunks, and sends a chunk to different processes.
 ```c
 ~
-MPI_Scatter(send_buffer, count, MPI_INT, recv_buffer, count, MPI_INT, 0, MPI_COMM_WORLD);
+MPI_Scatter(send_buffer, count, MPI_INT, recv_buffer, recv_count, recv_type, 0, MPI_COMM_WORLD);
 ```
 The `count` in this case, is the number of element each process will receive.
 
@@ -84,7 +84,7 @@ So, if `send_buffer = [1,2,3,4] & count = 1` and there are 4 processes; then:
 # Gather
 The opposite of scatter; collects data from all processes into an array
 ```c
-MPI_Gather(send_buffer, count, MPI_INT, recv_buffer, count, MPI_INT, 0, MPI_COMM_WORLD);
+MPI_Gather(toBeSentVariable, numberOfThingsToBeSent, MPI_INT, recv_buffer, count, MPI_INT, 0, MPI_COMM_WORLD);
 ```
 If each process sends `x`, in rank 0 will store `[P0_x,P1_x,P2_x,P3_x]`
 
@@ -126,7 +126,7 @@ MPI_Barrier(MPI_COMM_WORLD);
 ~
 MPI_Reduce(&send_data, &recv_data, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 ```
-```
+```c
 ~
 
 int local_value = rank + 1;  // Each process has a value
@@ -142,7 +142,28 @@ If we run 4 processes, The results on rank 0 will be,
 `1+2+3+4 = 10`
 
 ---
+
+==NOTE: These Methods Are Collective, as in all processes must run them simultaniously==
+
+`MPI_Gather` (collect data to root)
+
+`MPI_Gatherv` (collect data to root with variable amounts)
+
+`MPI_Scatter` (scatter data from root to all processes)
+
+`MPI_Scatterv` (scatter data with variable amounts)
+
+`MPI_Alltoall` (send data from each process to all others)
+
+`MPI_Reduce` (combine data from all processes to root)
+
+`MPI_Allreduce` (combine data and make the result available to all processes)
+
+`MPI_Barrier` (synchronize all processes)
+
 ---
+
+
 
 ==Try on haul lul==
 
@@ -322,4 +343,6 @@ Process 1 doing some work before calling MPI_Wait
 Process 1 received value 100 from process 0
 [wizard@archlinux TryOnHaul]$
 ```
+---
+
 ---
