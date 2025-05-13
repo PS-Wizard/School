@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Swoyam Pokharel 2431342 Movie App</title>
+        <link rel="stylesheet" href="/static/output.css" />
+    </head>
+    <body class="overflow-hidden">
+
+        <!-- navigation bar -->
+        <div class="px-30 py-8 navbar sticky top-0 z-50 bg-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center w-full bg-white rounded-lg px-4 border ">
+                <div class="flex-1">
+                    <h1 class="text-xl nav-link tooltip tooltip-bottom cursor-pointer" data-tip="Swoyam_Pokharel_2431342">Movie App</a>
+                </div>
+
+                <div class="flex-1 justify-end flex">
+                    <ul class="menu menu-horizontal px-1 flex gap-3">
+                        <li>
+                            <a class="rounded-full border bg-yellow-100 text-base font-medium nav-link tooltip tooltip-bottom" data-tip="Find The Code At My Github" href="https://github.com/PS-Wizard/School/tree/main/Distributed_Systems/Swoyam_Pokharel_2431342">View Code</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- gradient blob top left -->
+        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+            <div class="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+
+
+        <!-- page content -->
+        <section class="px-30 my-4">
+            <section class="flex w-full justify-between ">
+                <div class="form-control w-full max-w-lg flex">
+                    <input type="text" class="input border-black rounded-lg w-full" placeholder="Search Movies"/>
+                    <select id="sort-options" class="select select-bordered ml-4 bg-white rounded-lg">
+                        <option value="">No Filter</option>
+                        <option value="rating_asc">Rating Ascending</option>
+                        <option value="rating_desc">Rating Descending</option>
+                        <option value="release_asc">Release Ascending</option>
+                        <option value="release_desc">Release Descending</option>
+                    </select>
+                    <button class="btn btn-outline ml-4 bg-white rounded-lg filter-button">Filter</button>
+                </div>
+                <div class="flex">
+                    <button class="btn btn-primary ml-4 rounded-lg" onclick="new_movie_modal.showModal()"> + New Movie</button>
+                </div>
+            </section>
+            <section>
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th>Movie ID</th>
+                                <th>Movie Name</th>
+                                <th>Movie Rating</th>
+                                <th>Movie Director/s</th>
+                                <th>Movie Release</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movies-body">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </section>
+
+        <!-- gradient blob bottom right -->
+        <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+            <div class="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+
+        <!-- new movie dialog -->
+        <dialog id="new_movie_modal" class="modal">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg">New Movie</h3>
+                <div class="py-2 flex flex-col gap-2">
+                    <input type="text" class="input input-bordered w-full" placeholder="Movie Name" required />
+                    <input class="input input-bordered w-full" required type="number" placeholder="Movie Rating" max="5" min="1"/>
+                    <input type="text" class="input input-bordered w-full" placeholder="Movie Director/s" required />
+                    <input type="date" class="input input-bordered w-full" required placeholder="Date Of Release"/>
+                </div>
+                <div class="modal-action">
+                    <form method="dialog" class="flex gap-2">
+                        <button type="button" class="btn btn-primary rounded-lg">Create</button>
+                        <button class="btn btn-outline rounded-lg">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+
+        <!-- edit movie dialog -->
+        <dialog id="edit_movie_modal" class="modal">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg">Edit Movie</h3>
+                <div class="py-2 flex flex-col gap-2">
+                    <input type="text" class="input input-bordered w-full" placeholder="Movie Name" required />
+                    <input class="input input-bordered w-full" required type="number" placeholder="Movie Rating" max="5" min="1"/>
+                    <input type="text" class="input input-bordered w-full" placeholder="Movie Director/s" required />
+                    <input type="date" class="input input-bordered w-full" required placeholder="Date Of Release"/>
+                </div>
+                <div class="modal-action">
+                    <form method="dialog" class="flex gap-2">
+                        <button type="button" class="btn btn-primary rounded-lg">Update</button>
+                        <button class="btn btn-outline rounded-lg">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+
+        <script src="/static/script.js" type="module"> </script>
+    </body>
+</html>

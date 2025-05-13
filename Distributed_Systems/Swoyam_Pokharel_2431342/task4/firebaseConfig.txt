@@ -1,0 +1,35 @@
+<script type="module">
+
+  // Import the functions you need from the SDKs you need
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+
+  // TODO: Add SDKs for Firebase products that you want to use
+
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+
+  // Your web app's Firebase configuration
+
+  const firebaseConfig = {
+
+    apiKey: "AIzaSyArjiO-_4w_X7HGdNyhPilYWd0qeLjbbzU",
+
+    authDomain: "swoyam-pokharel-2431342.firebaseapp.com",
+
+    projectId: "swoyam-pokharel-2431342",
+
+    storageBucket: "swoyam-pokharel-2431342.firebasestorage.app",
+
+    messagingSenderId: "600290624989",
+
+    appId: "1:600290624989:web:7cade8f54135d672d72234"
+
+  };
+
+
+  // Initialize Firebase
+
+  const app = initializeApp(firebaseConfig);
+
+</script>
