@@ -32,7 +32,7 @@ async function fetchMovies(){
 function renderMovies(moviesArray) {
     const tbody = document.getElementById('movies-body');
     tbody.innerHTML = moviesArray.map(movie => `
-        <tr data-movie-id="${movie.id}">
+        <tr data-movie-id="${movie.id}" class="row-animation">
             <td>${movie.id}</td>
             <td>${movie.movieName}</td>
             <td>${movie.rating}</td>
@@ -44,6 +44,15 @@ function renderMovies(moviesArray) {
             </td>
         </tr>
     `).join('');
+
+    gsap.from(gsap.utils.toArray(".row-animation"), {
+        y: -10,
+        opacity: 0,
+        stagger: 0.1,
+        delay: 0.3,
+        duration: 0.6,
+        ease: "power2.out"
+    });
 }
 
 

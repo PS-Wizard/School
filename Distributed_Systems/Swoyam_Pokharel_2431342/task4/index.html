@@ -35,18 +35,18 @@
         <section class="px-30 my-4">
             <section class="flex w-full justify-between ">
                 <div class="form-control w-full max-w-lg flex">
-                    <input type="text" class="input border-black rounded-lg w-full" placeholder="Search Movies"/>
-                    <select id="sort-options" class="select select-bordered ml-4 bg-white rounded-lg">
+                    <input type="text" class="input border-black rounded-lg w-full nav-link" placeholder="Search Movies"/>
+                    <select id="sort-options" class="select select-bordered ml-4 bg-white rounded-lg nav-link">
                         <option value="">No Filter</option>
                         <option value="rating_asc">Rating Ascending</option>
                         <option value="rating_desc">Rating Descending</option>
                         <option value="release_asc">Release Ascending</option>
                         <option value="release_desc">Release Descending</option>
                     </select>
-                    <button class="btn btn-outline ml-4 bg-white rounded-lg filter-button">Filter</button>
+                    <button class="btn btn-outline ml-4 bg-white rounded-lg filter-button nav-link">Filter</button>
                 </div>
                 <div class="flex">
-                    <button class="btn btn-primary ml-4 rounded-lg" onclick="new_movie_modal.showModal()"> + New Movie</button>
+                    <button class="btn btn-primary ml-4 rounded-lg nav-link" onclick="new_movie_modal.showModal()"> + New Movie</button>
                 </div>
             </section>
             <section>
@@ -114,5 +114,31 @@
         </dialog>
 
         <script src="/static/script.js" type="module"> </script>
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+        <script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // navigation links fly in
+            gsap.from(gsap.utils.toArray(".nav-link"), {
+                y: -20,
+                opacity: 0,
+                stagger: 0.1,
+                delay: 0.3,
+                duration: 0.6,
+                ease: "power2.out"
+            });
+
+            gsap.from(gsap.utils.toArray(".row-animation"), {
+                y: -20,
+                opacity: 0,
+                stagger: 0.1,
+                delay: 0.3,
+                duration: 0.6,
+                ease: "power2.out"
+            });
+
+        });
+        </script>
     </body>
 </html>
