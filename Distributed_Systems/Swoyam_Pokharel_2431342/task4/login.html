@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/output.css" />
+        <title>2431342 Login</title>
+    </head>
+    <body class="h-screen flex flex-col items-center">
+        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+            <div class="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+        <div class="px-30 py-8 navbar sticky top-0 z-50 bg-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center w-full bg-white rounded-lg px-4 border">
+
+                <!-- Left: Movie App -->
+                <div class="flex-1">
+                    <a class="text-xl nav-link tooltip tooltip-bottom cursor-pointer" data-tip="Built By Swoyam_Pokharel_2431342" href="/index.html">
+                        Movie App
+                    </a>
+                </div>
+
+                <!-- Right: View Code + Auth Stuff -->
+                <div class="flex-1 justify-end flex">
+                    <ul class="menu menu-horizontal px-1 flex gap-3 items-center">
+                        <!-- Always visible -->
+                        <li>
+                            <a class="rounded-full border bg-yellow-100 text-base font-medium nav-link tooltip tooltip-bottom"
+                               data-tip="Find The Code At My Github"
+                               href="https://github.com/PS-Wizard/School/tree/main/Distributed_Systems/Swoyam_Pokharel_2431342">
+                                View Code
+                            </a>
+                        </li>
+
+                        <!-- Auth buttons here -->
+                        <li id="navbar-auth" class="flex gap-2"></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div class="max-w-lg mt-20 p-6 bg-white shadow rounded">
+            <h2 class="text-2xl font-bold mb-4" id="hero-text">Log In</h2>
+
+            <!-- Email and Password Form -->
+            <input id="email" type="email" placeholder="Email" class="nav-link input input-bordered w-full mb-3" />
+            <input id="password" type="password" placeholder="Password" class="input input-bordered nav-link w-full mb-4" />
+            <button onclick="loginWithEmail()" class="btn btn-primary nav-link w-full">Log In with Email</button>
+
+            <!-- Google Login -->
+            <div class="divider">OR</div>
+            <button onclick="loginWithGoogle()" class="btn btn-outline w-full nav-link">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 mr-2" />
+                Log In with Google
+            </button>
+            <a href="/signup.html" class="text-center text-md block pt-4 text-sky-800 nav-link underline"> Go To Signup? </a>
+        </div>
+        <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+            <div class="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+
+        <script type="module" src="/static/js/login.js"></script>
+        <script type="module" src="/static/js/navbar.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+
+                // navigation links fly in
+                gsap.from(gsap.utils.toArray(".nav-link"), {
+                    y: -20,
+                    opacity: 0,
+                    stagger: 0.1,
+                    delay: 0.3,
+                    duration: 0.6,
+                    ease: "power2.out"
+                });
+                const split = new SplitText("#hero-text", { type: "chars, words" });
+                gsap.from(split.chars, {
+                    opacity: 0,
+                    y: 50,
+                    stagger: 0.05,
+                    ease: "power4.out",
+                    duration: 1.2,
+                });
+            });
+        </script>
+    </body>
+    
+</html>
