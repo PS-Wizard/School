@@ -2,7 +2,7 @@
 ![Dance Racoon Lol](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXl1MDFvbWVxcDA1eHF4bXZxcXkxN2JwNzdnN2dqNmpsZzZpemdiYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tHIRLHtNwxpjIFqPdV/giphy.gif)
 ![Dance Cat Lol](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdGNzbW1ucHQ1dTZlZ3F3d3JqZnMzOXo0bTZobXQwYXNrdHhsajJ4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GeimqsH0TLDt4tScGw/giphy.gif)
 
-# This You With The ==*Ocean*~== County Stuff:
+### This You With The *OCEAN* county stuff:
 ![Ocean stuff ](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmtpams4MmliZGU0Nm84aXBiZmk4MDdmNGI2cTVjdHQxZGIwa2pmbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xUA7b30mMeQCZvUoU0/giphy.gif)
 
 ---
