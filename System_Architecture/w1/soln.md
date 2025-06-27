@@ -5,35 +5,47 @@ date: 2025-06-22
 tags: [system-design, backend, notes]
 ---
 
-# Workshop 1: Apply System Design Framework to Netflix || ~~Facebook~~
----
+# Week 1: 
+## Workshop 1: Apply System Design Framework to Netflix || ~~Facebook~~
 
+<details open>
+<summary><mark>Submission Details</mark></summary>
 
-### ++Step 1. Understand the problem and establish design scope:++
+- **Submitted By:** Swoyam Pokharel
+- **Submitted On:** 2025-05-05
+- **Tutor** Some Dude
+</details>
 
-**Functional Requirements:**
-- Support For Play / Pause, Fast Forward, Rewind
-- Creation / Login User Profiles, Curated Recommendations, Search
-- Account State Management
-- ==Subscription Management==
+<br/>
+<br/>
+<br/>
 
-**Non-Functional Requirements**
-- Low Latency
-- High Availability
-- Fault Tolerance
-- Cost Efficiency
-- Scalability {}
-
-**Workloads & Constraints**:
-- Mainly read-heavy
-- Large Media Files
-- Heavy Network Bandwidth Consumption
-- Global Distribution Needed
+> ### ++Step 1. Understand the problem and establish design scope:++
+>**Functional Requirements:**
+>- Support For Play / Pause, Fast Forward, Rewind
+>- Creation / Login User Profiles, Curated Recommendations, Search
+>- Account State Management
+>- Subscription Management
+> 
+>**Non-Functional Requirements**
+>- Low Latency
+>- High Availability
+>- Fault Tolerance
+>- Cost Efficiency
+>- Scalability {}
+>
+>**Workloads & Constraints**:
+>- Mainly read-heavy
+>- Large Media Files
+>- Heavy Network Bandwidth Consumption
+>- Global Distribution Needed
 
 ### ++Assumptions & Estimations:++
 >[!TIP]
 > # High Level Assumptions
-> ##### Average Movie Size:
+<details open>
+<summary><mark>High Level Assumptions</mark></summary>
+
 > - Average Movie Length[^2]: $\approx 131\text{minutes}$
 > - Uses Adaptive Bitrate Streaming via DASH[^3], so no clear way to determine, but, they[^4] state the following: 
      - (The following are adjusted estimates because of the shorter average runtime)
@@ -56,6 +68,7 @@ tags: [system-design, backend, notes]
 - Assuming a 200:1 read to write ration, that's $\approx 3.875$ Million titles written per day.
     - thats, $3.875M \times 6\text{GB} \approx 23\text{TB}$
 - Total File Size: $\approx 98\text{TB}$ 
+</details>
 
 >[!TIP]
 ># QPS Estimation

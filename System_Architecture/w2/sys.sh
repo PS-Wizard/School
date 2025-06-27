@@ -12,7 +12,7 @@ function sysinfo() {
     echo -e "${GRN}Kernel:${NC}         $(uname -r)"
     echo -e "${GRN}CPU:${NC}            $(lscpu | grep 'Model name' | awk -F: '{print $2}' | sed 's/^ *//')"
     echo -e "${GRN}Cores:${NC}          $(lscpu | grep '^CPU(s):' | awk -F: '{print $2}' | sed 's/^ *//')"
-    echo -e "${GRN}Users:${NC}          $(w -h | cut -d ' ' -f1 | sort | uniq | paste -sd ', ')"
+    echo -e "${GRN}Users:${NC}          $(w -h | cut -d ' ' -f1 | sort | paste -sd ', ')"
 
 
     echo -e "\n${YLW}------ Memory ------${NC}"

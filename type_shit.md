@@ -1,4 +1,7 @@
-# Ocean County Thingy:
+
+<link rel="stylesheet" type="text/css" href="file:///home/wizard/Magical.Styles/firefox-markdown-viewer/wizard.css">
+
+## Ocean County Thingy
 ![Dance Racoon Lol](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXl1MDFvbWVxcDA1eHF4bXZxcXkxN2JwNzdnN2dqNmpsZzZpemdiYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tHIRLHtNwxpjIFqPdV/giphy.gif)
 ![Dance Cat Lol](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdGNzbW1ucHQ1dTZlZ3F3d3JqZnMzOXo0bTZobXQwYXNrdHhsajJ4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GeimqsH0TLDt4tScGw/giphy.gif)
 
@@ -7,17 +10,17 @@
 
 ---
 
-# COULDNT FIND MUCH
+## COULDNT FIND MUCH
 
 ![I Couldnt](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTRoeHNoenl3a3Y5NnJiODAzMnB1MHo4ZzdtbGJrYmhxNWN1Nmw2aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/QBHXm9rHMTyH3iH1Ay/giphy.gif)
 ![Find](https://www.creativefabrica.com/wp-content/uploads/2021/06/13/Find-magnifying-glass-search-icon-Graphics-13344255-1-1-580x376.jpg)
 ![a lot](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTJ0bXMwZWx4bW9nd2NtY3F6Ym85dTJhcWJ1b3hpOWo5MDY1YWw5bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/wS0BFS3asq7HtA1B2n/giphy.gif)
 
->[!NOTE]
+>#### NOTE
 >Stg I didn't catch half of what this all means but oh well
 
 ---
-# The stuff u actually came for:
+### The stuff u actually came for:
 
 Ocean County College (OCC) has specific tuition and financial requirements for international students, categorized as "Out-of-State or foreign residents".
 Here's a summary of the tuition fees, estimated costs, housing information, and financial aid options for international students at OCC:
