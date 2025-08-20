@@ -39,6 +39,7 @@ Server starts at `0.0.0.0:3000`.
 
 ---
 
->[!INFO]
+>[!TIP]
 > ### API Documentation can be found inside the `tests/` folder of the project in `*.hurl` files
+
 
