@@ -1,16 +1,15 @@
 use axum::{Json, extract::State};
 use serde::{Deserialize, Serialize};
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt};
-use tokio::sync::MutexGuard;
 
 use crate::AppState;
 
 #[derive(Deserialize)]
 pub struct EvalRequest {
-    fen: String,
+    pub fen: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 pub struct EvalResponse {
     best_move: String,
     eval_cp: Option<i32>,
@@ -20,8 +19,16 @@ pub async fn evaluate(
     State(state): State<AppState>,
     Json(payload): Json<EvalRequest>,
 ) -> Json<EvalResponse> {
-    let mut stdin: MutexGuard<_> = state.stockfish_stdin.lock().await;
-    let mut stdout: MutexGuard<_> = state.stockfish_stdout.lock().await;
+    {
+        let cache = state.cache.lock().await;
+        if let Some(cached) = cache.get(&payload.fen) {
+            println!("Hit Cache");
+            return Json(cached.clone());
+        }
+    }
+
+    let mut stdin = state.stockfish_stdin.lock().await;
+    let mut stdout = state.stockfish_stdout.lock().await;
 
     stdin
         .write_all(format!("position fen {}\n", payload.fen).as_bytes())
@@ -38,7 +45,7 @@ pub async fn evaluate(
         line.clear();
         let bytes_read = stdout.read_line(&mut line).await.unwrap();
         if bytes_read == 0 {
-            break; // EOF
+            break;
         }
 
         if line.starts_with("info") && line.contains("score cp") {
@@ -57,5 +64,12 @@ pub async fn evaluate(
         }
     }
 
-    Json(EvalResponse { best_move, eval_cp })
+    let resp = EvalResponse { best_move, eval_cp };
+
+    {
+        let mut cache = state.cache.lock().await;
+        cache.insert(payload.fen.clone(), resp.clone());
+    }
+
+    Json(resp)
 }

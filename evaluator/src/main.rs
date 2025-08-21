@@ -1,4 +1,7 @@
-**use std::process::Stdio;
+use crate::middleware::auth_middleware;
+use crate::routes::eval::EvalResponse;
+use std::collections::HashMap;
+use std::process::Stdio;
 use std::sync::Arc;
 use tokio::io::BufReader;
 use tokio::process::ChildStdin;
@@ -13,12 +16,9 @@ use axum::{
 
 use libsql::Builder;
 
-use crate::{
-    middleware::auth_middleware,
-    routes::{
-        auth::{login, sign_up},
-        eval::evaluate,
-    },
+use crate::routes::{
+    auth::{login, sign_up},
+    eval::evaluate,
 };
 
 mod db;
@@ -32,6 +32,7 @@ struct AppState {
     conn: libsql::Connection,
     stockfish_stdin: Arc<Mutex<ChildStdin>>,
     stockfish_stdout: Arc<Mutex<BufReader<ChildStdout>>>,
+    pub cache: Arc<Mutex<HashMap<String, EvalResponse>>>, // wrap cache in Arc
 }
 
 #[tokio::main]
@@ -60,6 +61,7 @@ async fn main() {
         conn,
         stockfish_stdin,
         stockfish_stdout,
+        cache: Arc::new(Mutex::new(HashMap::new())),
     };
 
     let protected_routes: Router<AppState> = Router::new()
@@ -73,7 +75,7 @@ async fn main() {
         .route("/signup", post(sign_up))
         .route("/login", post(login))
         .merge(protected_routes)
-        .with_state(state);
+        .with_state(state.clone());
 
     // --- Start server ---
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
