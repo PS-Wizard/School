@@ -1,4 +1,4 @@
-POST http://localhost:3000/login
+POST http://localhost:8080/login
 {
   "username": "wizard1",
   "password": "secret123"

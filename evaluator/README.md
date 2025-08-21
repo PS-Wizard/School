@@ -14,6 +14,12 @@ A high-performance targeted, chess evaluation API built in **rust**.
 - JWT: Authorization
 - Chrono: Timestamps for expiration
 
+---
+
+# Excalidraw:
+![Architecture Diagram](./excalidraw.png)
+
+
 ## Installation
 
 1. Clone + Build:
