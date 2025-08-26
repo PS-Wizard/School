@@ -8,6 +8,11 @@
         [],
     );
 
+    function formatTime(ts: number) {
+        const date = new Date(ts);
+        return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+    }
+
     // Listen for new messages
     onMount(() => {
         const messagesNode = db?.get("chatroom");
@@ -57,6 +62,9 @@
             <div class="mb-2">
                 <span class="font-bold">{msg.from}:</span>
                 {msg.text}
+                <span class="text-xs text-neutral-500"
+                    >({formatTime(msg.time)})</span
+                >
             </div>
         {/each}
     </div>

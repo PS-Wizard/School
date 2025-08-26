@@ -1,17 +1,22 @@
-import http from 'http';
+import https from 'https';
+import fs from 'fs';
 import Gun from 'gun';
 import 'gun/axe.js';
 
-const server = http.createServer((req, res) => {
+// self-signed cert + key
+const server = https.createServer(
+  {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem'),
+  },
+  (req, res) => {
     res.writeHead(200);
-    res.end('ok');
-});
+    res.end('Relay running');
+  }
+);
 
-const gun = Gun({
-    web: server,
-    file: 'data', // optional, stores data on disk
-});
+Gun({ web: server });
 
-server.listen(8080, () => {
-    console.log('GUN relay server running on http://localhost:8080');
+server.listen(8080, '0.0.0.0', () => {
+  console.log('GUN relay running at https://0.0.0.0:8080/gun');
 });
