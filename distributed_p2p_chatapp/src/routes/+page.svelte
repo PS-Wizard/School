@@ -13,10 +13,13 @@
 <section class="h-[40vh] flex justify-center items-center flex-col gap-4 px-8">
     <div class="text-center leading-none">
         <AnimateMe animateFlag={animateMe} styles="text-[2rem~4rem]"
-            >Just Another Distributed And</AnimateMe
+            >Just Another Peer 2 Peer</AnimateMe
+        >
+        <AnimateMe animateFlag={animateMe} delay={100} styles="text-[2rem~4rem]"
+            >And</AnimateMe
         >
         <AnimateMe delay={250} animateFlag={animateMe} styles="text-[2rem~4rem]"
-            >Peer To Peer Chat App</AnimateMe
+            >Distributed Chat App</AnimateMe
         >
     </div>
     <AnimateMe delay={500} animateFlag={animateMe} styles="flex gap-4">
@@ -25,13 +28,13 @@
     </AnimateMe>
 </section>
 <img
-    src="https://png.pngtree.com/thumb_back/fh260/background/20230702/pngtree-abstract-off-white-waveform-a-3d-rendered-texture-background-image_3734027.jpg"
+    src="/image.png"
     alt="Placeholder"
     class="w-full object-cover"
     {@attach (el) => {
         animate(
             el,
-            { clipPath: ["inset(0 50% 0 50%)", "inset(0 0% 0 0%)"] },
+            { opacity: [0, 1], scale: [0.4, 1] },
             { ease: "easeInOut", duration: 0.69, delay: 1 },
         );
     }}

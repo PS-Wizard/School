@@ -13,7 +13,8 @@
             <div class="flex flex-col text-[xs~base]">
                 <a class="hover:underline" href="/login">LOGIN &nearr;</a>
                 <a class="hover:underline" href="/signup">SIGN UP &nearr;</a>
-                <a class="hover:underline" href="#">GITHUB &nearr;</a>
+                <a class="hover:underline" href="https://github.com/PS-Wizard/School">GITHUB &nearr;</a>
+                <a class="hover:underline" href="https://github.com/PS-Wizard/School">SLIDES &nearr;</a>
             </div>
             <div class="flex flex-col tracking-wide uppercase text-[xs~base]">
                 <a class="hover:underline" href="mailto:me@pswoyam.com.np"

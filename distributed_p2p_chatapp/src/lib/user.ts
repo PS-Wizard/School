@@ -3,7 +3,7 @@ import { browser } from '$app/environment';
 import GUN from 'gun';
 import 'gun/sea';
 
-export const db = browser ? GUN({ peers: ['https://192.168.1.16:8080/gun'] }) : null;
+export const db = browser ? GUN({ peers: ['https://127.0.0.1:8080/gun'] }) : null;
 export const user = browser && db ? db.user().recall({ sessionStorage: true }) : null;
 
 export const username = writable<string>('');

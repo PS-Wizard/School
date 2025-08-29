@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { signOut, username } from "$lib/user";
-    import { goto } from "$app/navigation";
+    import { username } from "$lib/user";
     import { animate } from "motion";
 
     function animateMe(el: HTMLElement) {
@@ -9,12 +8,6 @@
             { y: ["-100px", "0px"] },
             { duration: 0.5, ease: "easeInOut" },
         );
-    }
-
-    // Handle logout and redirect
-    function handleLogout() {
-        signOut();
-        goto("/login");
     }
 </script>
 
@@ -29,11 +22,8 @@
         <div
             class="flex gap-4 w-full justify-between md:w-fit md:justify-end items-center"
         >
-            <span class="text-lg text-neutral-300">{$username}</span>
+            <span class="text-[xs~lg] text-neutral-300">{$username}</span>
             <a href="/chat" class="text-lg hover:underline">Chat</a>
-            <button on:click={handleLogout} class="text-lg hover:underline"
-                >Logout</button
-            >
         </div>
     {:else}
         <!-- Logged-out state -->
@@ -41,9 +31,5 @@
             <a href="/login" class="text-lg hover:underline">Login</a>
             <a href="/signup" class="text-lg hover:underline">Sign Up</a>
         </div>
-    {/if}
-
-    {#if $username}
-        <a href="/chat" class="text-lg hover:underline hidden md:block">Chat</a>
     {/if}
 </nav>

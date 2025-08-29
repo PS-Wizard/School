@@ -1,8 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { db, user, username } from "$lib/user";
+    import { db, signOut, user, username } from "$lib/user";
     import { writable } from "svelte/store";
+    import { goto } from "$app/navigation";
 
+    function handleLogout() {
+        signOut();
+        goto("/login");
+    }
     const messageText = writable("");
     const messages = writable<{ from: string; text: string; time: number }[]>(
         [],
@@ -70,9 +75,12 @@
     </div>
 
     <!-- input bar -->
-    <div
-        class="absolute bottom-4 left-0 w-full flex gap-2 p-4 bg-black/50 rounded-lg"
-    >
+    <div class="absolute bottom-4 left-0 w-full flex gap-2 p-[1~4] bg-black/50 rounded-lg">
+        <button
+            on:click={handleLogout}
+            class="inline-flex bg-red-800 items-center justify-center font-medium px-[1~4] py-[1~2] text-sm rounded-md transition-all duration-200 focus:outline-none cursor-pointer bg-red text-white hover:underline hover:-translate-y-[2px]"
+            >LOGOUT</button
+        >
         <input
             bind:value={$messageText}
             type="text"
@@ -80,6 +88,10 @@
             class="flex-1 rounded-xl border border-neutral-700 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
             on:keypress={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button on:click={sendMessage}>SEND</button>
+        <button
+            on:click={sendMessage}
+            class="inline-flex items-center justify-center font-medium px-4 py-2 text-sm rounded-md transition-all duration-200 focus:outline-none cursor-pointer bg-white text-black border hover:underline hover:-translate-y-[2px]"
+            >SEND</button
+        >
     </div>
 </section>
