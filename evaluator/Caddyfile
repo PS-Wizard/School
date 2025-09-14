@@ -1,6 +1,0 @@
-
-:8080 {
-    reverse_proxy /eval* localhost:3000 localhost:3001
-    reverse_proxy /login localhost:3000 localhost:3001
-    reverse_proxy /signup localhost:3000 localhost:3001
-}
