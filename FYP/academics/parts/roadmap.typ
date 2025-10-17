@@ -1,15 +1,3 @@
-#import "layout.typ": *
-
-#show: academic-theme.with(
-  title: "Chess Engines and Artificial Intelligence: A Literature Review",
-  author: "Swoyam Pokharel",
-  date: "October 15, 2025",
-  abstract: [
-    Covers the research roadmap
-  ],
-)
-
-
 == Recommended Literature Review Structure
 
 === 1. Introduction & Historical Context (2-3 pages)
@@ -28,13 +16,14 @@ Papers: Knuth & Moore, Shannon
 - 2.2 Alpha-Beta Pruning Optimality
   - Knuth & Moore's proof of optimality
   - Best-case complexity: $W^{\lceil D/2 \rceil} + W^{\lfloor D/2 \rfloor} - 1$
-  - Node types (PV-nodes, Cut-nodes, All-nodes)
   - Why move ordering matters critically
 - 2.3 The Horizon Effect Problem
   - Shannon's original observation
   - Marsland's discussion of persistent challenges
   - Leads naturally to quiescence search
 
+
+// -----------------
 === 3. Board Representation & Data Structures (4-5 pages)
 Papers: Bijl & Tiet, Fiekas, Tesseract
 - 3.1 Evolution of Board Representations
@@ -42,32 +31,27 @@ Papers: Bijl & Tiet, Fiekas, Tesseract
   - Bitboard revolution (1970s concept, modern realization)
   - Hybrid approaches (Tesseract)
   - Performance comparison from Bijl: evaluation is the bottleneck, not move gen
-- 3.2 Sliding Piece Move Generation
-  - The lookup table approach
+- 3.2 Move Generation
+  - Iterative
+  - The lookup table approach for sliders
   - Magic bitboards (Fiekas): multiplicative hashing, search space reduction
   - PEXT bitboards: hardware acceleration (BMI2)
   - Comparative performance: Fiekas (0.7% difference), Bijl (negligible in practice)
-- 3.3 Zobrist Hashing
-  - Incremental hash updates for transposition tables
-  - XOR-based efficiency
+  - Move Representation
+    - Tesseract: 16-bit packed move encoding
+    - Memory efficiency vs clarity trade-offs
+    - Bit-packing impact: 50% speed improvement (Tesseract finding)
 
-Key Insight to Emphasize: Bijl showed that bitboards' real advantage is in evaluation speed (34% vs 41-43% of time), not raw move generation speed. This challenges conventional wisdom.
-
-=== 4. Move Generation Pipeline (2-3 pages)
-Papers: Bijl & Tiet, Tesseract
-- 4.1 Pseudo-legal vs Legal Moves
+  - 4.1 Pseudo-legal vs Legal Moves
   - Definitions and trade-offs
   - Tesseract: legal move generator with pinned piece detection
   - Top engines: pseudo-legal + lazy legality checking (Bijl observation)
-- 4.2 Move Representation
-  - Tesseract: 16-bit packed move encoding
-  - Memory efficiency vs clarity trade-offs
-  - Bit-packing impact: 50% speed improvement (Tesseract finding)
-- 4.3 Performance Optimization
-  - Branchless code (Tesseract)
-  - Pre-generated attack tables (king, knight)
-  - PEXT/Magic for sliding pieces
-  - Perft testing for correctness validation
+
+  - PERFT
+
+Key Insight to Emphasize: Bijl showed that bitboards' real advantage is in evaluation speed (34% vs 41-43% of time), not raw move generation speed. This challenges conventional wisdom. Vs that with the conventional understanding that bitboards are for speeding up move generation.
+
+// -----------------
 
 === 5. Search Algorithms & Enhancements (6-7 pages)
 Papers: Shannon, Knuth & Moore, Marsland, Bijl & Tiet, Tesseract, Brange
@@ -99,12 +83,6 @@ Papers: Shannon, Knuth & Moore, Marsland, Bijl & Tiet, Tesseract, Brange
 - Killer heuristic
 - History heuristic (Marsland: dynamic, context-free)
 - Tesseract: combined ordering strategy
-
-5.6 Quiescence Search
-- Shannon's Type B strategy: search "forceful variations"
-- Marsland: resolving the horizon effect
-- Tesseract: 7307→8520 score improvement, EBF 4.23
-- Capture-only search until "quiet" position
 
 5.7 Pruning Techniques
 - Null Move Pruning (Tesseract: biggest speedup, EBF→3.31)
