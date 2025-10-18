@@ -24,19 +24,21 @@ Papers: Knuth & Moore, Shannon
 
 
 // -----------------
-=== 3. Board Representation & Data Structures (4-5 pages)
+=== 3. Entity Representation & Move Generation (4-5 pages)
 Papers: Bijl & Tiet, Fiekas, Tesseract
 - 3.1 Evolution of Board Representations
   - Array-based (2D, 1D, 0x88, mailbox)
   - Bitboard revolution (1970s concept, modern realization)
   - Hybrid approaches (Tesseract)
   - Performance comparison from Bijl: evaluation is the bottleneck, not move gen
+
 - 3.2 Move Generation
   - Iterative
   - The lookup table approach for sliders
   - Magic bitboards (Fiekas): multiplicative hashing, search space reduction
   - PEXT bitboards: hardware acceleration (BMI2)
   - Comparative performance: Fiekas (0.7% difference), Bijl (negligible in practice)
+
   - Move Representation
     - Tesseract: 16-bit packed move encoding
     - Memory efficiency vs clarity trade-offs
@@ -370,4 +372,4 @@ This structure gives you:
 - Synthesis bringing it all together
 - Your papers are well-utilized without redundancy
 
-You're ready to start writing tomorrow. Each section has clear papers to cite, clear themes, and clear contribution to your overall narrative.
+You're ready to start writing tomorrow. Each section has clear papers to cite, clear themes, and clear contribution to your overall narrative. 

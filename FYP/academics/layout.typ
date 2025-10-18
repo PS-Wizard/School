@@ -46,7 +46,7 @@
           if calc.even(i) [#i], if calc.even(i) { author_text } else { title }, if calc.odd(i) [#i],
         )
       }
-      align(center, line(length: 100%, stroke: 0.5pt))
+      align(center, line(length: 50%, stroke: 0.5pt))
     },
   )
 
@@ -142,7 +142,24 @@
   outline(depth: 2)
   v(0.4em)
   line(length: 100%)
-
+  //
+  // Code blocks with border
+  show raw.where(block: true): it => {
+    block(
+      width: 100%,
+      inset: 10pt,
+      radius: 3pt,
+      stroke: 0.5pt + rgb("#d0d0d0"),
+      fill: rgb("#f8f8f8"),
+      it,
+    )
+  }
+  // Links - underlined with custom color
+  show link: it => underline(
+    stroke: 0.5pt,
+    offset: 1.5pt,
+    text(fill: rgb("#0066cc"), it),
+  )
   // Document body
   doc
 }
@@ -154,3 +171,4 @@
   stroke: 0.5pt,
   inset: 8pt,
 )
+
