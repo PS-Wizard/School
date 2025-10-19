@@ -119,12 +119,12 @@ However, this performance is critically dependent on move ordering. When a compu
 Shannon was amongst the earliest to recognize, what is known today as the "horizon effect" @shannon_1950_programming[p.6]. This effect describes a program's tendency to
 "hide" the inevitable material loss by making delaying moves until said loss is far enough out of it's maximum depth ( the horizon ). This problem emerges as a lack of computing power that force programs to limit the depth of the search and make the "best move" based on incomplete information @Brange[p.14].
 
-The core issue is that positions evaluated at the edge of the search depth may appear favorable, but extending the search by even a few additional moves would reveal better alternatives @bijl_2021_exploring[p.10-11]. While alpha-beta pruning significantly enhances search efficiency and enables deeper analysis, it still remains vulnerable to the horizon effect since the problem persists at whatever depth the search terminates at @rsisinternationalTheoreticalAnalysis[p.4].
+The core issue is that positions evaluated at the edge of the search depth may appear favorable, but extending the search by even a few additional moves would reveal better alternatives @bijl_2021_exploring[p.10-11]. While alpha-beta pruning significantly enhances search efficiency and enables deeper analysis, it still remains vulnerable to the horizon effect since the problem persists at whatever depth the search terminates at.
 
 Shannon acknowledged the importance of evaluating only those positions that are "relatively quiescent" @shannon_1950_programming[p.6]. A quiescent position is one that can be acessed accurately without needing further deepening @marsland[p.7]. This matters because positions at the horizon frequently occur with tactical sequences like captures, checks or other forcing moves, creating a situation that defies the accurate static evaluation @marsland[p.19].
 
 === Quiescience Search
-Quiescience search is the principle approach to solving the horizon effect problem, by making sure that a position is stable before evaluation. It is a type of search extention that continues evaluation of all the forcing moves until a "quiet" position is reached. @rsisinternationalTheoreticalAnalysis[p.3]. Rather than terminating the serach at a fixed depth regardless of the position's characterstics, quiescence search adapts, extending analysis in tactical positions.
+Quiescience search is the principle approach to solving the horizon effect problem, by making sure that a position is stable before evaluation. It is a type of search extention that continues evaluation of all the forcing moves until a "quiet" position is reached. Rather than terminating the serach at a fixed depth regardless of the position's characterstics, quiescence search adapts, extending analysis in tactical positions.
 
 
 ==== Performance Impact
@@ -230,7 +230,7 @@ knight_attack[63] = ...
 ```
 #line(length: 100%)
 
-Now, to filter out capturing friendly pawns, it's simply `knight_attacks[28] & !friendly`, where `friendly` is another bitboard representing all the friendly pieces for the current side to move. @Brange[p.27], @tessaract[p.7], @bijl_2021_exploring[p.6]. The same principle applies to kings as well—only the array's elements differ. 
+Now, to filter out capturing friendly pawns, it's simply `knight_attacks[28] & !friendly`, where `friendly` is another bitboard representing all the friendly pieces for the current side to move. @Brange[p.27], @tessaract[p.7], @bijl_2021_exploring[p.6]. The same principle applies to kings as well—only the array's elements differ.
 
 === Move Generation for Sliding Pieces
 
@@ -300,12 +300,12 @@ In Bijl & Tiet's tests, they found that in a complete engine, move generation ac
 
 Their findings are interesting because the general consensus that the main advantage of the bitboards approach is its speed in move generation @tessaract[p.6, p.10], @sophie[p.4] @parallel_chess_searching[p.49]. However, this study shows that mailbox approaches like `0x88` can still keep up. That said, in terms of evaluation, bitboards are still the fastest, yielding more nodes searched during actual gameplay. As such, bitboards remain the best option, but not solely because of move generation speed, but because of their overall performance benefits. @bijl_2021_exploring[p.19]
 
-Amongst the two bitboard approaches, although PEXT boards should have been faster, atleast theoritically, Bijl & Tiet's findings show no meaningful difference in engine speed between PEXT boards and Magic bitboards. However, PEXT boards do offer the benefit of not having to find and store magic numbers, thus avoiding that memory overhead. 
+Amongst the two bitboard approaches, although PEXT boards should have been faster, atleast theoritically, Bijl & Tiet's findings show no meaningful difference in engine speed between PEXT boards and Magic bitboards. However, PEXT boards do offer the benefit of not having to find and store magic numbers, thus avoiding that memory overhead.
 
 However, it's worth noting that older chipsets (machines running pre-Haswell for Intel and some pre-Excavator/pre-Zen for AMD) don't support BMI2, making it mandatory to use magic bitboards if support for these systems is desired. @tessaract[p.10]
 
 === Move Representation
-When working with PEXT or Magic bitboards, what we end up getting as pseudo-legal moves is raw bitboard. This won't be sufficient as special moves, such as en-passant, castling, captures, promotions etc, require updating multiple different bitboards. As such, to contextualize the `make_move` function, we need to pack the raw moves into an effecient structure. 
+When working with PEXT or Magic bitboards, what we end up getting as pseudo-legal moves is raw bitboard. This won't be sufficient as special moves, such as en-passant, castling, captures, promotions etc, require updating multiple different bitboards. As such, to contextualize the `make_move` function, we need to pack the raw moves into an effecient structure.
 
 The fundamental information that this structure has to capture is the `from` and the `to` square. As such, following the tradition of using unsigned integers to represent the entities, requires us to have an integer that is atleast 12 bits long at minimum, with each 6-bits representing the `from` and the `to` square  . Generally, modern engines like #link("https://stockfishchess.org/")[Stockfish], use a 16 bit representation for the moves. @tessaract[p.12], @shannon_1950_programming[p.10] @bijl_2021_exploring[p. 8-9]
 
@@ -324,7 +324,7 @@ This encoding offers significant advantages, the most notable ones being:
 - Speed: With direct bit manipulation, parsing the `from`, `to` and `promo` values are significantly faster compared to struct fields.
 - Cache Effeciency: Smaller size means that more moves can fit into the CPU cache lines
 
-Although engines mostly stick to a 16 bit representation, some split the bits differently. Another approach is the (6-6-2-2) encoding scheme: 
+Although engines mostly stick to a 16 bit representation, some split the bits differently. Another approach is the (6-6-2-2) encoding scheme:
 
 - 6 bit: source
 - 6 bit: destination
@@ -337,19 +337,86 @@ This variant explicitly tags special moves, which simplifies the move execution 
 When tessaract switch to this 16 bit encoding scheme, from a naive struct/classes implementation, it reported an almost 50% increase in move generation speed, which is quite significant. @tessaract[p.12]
 
 
-=== Perft 
+=== Perft
 
 
 ==== Correctness and Validation
 Perft, short for performance test, (also reffered to as move path enumeration) is a fundamental debugging and validating tool in chess engine development. It operates by recursively generating the entire game tree for a specific position upto a given depth and counting all of the resulting nodes. @alphadeepchess[p.41], @sophie[p.67], @tessaract[p.16]. A developer can compare the nodes that their engine calculates with reputable engines or visit websites that share a consensus such as #link("https://www.chessprogramming.org/Perft_Results")[chess programming wiki].
 
 ==== Peformance Indicator
-Because of the branching factor of chess, just 9 plies deep from the starting position yileds over 2.4 trillion leaf nodes in the game tree. Due to this computationally heavy nature, Perft can also act as a measure of performance in an engine as evident in tesseract's benchmarks and Bijl & Tiet's study @bijl_2021_exploring[p.19] @tessaract[p.17]. 
-
-
-
+Because of the branching factor of chess, just 9 plies deep from the starting position yileds over 2.4 trillion leaf nodes in the game tree. Due to this computationally heavy nature, Perft can also act as a measure of performance in an engine as evident in tesseract's benchmarks and Bijl & Tiet's study @bijl_2021_exploring[p.19] @tessaract[p.17].
 
 #pagebreak()
 
+= Foundations Of Evaluation
+
+Shannon first introduced the concept of an approximate evaluation function $f(P)$ to guide chess engines in selecting the best move, as he recognized that searching the entire game tree ($10^{120}$) is unfeasible. @alphadeepchess[p.18] @shannon_1950_programming[p. 4-6]
+
+Shannon described this evaluating function $f(P)$ as one based on a combination of various established chess concepts and general chess principles that approximates the long-term advantages of a position. He also noted that $f(P)$ would produce a continuous quality range that reflects the "quality" of a move, as no move in chess is completely wrong or right. Most notably, Shannon suggested that $f(P)$ should include material advantage, pawn formation, piece mobility, and king safety. @shannon_1950_programming[p.5, p.17]
+
+This section, taking basis from Shannon's work, covers the techniques concerned with evaluating a position that chess engines have implemented over the years.
+
+== Hand Crafted Evaluation (HCE)
+
+Engines have historically used Hand Crafted Evaluation functions that account for different features. @mastering[p.10] @mcts[p.2] @shannon_1950_programming[p. 5] Although the exact combinations of these heuristics differed from engine to engine, the key factors Shannon suggested were:
+
+=== Materialistic Approach
+
+Material advantage is generally a stronger indicator compared to other positional factors and is also perhaps the simplest form of evaluation. The intuition is simple: "if you are up pieces, then you are probably winning." This technique simply subtracts the total material scores of the two sides, and these values are generally represented in centipawns:
+
+$
+ "Pawn" &= 100 \
+ "Knight" &= 320 \
+ "Bishop" &= 330 \
+ "Rook" &= 550 \
+ "Queen" &= 950
+$
+
+@marsland[p.3] @alphadeepchess[p.34]. Although these values are the de facto standard, Bijl & Tiet do note a study from S. Droste and J. Furnkranz for assigning values to pieces using reinforcement learning that yielded the following @bijl_2021_exploring[p.12]:
+
+$
+ "Pawn" &= 100 \
+ "Knight" &= 270 \
+ "Bishop" &= 290 \
+ "Rook" &= 430 \
+ "Queen" &= 890
+$
+
+=== Positional and Strategic Heuristics
+
+Of course, in a game of chess, material isn't everything; other factors such as king safety, mobility, and pawn structure determine whether a position is good or bad. As such, to encapsulate these factors, chess engines have employed various techniques:
+
+==== Piece Square Tables (PSTs)
+
+Piece Square Tables are piece-specific, precomputed tables that assign a bonus or a penalty for a piece depending on its square. They are used to represent the fact that a piece's effectiveness is dependent on its position. For instance, take the following position into consideration:
+
+#figure(
+image("images/random_pos.png", width: 60%),
+caption: "A Position With Equal Material Count",
+)
+
+Although both sides have the same material count, the white knight is arguably better than black's as it is towards the center and covers more squares. @alphadeepchess[p.35] @Brange[p.31] @tessaract[p.33]
+
+Tessaract's performance analysis shows that the implementation of PSTs caused the evaluation to go from 5640 to 8255, the single biggest evaluation impact amongst other heuristics. He also concludes that the most important heuristics for the evaluation function were the material and positional scores. @tessaract[p.38-p.39]
+
+==== Pawn Structure
+
+Another positional aspect is the pawn structure; isolated, doubled, or backwards pawns are weak. As such, engines penalize the evaluation of such positions. @bijl_2021_exploring[p.15] @tessaract[p.36]
+
+==== Mobility
+Mobility can be defined as the number of legal moves available to a piece. @bijl_2021_exploring[p.14] @parallel_chess_searching[p.57] This is typically calculated by using popcount on our final attack bitboard. A higher mobility score yields a better evaluation compared to a lower one.
+
+==== King Safety
+The King is the most important piece, as such its safety matters very much. Engines often approximate this by accounting for the proximity of enemy pieces and that of the friendly pieces. The bonus or penalty is then applied as needed. @alphadeepchess[p.53] @tessaract[p.34]
+
+==== Tapered Evaluation
+
+To account for the fact that a piece's value and its position are also dependent on the stage of the game, this technique is used. This is done to capture the fact that, say, a pawn in the early game is worth less compared to that in the endgame, or the fact that a king towards the center of the board is a huge problem in the early game but is actually wanted in the endgame. As such, engines typically employ 2 different sets of PSTs and interpolate between them depending on the stage of the game. @alphadeepchess[p.35] @tessaract[p.33]
+
+=== Parameter Tuning
+
+Tuning these PSTs and values is a way to increase the efficiency of these techniques. Bijl & Tiet's sequential tuning resulted in an average win rate increase of 15%. Their study also revealed that search depth was an important factor that determined the value of a piece. They found that the optimal Knight Material Score decreased with increasing depth, but the bishop pair increased. Their study also shows that stacked rooks were ranked high across all iterations of tuning. @bijl_2021_exploring[p.20] This implies that the findings of S. Droste and J. Furnkranz might've been more accurate. @bijl_2021_exploring[p.12]
+
+#pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
 
