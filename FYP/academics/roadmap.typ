@@ -373,3 +373,57 @@ This structure gives you:
 - Your papers are well-utilized without redundancy
 
 You're ready to start writing tomorrow. Each section has clear papers to cite, clear themes, and clear contribution to your overall narrative. 
+
+
+---
+
+= Search Enhancements & Optimizations
+
+== Memory-Aided Search
+  === Transposition Tables
+    - Zobrist Hashing
+    - Replacement Schemes (always replace, depth-preferred, two-tier)
+    - TT Entry Types (exact, lower bound, upper bound)
+  === Refutation Tables
+
+== Iterative Deepening Framework
+  === Basic Concept
+  === Benefits (time control, move ordering)
+  === Aspiration Windows
+
+== Advanced Alpha-Beta Variants
+  === Principal Variation Search (PVS)
+  === Negascout
+  === MTD(f)
+
+== Move Ordering Heuristics
+  === Importance of Move Ordering
+  === TT Move
+  === MVV-LVA for Captures
+  === Killer Heuristic
+  === History Heuristic
+  === Countermove Heuristic
+  === Continuation History
+
+== Selective Search Extensions
+  === When to Extend
+  === Check Extensions
+  === Pawn Push Extensions
+  === Singular Extensions
+  === One Reply Extensions
+
+== Pruning Techniques
+  === Null Move Pruning
+  === Late Move Reductions (LMR)
+  === Futility Pruning
+  === Reverse Futility Pruning
+  === Delta Pruning (in Quiescence)
+  === Razoring
+  === Multicut/Probcut
+
+== Parallel Search
+  === Young Brothers Wait Concept
+  === Lazy SMP
+  === Thread Management
+
+== Time Management & Practical Considerations

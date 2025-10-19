@@ -259,7 +259,7 @@ index = (blockers * magic_number) >> shift_amount
 // and used as: sliding_piece_<bishop or rook or queen>[index]
 ```
 
-Magic Bitboards provide a constant-time algorithm for generating moves for sliding pieces and have thus become the de facto standard for modern engines. @bijl_2021_exploring[p.7] @alphadeepchess[p.48-p.51]
+Magic Bitboards provide a constant-time algorithm for generating moves for sliding pieces and have thus become the de facto standard for modern engines. @bijl_2021_exploring[p.7] @alphadeepchess[p.48-p.51]. While other variants like Black magics, Fixed Shift Magics etc, do exist, they tackle the same fundamental problem. @hash_funtions[p.30]
 
 
 ==== PEXT Boards
@@ -416,6 +416,66 @@ To account for the fact that a piece's value and its position are also dependent
 === Parameter Tuning
 
 Tuning these PSTs and values is a way to increase the efficiency of these techniques. Bijl & Tiet's sequential tuning resulted in an average win rate increase of 15%. Their study also revealed that search depth was an important factor that determined the value of a piece. They found that the optimal Knight Material Score decreased with increasing depth, but the bishop pair increased. Their study also shows that stacked rooks were ranked high across all iterations of tuning. @bijl_2021_exploring[p.20] This implies that the findings of S. Droste and J. Furnkranz might've been more accurate. @bijl_2021_exploring[p.12]
+
+
+#pagebreak()
+
+= Search Enhancements & Optimizations
+This section now will expand upon the fundamentals and cover more advanced optimization techniques that modern engines implement.
+
+== Memory-Aided Search
+=== Transposition Tables
+In any chess game, the same positions can be reached in different sequences of moves. For instance, take the following move sequences into consideration:
+
+$
+"Starting position → 1. e4 e5 2. Nf3 Nc6" \
+"Starting position → 1. Nf3 Nc6 2. e4 e5"
+$
+
+although the order in which the moves were made are different, the final position it reached is inheretly the same. These sequences are called transpositions.When an engine explores the game tree, it encounters the same position in multiple branches. Without a transposition table, the engine would, for each of these branches, re-calculate the evaluatino for the same position over and over again. Transposition tables are data structures, typically hash tables that store the evaluation of a position that has already been reached, for it to be re-used later. @marsland[p.13] @bijl_2021_exploring[p. 10] @alphadeepchess[p.45]
+
+==== Zobrist Hashing
+Zobrist Hashing is the most popular way to generate the hash for game positions. It is an incremental hashing technique that involves calculating the hash by `XOR`-ing together pregenerated 64 bit numbers corresponding to every piece type on every square, together with other game states like castling rights, en passant square, and the side to move. Although Zobrist Hashing isn't perfect, as it yields a chance to collide (~0.000003% with 1 billion moves stored) @zobrist[p.10], the chance is small enough to be effectively zero for practical purposes. The key advantage of this technique is it's incremental nature, allowing the hash to be updated in just 2-4 `XOR` operations, rather than recalculating from scratch.
+@marsland[p.14] @alphadeepchess[p.46] @Brange[p.37] @zobrist[p.5, p.10] @parallel_chess_searching[p.36] @tessaract[p.18]. 
+
+==== Transposition Table Entry
+Each entry in the table stores multiple things to maximize it's effectiveness @alphadeepchess[p.48] @marsland[p.14] @Brange[p.36] @parallel_chess_searching[p.100]:
+
+- The Zobrist Hash: The full 64-bit hash of the position. This is used to verify that the entry in the table is correct and detect index collissions
+
+- Evaluation: The result yielded by the evaluation function
+
+- Depth: The depth to which the search was calculated. This value is generally used to determine if the entry should be overridden with a more extensive search.
+
+- Best Move: The best move found during the search, this is the foundation for move ordering in future searches. 
+
+- Age: This is used to identify stale entries from previous searches. 
+
+- Node Type: Due to alpha-beta pruning, not all searches result in exact scores, the node type represnts these cases
+  - `EXACT`: The search completed fully without cutoffs, the exact evaluation score for the position is searched. This occurs when the score falls between the search window ($alpha$ < `score` < $beta$)
+
+  - `LOWERBOUND`: A beta cutoff occurred, meaning that the score is atleast as good as the stored value, but it could also be better. This happens when a good move was found, ( `score` >= $beta$ ), causing the search to end early. Thus, this stored score can only be used if it's greater than or equal to the current $beta$ value
+
+  - `UPPERBOUND`: An alpha cutoff occurred, meaning that none of moves scored better than the current best value (`score` <= $alpha$). Thus, this stored score can only be used if it's less than or equal to the current $alpha$ value.
+
+==== Replacement Schemes
+Since Transposition Tables are often fixed in size due to resource limitations @marsland[p.16] @zobrist[p.2], entries in the table need to be overwritten. The most common replacement strategies are:
+
+- Always Replace: The simplest strategy is to unconditionally overwrite any existing entry with a new one. While simple to implement, it has significant drawbacks. This strategy is prone to shallow searches replacing the deeper ones, loosing valuable information. As such, this strategy is rarely seen in chess engines.
+
+- Depth Preferred Replacement: This technique acknowledges that deeper searches are more valuable than the shallower ones, as such an entry is replaced only if the new entry is greater in depth than the currently stored one. This preserves the most computationally expensive searches, while still allowing updates where it is better.
+
+=== Refutation Tables
+In chess, a refutation is a move that punishes the opponent's last move, proving that it was a mistake. For instance, 
+
+```
+Black plays: Nf6 (developing the knight) 
+White responds: e5 (kicks the knight, "refutes" the idea )
+```
+and if this refutation worked well, the engine remembers to try the same move next time. A refutation table is a lightweight data structure that remembers effective refutations. It is much simpler than the transposition table employing arrays instead of hashes, and are often referred to as a space-effecient alternatives to transposition tables. This table is often preffered for low end devices with memory constraints. @marsland[p.16]
+
+
+
 
 #pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
