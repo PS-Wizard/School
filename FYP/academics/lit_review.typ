@@ -495,6 +495,32 @@ The search score from a previous position provides a strong approximation for th
 
 In an empirical analysis of the KLAS engine, Brange mentions that the use of Iterative Deepening along with PV-Ordering caused the average search time to decrease by 28.7% on average. @Brange[p.47]
 
+== Advanced Alpha-Beta Variations
+
+=== Principle Variation Search (PVS) / Negascout
+PVS or Negascout is an optimization of alpha-beta that exploits move ordering. Assuming the first move is likely best, PVS searches it with a full window [$alpha, beta$] to determine its exact value. Subsequent moves are searched with a minimal window (typically [$alpha, alpha+1$]) to quickly verify they score no better than the first move. These narrow window searches are significantly faster because they produce more cutoffs. If a minimal window search fails, indicating a move may actually be superior PVS, it searches it again with the full window to find its true value. In this case, the algorithm takes the cost of a re-search, but with good move ordering this situation is rare enough that the approach remains beneficial overall. @marsland[p.9] @parallel_chess_searching[p.40] @tessaract[p.22]
+
+=== MDT(f)
+MTD(f), short for Memory-enhanced Test Driver with node f, takes a different approach from PVS by performing multiple minimal window searches that converge on the minimax value. Instead of searching once with a full window, it starts with an initial guess (typically from a previous iteration or transposition table) and repeatedly searches with minimal windows around that guess. If the search yields a value $>= beta$, the true value is at least $beta$, so the algorithm searches again with a higher window. If the search yields $< beta$, the value is below $beta$, prompting a search with a lower window. This process continues until the bounds converge on the exact minimax value.
+
+This approach performs less work per individual search since minimal windows produce more cutoffs, but it requires searching multiple times. As such, a strong transposition table is essential to avoid redundantly re-computing positions across multiple passes. In practice, MTD(f) can outperform PVS when combined with effective hashing @negascout. Despite its promise, PVS remains more widely adopted due to its simpler implementation and less strict dependency on transposition tables.
+
+== Move Ordering Heuristics
+Move ordering is critical for pruning effectiveness, as it establishes the threshold against which other positions are evaluated and thus subsequent inferior branches can be quickly ignored @parallel_chess_searching[p.31] @alphadeepchess[p.22]. Several heuristics exist to improve move ordering:
+
+=== Transposition Table Move (TT Move)
+The intuition behind the TT Move ordering is that the transposition table stores previously searched positions along with their best moves. So, when an engine encounters the same position, the table tells it what move was best last time. Depending on the depth, it's fair to assume that the same move is still probably very good since it's not just a heuristic guess from the evaluation function but a proven score from the search itself. This is the key idea behind prioritizing TT moves. Thus, transposition tables help both avoid re-computation and improve move ordering. @parallel_chess_searching[p.37] @marsland[p.13]
+
+
+=== MVV-LVA 
+The Most Valuable Victim - Least Valuable Aggressor (MVV-LVA) is a simple yet reasonably effective heuristic for ordering captures. It prioritizes positive material trades; for example, ordering a pawn capturing a queen ahead of a queen capturing a pawn. The idea is simple, winning material is good, and doing so without risking your valuable pieces is even better. This heuristic is fast to compute and works well because captures that win material often cause beta cutoffs. @alphadeepchess[p.42] @mastering[p.11] @Brange[p.34] In an assessment of the KLAS engine, MVV-LVA ordering resulted in the single biggest performance impact, decreasing execution time by 68.5% @Brange[p.45], which is evidence of its effectiveness.
+
+=== Killer Heuristics
+Killer moves are aliases for non-capture moves that caused beta cutoffs at the same depth in sibling positions. The key insight is that if a move was strong enough to cause a cutoff in a position at this depth, that move is likely to do the same at other positions at the same depth too, and as such searching this move early is probably beneficial. Typically, the two most frequently occurring "killers" at each level of the search tree are tracked, and a quiet move that matches a tracked "killer" is given a bonus score to prioritize it amongst other quiet ones @parallel_chess_searching[p.38] @alphadeepchess[p. 42-p.43] @marsland[p. 12].
+
+=== History Heuristic
+The History Heuristic tracks how often a move causes a beta cutoff across the entire search tree. Generally, this is done by maintaining a table indexed by `[from_square][to_square]`, incrementing the score each time that move causes a cutoff. Unlike killers, history is *global across all depths and positions* and thus captures broader patterns about which moves tend to perform well. The history heuristic is often applied to sort the remainder of the non-capture moves after other ordering schemes like killer moves have been applied @marsland[p.12] @parallel_chess_searching[p.39].
+
 #pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
 

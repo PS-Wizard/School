@@ -377,33 +377,31 @@ You're ready to start writing tomorrow. Each section has clear papers to cite, c
 
 ---
 
-= Search Enhancements & Optimizations
+// = Search Enhancements & Optimizations
 
-== Memory-Aided Search
-  === Transposition Tables
-    - Zobrist Hashing
-    - Replacement Schemes (always replace, depth-preferred, two-tier)
-    - TT Entry Types (exact, lower bound, upper bound)
-  === Refutation Tables
+// == Memory-Aided Search
+//   === Transposition Tables
+//     - Zobrist Hashing
+//     - Replacement Schemes (always replace, depth-preferred, two-tier)
+//     - TT Entry Types (exact, lower bound, upper bound)
+//   === Refutation Tables
+//
+// == Iterative Deepening Framework
+//   === Basic Concept
+//   === Benefits (time control, move ordering)
+//   === Aspiration Windows
+//
+// == Advanced Alpha-Beta Variants
+//   === Principal Variation Search (PVS)
+//   === Negascout
+//   === MTD(f)
 
-== Iterative Deepening Framework
-  === Basic Concept
-  === Benefits (time control, move ordering)
-  === Aspiration Windows
-
-== Advanced Alpha-Beta Variants
-  === Principal Variation Search (PVS)
-  === Negascout
-  === MTD(f)
-
-== Move Ordering Heuristics
-  === Importance of Move Ordering
-  === TT Move
-  === MVV-LVA for Captures
-  === Killer Heuristic
-  === History Heuristic
-  === Countermove Heuristic
-  === Continuation History
+// == Move Ordering Heuristics
+//   === Importance of Move Ordering
+//   === TT Move
+//   === MVV-LVA for Captures
+//   === Killer Heuristic
+  // === History Heuristic
 
 == Selective Search Extensions
   === When to Extend
