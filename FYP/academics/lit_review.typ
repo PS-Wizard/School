@@ -472,10 +472,28 @@ In chess, a refutation is a move that punishes the opponent's last move, proving
 Black plays: Nf6 (developing the knight) 
 White responds: e5 (kicks the knight, "refutes" the idea )
 ```
-and if this refutation worked well, the engine remembers to try the same move next time. A refutation table is a lightweight data structure that remembers effective refutations. It is much simpler than the transposition table employing arrays instead of hashes, and are often referred to as a space-effecient alternatives to transposition tables. This table is often preffered for low end devices with memory constraints. @marsland[p.16]
+and if this refutation worked well, the engine remembers to try the same move next time. A refutation table is a lightweight data structure that stores these effective refutations and main continuations. It is much simpler than the transposition table employing arrays instead of hashes, and are often referred to as a space-effecient alternatives to transposition tables. This table is often preffered for low end devices with memory constraints. For devices with no memory constraint, this technique is still used as an additional aid for the search. @marsland[p.16]
 
 
+== Iterative Deepening
 
+Iterative Deepening, also known as "iterated aspiration search" or "progressive deepening"; a term first coined by de Groot @deGroot1965, is an optimization technique that chess engines employ, especially those that implement alpha-beta pruning. The idea behind iterative deepening is that when a search is requested to $D$ plies, the search will first go 1-ply, then 2-ply, and so on until it reaches $D$. Although this may seem counter-intuitive, since it means we're repeating the same search over and over again in each iteration—which is true to some extent—engines use the information gained from these shallow searches to prioritize the best moves in deeper searches, which prunes a lot of branches right off the bat. If caches like transposition tables are also implemented, it's possible that iterative deepening searches faster than an immediate search to the same depth. @bijl_2021_exploring[p.10] @alphadeepchess[p.32] @Brange[p.38]
+
+=== Benefits of Iterative Deepening
+
+==== Time Management
+
+Iterative Deepening is perhaps the de facto standard for time management, as it ensures that if a search is interrupted (e.g., due to a time limit), we have the result from the previously completed depth. As such, the result from the previous shallower depth search can be used rather than the deeper but incomplete search. @marsland[p.17] @parallel_chess_searching[p.39]
+
+==== Move Ordering 
+
+Iterative Deepening helps move ordering significantly. Generally, the promising moves from previous shallower searches are searched first, and as such, the likelihood of finding a good move goes up, causing more pruning. The overall efficiency of iterative deepening comes from the fact that it can use the information from the previous search to get the Principal Variation, and then use that information to reorder moves in the current deeper search.
+
+==== Aspiration Windows
+
+The search score from a previous position provides a strong approximation for the expected value of the current search. This can be utilized to set a tight aspiration window for the new search, thus leading to more cut-offs. @tessaract[p.21] @parallel_chess_searching[p.33]
+
+In an empirical analysis of the KLAS engine, Brange mentions that the use of Iterative Deepening along with PV-Ordering caused the average search time to decrease by 28.7% on average. @Brange[p.47]
 
 #pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
