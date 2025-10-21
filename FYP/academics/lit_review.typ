@@ -365,21 +365,21 @@ Engines have historically used Hand Crafted Evaluation functions that account fo
 Material advantage is generally a stronger indicator compared to other positional factors and is also perhaps the simplest form of evaluation. The intuition is simple: "if you are up pieces, then you are probably winning." This technique simply subtracts the total material scores of the two sides, and these values are generally represented in centipawns:
 
 $
- "Pawn" &= 100 \
- "Knight" &= 320 \
- "Bishop" &= 330 \
- "Rook" &= 550 \
- "Queen" &= 950
+    "Pawn" & = 100 \
+  "Knight" & = 320 \
+  "Bishop" & = 330 \
+    "Rook" & = 550 \
+   "Queen" & = 950
 $
 
 @marsland[p.3] @alphadeepchess[p.34]. Although these values are the de facto standard, Bijl & Tiet do note a study from S. Droste and J. Furnkranz for assigning values to pieces using reinforcement learning that yielded the following @bijl_2021_exploring[p.12]:
 
 $
- "Pawn" &= 100 \
- "Knight" &= 270 \
- "Bishop" &= 290 \
- "Rook" &= 430 \
- "Queen" &= 890
+    "Pawn" & = 100 \
+  "Knight" & = 270 \
+  "Bishop" & = 290 \
+    "Rook" & = 430 \
+   "Queen" & = 890
 $
 
 === Positional and Strategic Heuristics
@@ -391,8 +391,8 @@ Of course, in a game of chess, material isn't everything; other factors such as 
 Piece Square Tables are piece-specific, precomputed tables that assign a bonus or a penalty for a piece depending on its square. They are used to represent the fact that a piece's effectiveness is dependent on its position. For instance, take the following position into consideration:
 
 #figure(
-image("images/random_pos.png", width: 60%),
-caption: "A Position With Equal Material Count",
+  image("images/random_pos.png", width: 60%),
+  caption: "A Position With Equal Material Count",
 )
 
 Although both sides have the same material count, the white knight is arguably better than black's as it is towards the center and covers more squares. @alphadeepchess[p.35] @Brange[p.31] @tessaract[p.33]
@@ -428,15 +428,15 @@ This section now will expand upon the fundamentals and cover more advanced optim
 In any chess game, the same positions can be reached in different sequences of moves. For instance, take the following move sequences into consideration:
 
 $
-"Starting position → 1. e4 e5 2. Nf3 Nc6" \
-"Starting position → 1. Nf3 Nc6 2. e4 e5"
+  "Starting position → 1. e4 e5 2. Nf3 Nc6" \
+  "Starting position → 1. Nf3 Nc6 2. e4 e5"
 $
 
 although the order in which the moves were made are different, the final position it reached is inheretly the same. These sequences are called transpositions.When an engine explores the game tree, it encounters the same position in multiple branches. Without a transposition table, the engine would, for each of these branches, re-calculate the evaluatino for the same position over and over again. Transposition tables are data structures, typically hash tables that store the evaluation of a position that has already been reached, for it to be re-used later. @marsland[p.13] @bijl_2021_exploring[p. 10] @alphadeepchess[p.45]
 
 ==== Zobrist Hashing
 Zobrist Hashing is the most popular way to generate the hash for game positions. It is an incremental hashing technique that involves calculating the hash by `XOR`-ing together pregenerated 64 bit numbers corresponding to every piece type on every square, together with other game states like castling rights, en passant square, and the side to move. Although Zobrist Hashing isn't perfect, as it yields a chance to collide (~0.000003% with 1 billion moves stored) @zobrist[p.10], the chance is small enough to be effectively zero for practical purposes. The key advantage of this technique is it's incremental nature, allowing the hash to be updated in just 2-4 `XOR` operations, rather than recalculating from scratch.
-@marsland[p.14] @alphadeepchess[p.46] @Brange[p.37] @zobrist[p.5, p.10] @parallel_chess_searching[p.36] @tessaract[p.18]. 
+@marsland[p.14] @alphadeepchess[p.46] @Brange[p.37] @zobrist[p.5, p.10] @parallel_chess_searching[p.36] @tessaract[p.18].
 
 ==== Transposition Table Entry
 Each entry in the table stores multiple things to maximize it's effectiveness @alphadeepchess[p.48] @marsland[p.14] @Brange[p.36] @parallel_chess_searching[p.100]:
@@ -447,9 +447,9 @@ Each entry in the table stores multiple things to maximize it's effectiveness @a
 
 - Depth: The depth to which the search was calculated. This value is generally used to determine if the entry should be overridden with a more extensive search.
 
-- Best Move: The best move found during the search, this is the foundation for move ordering in future searches. 
+- Best Move: The best move found during the search, this is the foundation for move ordering in future searches.
 
-- Age: This is used to identify stale entries from previous searches. 
+- Age: This is used to identify stale entries from previous searches.
 
 - Node Type: Due to alpha-beta pruning, not all searches result in exact scores, the node type represnts these cases
   - `EXACT`: The search completed fully without cutoffs, the exact evaluation score for the position is searched. This occurs when the score falls between the search window ($alpha$ < `score` < $beta$)
@@ -466,10 +466,10 @@ Since Transposition Tables are often fixed in size due to resource limitations @
 - Depth Preferred Replacement: This technique acknowledges that deeper searches are more valuable than the shallower ones, as such an entry is replaced only if the new entry is greater in depth than the currently stored one. This preserves the most computationally expensive searches, while still allowing updates where it is better.
 
 === Refutation Tables
-In chess, a refutation is a move that punishes the opponent's last move, proving that it was a mistake. For instance, 
+In chess, a refutation is a move that punishes the opponent's last move, proving that it was a mistake. For instance,
 
 ```
-Black plays: Nf6 (developing the knight) 
+Black plays: Nf6 (developing the knight)
 White responds: e5 (kicks the knight, "refutes" the idea )
 ```
 and if this refutation worked well, the engine remembers to try the same move next time. A refutation table is a lightweight data structure that stores these effective refutations and main continuations. It is much simpler than the transposition table employing arrays instead of hashes, and are often referred to as a space-effecient alternatives to transposition tables. This table is often preffered for low end devices with memory constraints. For devices with no memory constraint, this technique is still used as an additional aid for the search. @marsland[p.16]
@@ -485,7 +485,7 @@ Iterative Deepening, also known as "iterated aspiration search" or "progressive 
 
 Iterative Deepening is perhaps the de facto standard for time management, as it ensures that if a search is interrupted (e.g., due to a time limit), we have the result from the previously completed depth. As such, the result from the previous shallower depth search can be used rather than the deeper but incomplete search. @marsland[p.17] @parallel_chess_searching[p.39]
 
-==== Move Ordering 
+==== Move Ordering
 
 Iterative Deepening helps move ordering significantly. Generally, the promising moves from previous shallower searches are searched first, and as such, the likelihood of finding a good move goes up, causing more pruning. The overall efficiency of iterative deepening comes from the fact that it can use the information from the previous search to get the Principal Variation, and then use that information to reorder moves in the current deeper search.
 
@@ -512,7 +512,7 @@ Move ordering is critical for pruning effectiveness, as it establishes the thres
 The intuition behind the TT Move ordering is that the transposition table stores previously searched positions along with their best moves. So, when an engine encounters the same position, the table tells it what move was best last time. Depending on the depth, it's fair to assume that the same move is still probably very good since it's not just a heuristic guess from the evaluation function but a proven score from the search itself. This is the key idea behind prioritizing TT moves. Thus, transposition tables help both avoid re-computation and improve move ordering. @parallel_chess_searching[p.37] @marsland[p.13]
 
 
-=== MVV-LVA 
+=== MVV-LVA
 The Most Valuable Victim - Least Valuable Aggressor (MVV-LVA) is a simple yet reasonably effective heuristic for ordering captures. It prioritizes positive material trades; for example, ordering a pawn capturing a queen ahead of a queen capturing a pawn. The idea is simple, winning material is good, and doing so without risking your valuable pieces is even better. This heuristic is fast to compute and works well because captures that win material often cause beta cutoffs. @alphadeepchess[p.42] @mastering[p.11] @Brange[p.34] In an assessment of the KLAS engine, MVV-LVA ordering resulted in the single biggest performance impact, decreasing execution time by 68.5% @Brange[p.45], which is evidence of its effectiveness.
 
 === Killer Heuristics
@@ -538,7 +538,23 @@ This extension focuses on situations where the best move is very clear or forced
 === One Reply Extensions
 When a position has only one legal move (or one non-losing move), the search is extended since the response is forced. Since there are no alternative moves to consider, extending the search incurs minimal computational cost while ensuring forced sequences are analyzed completely. This helps resolve tactical lines where the opponent has no meaningful choice. @parallel_chess_searching[p.42]
 
+
 == Pruning Techniques
+
+=== Null Move Pruning (NMP)
+Null move pruning exploits the observation that, in most positions, making any legal move is preferable to passing a turn. The technique operates by allowing the side to move to "pass" (make a null move), giving the opponent two consecutive moves, and searching the resulting position with reduced depth. If this deliberately weakened position still produces a score $>= beta$, the engine can safely assume that the current position is so strong that at least one real move will exceed $beta$, allowing the subtree to be pruned @mastering[p.10] @parallel_chess_searching[p.43].
+
+The search after the null move is typically performed with a reduced depth (commonly $D-R-1$, where $R$ is the reduction factor, usually 2 or 3) and a narrow window around $beta$ to quickly verify the position's strength. However, this technique relies on the fundamental assumption that zugzwang positions, where passing would be preferable to any legal move, are rare. Since zugzwang occurs more frequently in endgames with few pieces, engines typically disable null move pruning in such positions or when in check, as the null move assumption breaks down @bijl_2021_exploring[p.12].
+
+=== Late Move Reduction (LMR)
+Late move reduction exploits strong move ordering to reduce search effort on moves that are unlikely to be best. In a well-ordered move list, the most promising moves appear first, while later moves are statistically less likely to improve upon the current best line. Rather than searching all moves to the full depth $D$, LMR searches later moves to a reduced depth, typically $D-R$ where $R$ increases with move number and decreases with depth . Unlike Principal Variation Search (PVS), which operates with narrow search windows at full depth, LMR fundamentally alters the search depth itself. To avoid missing tactical opportunities, LMR includes safeguards that prevent reduction of tactically critical moves such as captures, promotions, checks, check evasions, and killer moves . If a reduced-depth search returns a score within the $[alpha, beta]$ window—indicating the move may be better than expected—the engine re-searches the move at full depth. While this re-search incurs additional cost, effective move ordering ensures such cases are rare enough that the overall trade-off remains positive. @bijl_2021_exploring[p.12] @alphadeepchess[p.55] @tessaract[p.26]
+
+The effectiveness of LMR is heavily dependent on move ordering quality. AlphaDeepChess reported no improvement from implementing LMR due to insufficient move ordering strength @alphadeepchess[p.65]. In contrast, the Tesseract engine demonstrated significant performance gains, reducing average search time from 83.87 to 64.13 milliseconds, though with a corresponding decrease in score from 8584 to 8124 @tessaract[p.26]. This trade off illustrates the delicate nature of LMR and other agressive pruning techniques.
+
+=== Futility Pruning
+Futility pruning eliminates moves that are unlikely to raise the score above $alpha$ when the search is near the horizon. The technique operates on the principle that if a position's static evaluation plus a generous margin still falls below $alpha$, and only a few plies remain to the search horizon, then quiet moves (non-tactical moves) are unlikely to dramatically improve the position and can be safely pruned @parallel_chess_searching[p.41] @marsland[p.11].
+
+This optimization is particularly effective when applied with quiescence search, as it helps limit the explosive branching factor of the quiescence tree. Futility pruning typically applies only at nodes one or two plies from the horizon and to quiet moves, as tactical moves (captures, promotions, checks) can cause non linear evaluation changes that go againt the futility assumption. 
 
 
 #pagebreak()

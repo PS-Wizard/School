@@ -410,14 +410,11 @@ You're ready to start writing tomorrow. Each section has clear papers to cite, c
 //   === Singular Extensions
 //   === One Reply Extensions
 
-== Pruning Techniques
-  === Null Move Pruning
-  === Late Move Reductions (LMR)
-  === Futility Pruning
-  === Reverse Futility Pruning
-  === Delta Pruning (in Quiescence)
-  === Razoring
-  === Multicut/Probcut
+// == Pruning Techniques
+  // === Null Move Pruning
+  // === Late Move Reductions (LMR)
+  // === Futility Pruning
+  // === Reverse Futility Pruning
 
 == Parallel Search
   === Young Brothers Wait Concept
