@@ -403,12 +403,12 @@ You're ready to start writing tomorrow. Each section has clear papers to cite, c
 //   === Killer Heuristic
   // === History Heuristic
 
-== Selective Search Extensions
-  === When to Extend
-  === Check Extensions
-  === Pawn Push Extensions
-  === Singular Extensions
-  === One Reply Extensions
+// == Selective Search Extensions
+//   === When to Extend
+//   === Check Extensions
+//   === Pawn Push Extensions
+//   === Singular Extensions
+//   === One Reply Extensions
 
 == Pruning Techniques
   === Null Move Pruning

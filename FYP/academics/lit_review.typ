@@ -521,6 +521,26 @@ Killer moves are aliases for non-capture moves that caused beta cutoffs at the s
 === History Heuristic
 The History Heuristic tracks how often a move causes a beta cutoff across the entire search tree. Generally, this is done by maintaining a table indexed by `[from_square][to_square]`, incrementing the score each time that move causes a cutoff. Unlike killers, history is *global across all depths and positions* and thus captures broader patterns about which moves tend to perform well. The history heuristic is often applied to sort the remainder of the non-capture moves after other ordering schemes like killer moves have been applied @marsland[p.12] @parallel_chess_searching[p.39].
 
+
+== Selective Search Extensions
+These are mechanisms used in game-tree searching to strategically increase the search depth of certain moves, beyond the fixed depth. @marsland[p.3]. The primary purpose of selective search extensions is to shape the game-tree so that "interesting" positions are explored more thoroughly and uninteresting ones aren't. Shannon categorizes this as a *type B* strategy. @shannon_1950_programming[p.13]. However, these extensions need to be controlled as the tree can explode in size if done too frequently or extensively. @parallel_chess_searching[p.43]
+
+=== Check Extensions
+Checks are the most forceful type of move, as they limit the responses from the opponent. The rationale behind check extension is that, if an opponent is in check, it is reasonable to assume that it might lead to a check-mate, as such extending this might be beneficial. And since the opponent's responses are limited, it's not too computationally expensive. As such, check extensions are the most common type of extension heuristic. Check extensions differ from quiescence search in that they occur during the main alpha-beta search before the depth limit is reached, while quiescence search happens after the normal search depth is exhausted and continues until the position is tactically quiet.
+@parallel_chess_searching[p.42]
+
+=== Pawn Pushes
+In this mechanic, the search is extended if the pawn is near promotion, typically when a pawn is moved to the 7th (for white) or 2nd (for black) rank. Passed pawns advancing to these ranks create significant threats that can drastically alter the evaluation, making deeper analysis necessary to assess promotion threats and defensive resources accurately. This should optimally be added to quiescence search itself if possible. @parallel_chess_searching[p.43] @marsland[p.8]
+
+=== Singular Extensions
+This extension focuses on situations where the best move is very clear or forced. The engine performs a reduced-depth search excluding the best move candidate; if all alternative moves fail significantly below the current best move's value, the best move is considered "singular" and the search is extended. This identifies tactically or strategically forced moves that warrant deeper analysis. @parallel_chess_searching[p.10] @bijl_2021_exploring[p.13]
+
+=== One Reply Extensions
+When a position has only one legal move (or one non-losing move), the search is extended since the response is forced. Since there are no alternative moves to consider, extending the search incurs minimal computational cost while ensuring forced sequences are analyzed completely. This helps resolve tactical lines where the opponent has no meaningful choice. @parallel_chess_searching[p.42]
+
+== Pruning Techniques
+
+
 #pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
 

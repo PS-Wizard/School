@@ -23,6 +23,7 @@
     font: "EB Garamond",
     size: 12pt,
     lang: "en",
+    hyphenate: false,
   )
 
   show math.equation: set text(weight: 400)
