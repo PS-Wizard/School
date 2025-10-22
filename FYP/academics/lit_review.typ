@@ -556,6 +556,28 @@ Futility pruning eliminates moves that are unlikely to raise the score above $al
 
 This optimization is particularly effective when applied with quiescence search, as it helps limit the explosive branching factor of the quiescence tree. Futility pruning typically applies only at nodes one or two plies from the horizon and to quiet moves, as tactical moves (captures, promotions, checks) can cause non linear evaluation changes that go againt the futility assumption. 
 
+== Parallel Search
+As modern CPUs have evolved to include multiple cores, parallelizing the search has become the natural next step. The intuition is simple: if one core is fast, multiple cores should be faster. However, the reality is more nuanced. Alpha-beta search is inherently sequential, the results from searching one move provide critical information for pruning subsequent moves. When the work is distributed across threads to search different subtrees simultaneously, this pruning information isn't immediately available across threads. Each thread ends up searching more nodes than would be examined in a sequential search, because they lack real-time access to each other's cutoff discoveries. This is why parallelization yields diminishing returns: a speedup of only 9.2x was observed on 22 processors, far short of the theoretical 22x @parallel_chess_searching[p. 3, p.78].
+
+To prevent threads from redundantly searching the same positions, shared data structures like the transposition table are employed. However, concurrent access to these global structures introduces its own costs; synchronization overhead from mutex locks or atomic operations can become significant. The tree size growth from parallelization overhead appears to be roughly linear @parallel_chess_searching[p. 78], meaning that the combined effect of sub-linear speedup and linear growth in nodes searched results in only modest time reductions when using many processors. At some point, adding more processors no longer translates to a meaningfully faster search. This section examines two prominent approaches to parallelizing chess search: Young Brothers Wait Concept (YBWC) and Lazy SMP.
+
+=== Young Brothers Wait Concept (YBWC)
+The Young Brothers Wait Concept (YBWC) represents an early, theoretically principled approach to parallelizing alpha-beta search. The algorithm's is straightforward: search the first child node sequentially with the main thread, then distribute the remaining "young brother" nodes among multiple threads for parallel evaluation. During the sequential phase, helper threads remain idle, waiting for the principal variation search to complete before they can begin their work @parallel_chess_searching[p.62] @alphadeepchess[p.55]
+
+This design aligns with the structure of alpha-beta node types. In Type 1 (PV) nodes, where all children must be searched, YBWC's sequential first approach establishes tight alpha and beta bounds before parallelizing the remaining children @parallel_chess_searching[p. 78]. Similarly, for Type 2 (CUT) nodes with good move ordering, a cutoff typically occurs after searching the first child, meaning the young brothers never need to be searched at all—making the wait concept perfectly efficient @parallel_chess_searching[p. 62]. However, YBWC proves suboptimal for Type 3 (ALL) nodes, where all children must be searched regardless. Here, forcing the first child to be searched sequentially wastes potential parallelism, as all children could have been evaluated simultaneously from the start.
+
+Despite its theoretical soundness, YBWC has struggled in practice. The AlphaDeepChess project implemented YBWC for its multithreaded search but observed performance degradation rather than improvement . The decline was attributed to synchronization overhead, the costs of thread creation and destruction, and the implementation's inability to effectively leverage a shared transposition table for concurrent access @alphadeepchess[p.62]. These practical challenges have led modern engines most notably Stockfish, to #link("https://github.com/official-stockfish/Stockfish/commit/ecc5ff6693f116f4a8ae5f5080252f29b279c0a1")[switch away from YBWC to LazySMP].
+
+=== Lazy SMP 
+Lazy Symmetric MultiProcessing (Lazy SMP) takes a very different approach to parallelization. Rather than carefully coordinating threads, it spawns independent threads that each perform a complete search autonomously, sharing information only through the transposition table @Brange[p.39] @tessaract[p.27]. 
+
+This "lazy" technique; allowing threads to redundantly search similar positions instead of enforcing perfect work distribution, sounds counterintuitive, yet proves remarkably effective in practice. To prevent threads from exploring identical lines simultaneously, implementations employ randomized move ordering at the root node, ensuring each thread's search diverges early @Brange[p.39] @tessaract[p.27].
+
+In practice, Lazy SMP achieved a 33.1% reduction in average execution time on a four-core system in the KLAS engine @Brange[p.58] and a 40% speedup in Tesseract @tessaract[p.27]. Howver, these gains come with tradeoffs, memory usage increases substantially, and garbage collection overhead can become significant, as noted in the KLAS implementation @Brange[p.58]. Nevertheless, despite these costs and its inherently wasteful nature, Lazy SMP remains the dominant multithreaded search method in modern chess engines, outcompeting more theoretically sophisticated alternatives through sheer simplicity and effectiveness.
+
+
+
+
 
 #pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
