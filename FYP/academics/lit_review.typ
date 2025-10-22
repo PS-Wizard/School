@@ -590,9 +590,57 @@ A distinctive component of NNUE is its difference-based computation mechanism, w
 
 In practical terms, NNUE’s introduction bridged the gap between hand-engineered heuristics and learned evaluation, achieving both interpretability and adaptability. Its incorporation into major engines such as Stockfish and Komodo Dragon resulted in strength gains exceeding 100 Elo, demonstrating that lightweight neural architectures can coexist with traditional search algorithms without the computational demands of deep learning frameworks.
 
-From a research perspective, NNUE has redefined what “efficiency” means in neural evaluation—emphasizing updatability and hardware-conscious design over brute-force scale. This paradigm continues to influence ongoing work in adaptive evaluation, incremental learning, and hybrid symbolic–neural systems beyond board games, pointing toward broader applications in real-time decision-making and embedded AI systems.
+From a research perspective, NNUE has redefined what “efficiency” means in neural evaluation—emphasizing updatability and hardware-conscious design over brute-force scale. This paradigm continues to influence ongoing work in adaptive evaluation, incremental learning, and hybrid symbolic–neural systems beyond board games, pointing toward broader applications in real-time decision-making and embedded AI systems. @Stockfish2025NNUEWiki @Nasu2018NNUE
 
-@Stockfish2025NNUEWiki @Nasu2018NNUE
+==== Architecture
+
+#figure(
+  image("images/NNUE.jpg"),
+  caption: "NNUE Stockfish Architecture",
+)
+
+The NNUE architecture consists of four distinct layers designed specifically for efficient chess position evaluation. Unlike traditional deep neural networks used in other chess engines like Leela Chess Zero, NNUE's design prioritizes incremental updates during alpha-beta search, making it computationally efficient enough to maintain high search speeds.
+
+==== Input Layer and Feature Transformer
+
+The input layer uses a sparse binary representation called HalfKP (or HalfKAv2 in modern versions), where features represent the presence of specific pieces on specific squares relative to each king's position. The network processes two "halves" simultaneously - one for each king - with each half containing information about all pieces on the board relative to that king's position.
+
+In the original HalfKP architecture, each half receives 41,024 binary inputs (64 king positions × 641 inputs per position), where each input indicates whether a particular piece occupies a particular square. These inputs connect to a 256-neuron hidden layer per half, resulting in over 10 million weights in this feature transformer alone. This massive overparameterization allows the network to learn complex position-dependent patterns.
+
+The modern HalfKAv2 architecture improves upon this by using 45,056 inputs per side (11 piece types × 64 squares × 64 king positions) mapped to a 512-neuron feature transformer per side. This version eliminates redundancy by considering that the king's own square doesn't need to be encoded as a separate feature.
+
+==== The Accumulator: Efficient Updates
+
+The critical innovation enabling NNUE's efficiency is the accumulator mechanism. Rather than recalculating the entire feature transformer output for each position during search, the engine maintains an "accumulator" - the weighted sum of active features. When a piece moves, only the weights corresponding to the moved piece need updating:
+
+- Subtract the weights for the piece's old square
+- Add the weights for the piece's new square
+
+This transforms what would be an O(n) operation (processing all active features) into an O(1) operation (updating only changed features). During alpha-beta search, where the engine evaluates millions of positions per second, this incremental update provides massive computational savings. For example,
+
+```
+move(piece from A to B):
+  accumulator -= weights[piece][A]  // remove old position
+  accumulator += weights[piece][B]  // add new position
+```
+
+==== Hidden Layers
+
+After the feature transformer, the network passes through three smaller fully-connected layers:
+- First hidden layer: 512 inputs → 32 outputs
+- Second hidden layer: 32 inputs → 32 outputs  
+- Output layer: 32 inputs → 1 output (evaluation score)
+
+These layers use ClippedReLU activation functions, which clip values to a 0-127 range. The smaller size of these layers means they contribute minimal computational cost compared to the feature transformer.
+
+==== Quantization for Speed
+
+All network weights and intermediate values use quantized integer arithmetic rather than floating-point calculations. The feature transformer uses 16-bit integers, while subsequent layers use 8-bit integers. This quantization enables efficient SIMD (Single Instruction, Multiple Data) operations using CPU instructions like AVX2, processing multiple values simultaneously. The final output undergoes scaling divisions (by 64 for hidden layers, by 16 for final output) to produce the evaluation score.
+
+Modern versions (HalfKAv2) further optimize by using multiple sub-networks discriminated by piece count, allowing the network to specialize its evaluation based on material configuration, and by feeding some feature transformer outputs directly to the final layer to better handle imbalanced material situations.
+
+
+
 
 #pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
