@@ -573,11 +573,26 @@ Lazy Symmetric MultiProcessing (Lazy SMP) takes a very different approach to par
 
 This "lazy" technique; allowing threads to redundantly search similar positions instead of enforcing perfect work distribution, sounds counterintuitive, yet proves remarkably effective in practice. To prevent threads from exploring identical lines simultaneously, implementations employ randomized move ordering at the root node, ensuring each thread's search diverges early @Brange[p.39] @tessaract[p.27].
 
-In practice, Lazy SMP achieved a 33.1% reduction in average execution time on a four-core system in the KLAS engine @Brange[p.58] and a 40% speedup in Tesseract @tessaract[p.27]. Howver, these gains come with tradeoffs, memory usage increases substantially, and garbage collection overhead can become significant, as noted in the KLAS implementation @Brange[p.58]. Nevertheless, despite these costs and its inherently wasteful nature, Lazy SMP remains the dominant multithreaded search method in modern chess engines, outcompeting more theoretically sophisticated alternatives through sheer simplicity and effectiveness.
+In practice, Lazy SMP achieved a 33.1% reduction in average execution time on a four-core system in the KLAS engine @Brange[p.58] and a 40% speedup in Tesseract @tessaract[p.27]. However, these gains come with tradeoffs, memory usage increases substantially, and garbage collection overhead can become significant, as noted in the KLAS implementation @Brange[p.58]. Nevertheless, despite these costs and its inherently wasteful nature, Lazy SMP remains the dominant multithreaded search method in modern chess engines, outcompeting more theoretically sophisticated alternatives through sheer simplicity and effectiveness.
+
+= Evaluation Optimizations & Enhancements
+
+HCEs, despite of their historical value, have objective drawbacks. The main drawback of HCE is that it is inheretly designed on a human metric and heuristics. This limitation means that even the best HCE is limited to the same level as the best human player. These days the standard goto method to counteract this is NNUEs
 
 
 
+== NNUE ( ƎUИИ Efficiently Updatable Neural Networks )
+The Efficiently Updatable Neural Network (NNUE) represents a major shift in how modern game engines—particularly in chess and shogi—approach evaluation functions. Originally proposed by Yu Nasu (2018) for computer shogi, NNUE introduced a hybrid paradigm that merges the pattern recognition strength of neural networks with the speed and deterministic precision of handcrafted linear evaluators. The architecture was later adapted to chess, first integrated into Stockfish in 2019,  a performance leap unprecedented since the rise of alpha–beta–based engines.
 
+Unlike deep convolutional or reinforcement-learning models such as AlphaZero, NNUE is designed explicitly for CPU execution rather than GPU acceleration. It employs a fully connected, shallow neural network, optimized for rapid, low-precision inference. The efficiency derives from three principles—input sparsity, input stability, and incremental updatability—which enable the network to update evaluations incrementally after each move, rather than recalculating from scratch.
+
+A distinctive component of NNUE is its difference-based computation mechanism, where the system maintains an internal accumulator of first-layer activations. When a piece moves, only the relevant features—encoded through HalfKP (Half King–Piece) relationships—are updated. This yields near-instantaneous position evaluation while preserving the expressive nonlinearity of a neural network. Furthermore, quantization of weights and activations into integer domains (often 8–16 bits) allows the network to leverage SIMD instructions for massive speed-ups on standard CPUs.
+
+In practical terms, NNUE’s introduction bridged the gap between hand-engineered heuristics and learned evaluation, achieving both interpretability and adaptability. Its incorporation into major engines such as Stockfish and Komodo Dragon resulted in strength gains exceeding 100 Elo, demonstrating that lightweight neural architectures can coexist with traditional search algorithms without the computational demands of deep learning frameworks.
+
+From a research perspective, NNUE has redefined what “efficiency” means in neural evaluation—emphasizing updatability and hardware-conscious design over brute-force scale. This paradigm continues to influence ongoing work in adaptive evaluation, incremental learning, and hybrid symbolic–neural systems beyond board games, pointing toward broader applications in real-time decision-making and embedded AI systems.
+
+@Stockfish2025NNUEWiki @Nasu2018NNUE
 
 #pagebreak()
 #bibliography("refs.bib", style: "harvard-cite-them-right")
