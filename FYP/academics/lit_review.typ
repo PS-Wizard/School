@@ -18,7 +18,6 @@
   The game of chess has served as a proving ground for artificial intelligence reserach for decades now. From Claude Shannon's foundational paper framing chess as a computational problem, to Deepmind's AlphaZero acheiving extremely high strength through sheer self-play; chess has redefined the boundaries of algorithmic reasoning. Today, chess engines have far exceeded human capacity, with top engines like Stockfish and Leela Chess Zero estimated to operate at over 3500 Elo, approximately 800 Elo above the best humans to play chess.
 ]
 
-
 What started as theoretical curiosity, that if solved, would force us to create "mechanized thinking", has now transformed into a vast domain for algorithmic innovation. Shannon recognized early on that exhaustive search was not feasible a typical chess game lasting 40 moves, containing approximately $10^120$ possible position variations; a number that far exceeds the number of atoms in the observable universe @shannon_1950_programming[p. 4]. This fundamental constraint, paired with the well-defined rules and success criteria, made chess an ideal playground for developing selective search methods, heuristic evaluation, and other fundamental techniques in modern AI.
 
 = Foundations of Search
@@ -465,6 +464,12 @@ Since Transposition Tables are often fixed in size due to resource limitations @
 
 - Depth Preferred Replacement: This technique acknowledges that deeper searches are more valuable than the shallower ones, as such an entry is replaced only if the new entry is greater in depth than the currently stored one. This preserves the most computationally expensive searches, while still allowing updates where it is better.
 
+=== Syzygy tablebases
+Chess endgames with seven or fewer pieces have been completely solved through exhaustive retrograde analysis @parallel_chess_searching[p.11]. Engines can leverage tablebases, such as Ronald de Man's Syzygy tablebases, to achieve perfect endgame play @bijl_2021_exploring[p.21]. These tablebases work by analyzing positions backwards from known outcomes (checkmate, stalemate, or drawn positions) to determine the optimal move and outcome for every possible configuration. 
+
+However, the storage requirements are substantial. The complete Syzygy tablebases scale dramatically with piece count: 3-5 piece endgames require 939 MiB, 6-piece endgames expand to 149.2 GB, and the full 7-piece tablebase consumes 16.7 TiB of storage #link("https://www.chessprogramming.org/Syzygy_Bases")[source]. This massive data requirement echoes Shannon's original proposal for a "dictionary" storing optimal moves for all positions @shannon_1950_programming[p.4]; an idea he dismissed as impractical due to size constraints. While Shannon's vision of solving the entire game remains infeasible ($10^120$ positions), modern engines have realized a practical subset: perfect play for the simplified positions that matter most, once sufficient material has been traded off the board.
+
+
 === Refutation Tables
 In chess, a refutation is a move that punishes the opponent's last move, proving that it was a mistake. For instance,
 
@@ -494,6 +499,8 @@ Iterative Deepening helps move ordering significantly. Generally, the promising 
 The search score from a previous position provides a strong approximation for the expected value of the current search. This can be utilized to set a tight aspiration window for the new search, thus leading to more cut-offs. @tessaract[p.21] @parallel_chess_searching[p.33]
 
 In an empirical analysis of the KLAS engine, Brange mentions that the use of Iterative Deepening along with PV-Ordering caused the average search time to decrease by 28.7% on average. @Brange[p.47]
+
+
 
 == Advanced Alpha-Beta Variations
 
