@@ -554,7 +554,7 @@ The effectiveness of LMR is heavily dependent on move ordering quality. AlphaDee
 === Futility Pruning
 Futility pruning eliminates moves that are unlikely to raise the score above $alpha$ when the search is near the horizon. The technique operates on the principle that if a position's static evaluation plus a generous margin still falls below $alpha$, and only a few plies remain to the search horizon, then quiet moves (non-tactical moves) are unlikely to dramatically improve the position and can be safely pruned @parallel_chess_searching[p.41] @marsland[p.11].
 
-This optimization is particularly effective when applied with quiescence search, as it helps limit the explosive branching factor of the quiescence tree. Futility pruning typically applies only at nodes one or two plies from the horizon and to quiet moves, as tactical moves (captures, promotions, checks) can cause non linear evaluation changes that go againt the futility assumption. 
+This optimization is particularly effective when applied with quiescence search, as it helps limit the explosive branching factor of the quiescence tree. Futility pruning typically applies only at nodes one or two plies from the horizon and to quiet moves, as tactical moves (captures, promotions, checks) can cause non linear evaluation changes that go againt the futility assumption.
 
 == Parallel Search
 As modern CPUs have evolved to include multiple cores, parallelizing the search has become the natural next step. The intuition is simple: if one core is fast, multiple cores should be faster. However, the reality is more nuanced. Alpha-beta search is inherently sequential, the results from searching one move provide critical information for pruning subsequent moves. When the work is distributed across threads to search different subtrees simultaneously, this pruning information isn't immediately available across threads. Each thread ends up searching more nodes than would be examined in a sequential search, because they lack real-time access to each other's cutoff discoveries. This is why parallelization yields diminishing returns: a speedup of only 9.2x was observed on 22 processors, far short of the theoretical 22x @parallel_chess_searching[p. 3, p.78].
@@ -568,8 +568,8 @@ This design aligns with the structure of alpha-beta node types. In Type 1 (PV) n
 
 Despite its theoretical soundness, YBWC has struggled in practice. The AlphaDeepChess project implemented YBWC for its multithreaded search but observed performance degradation rather than improvement . The decline was attributed to synchronization overhead, the costs of thread creation and destruction, and the implementation's inability to effectively leverage a shared transposition table for concurrent access @alphadeepchess[p.62]. These practical challenges have led modern engines most notably Stockfish, to #link("https://github.com/official-stockfish/Stockfish/commit/ecc5ff6693f116f4a8ae5f5080252f29b279c0a1")[switch away from YBWC to LazySMP].
 
-=== Lazy SMP 
-Lazy Symmetric MultiProcessing (Lazy SMP) takes a very different approach to parallelization. Rather than carefully coordinating threads, it spawns independent threads that each perform a complete search autonomously, sharing information only through the transposition table @Brange[p.39] @tessaract[p.27]. 
+=== Lazy SMP
+Lazy Symmetric MultiProcessing (Lazy SMP) takes a very different approach to parallelization. Rather than carefully coordinating threads, it spawns independent threads that each perform a complete search autonomously, sharing information only through the transposition table @Brange[p.39] @tessaract[p.27].
 
 This "lazy" technique; allowing threads to redundantly search similar positions instead of enforcing perfect work distribution, sounds counterintuitive, yet proves remarkably effective in practice. To prevent threads from exploring identical lines simultaneously, implementations employ randomized move ordering at the root node, ensuring each thread's search diverges early @Brange[p.39] @tessaract[p.27].
 
@@ -628,7 +628,7 @@ move(piece from A to B):
 
 After the feature transformer, the network passes through three smaller fully-connected layers:
 - First hidden layer: 512 inputs → 32 outputs
-- Second hidden layer: 32 inputs → 32 outputs  
+- Second hidden layer: 32 inputs → 32 outputs
 - Output layer: 32 inputs → 1 output (evaluation score)
 
 These layers use ClippedReLU activation functions, which clip values to a 0-127 range. The smaller size of these layers means they contribute minimal computational cost compared to the feature transformer.
@@ -640,6 +640,54 @@ All network weights and intermediate values use quantized integer arithmetic rat
 Modern versions (HalfKAv2) further optimize by using multiple sub-networks discriminated by piece count, allowing the network to specialize its evaluation based on material configuration, and by feeding some feature transformer outputs directly to the final layer to better handle imbalanced material situations.
 
 
+== Monte Carlo Tree Search and Neural Network Engines
+
+Moving away from traditional alpha-beta architectures, engines like AlphaZero and Leela Chess Zero employ Monte Carlo Tree Search (MCTS), a fundamentally different approach to finding the best move. Unlike alpha-beta search which aims for exhaustive coverage within a depth limit, MCTS grows its tree asymmetrically, concentrating computational effort on the most promising variations @mastering[p.3].
+
+=== MCTS Algorithm
+
+MCTS operates through four iterative phases that build the search tree incrementally:
++ *Selection*: Starting from the root position, traverse the tree by selecting moves that balance exploring new possibilities with exploiting known strong lines, guided by the UCB1 (Upper Confidence Bound) formula.
++ *Expansion*: When reaching an unvisited position, add it to the tree as a new node.
++ *Simulation*: Evaluate the new position to estimate its value (traditionally via random playouts, but in AlphaZero using neural network evaluation).
++ *Backpropagation*: Update the value estimates and visit counts for all positions along the path from the new node back to the root.
+
+This process repeats thousands of times per move, gradually building confidence about which moves are strongest.
+
+=== AlphaZero's Neural-Guided MCTS
+
+In AlphaZero, MCTS is guided by a deep neural network $f_theta (s)$ that takes the board position $s$ as input and outputs two critical values @mastering[p.2]:
++ *Policy ($bold(p)$)*: A probability distribution indicating which moves are most promising.
++ *Value ($v$)*: An estimate of the expected game outcome from this position (ranging from -1 for a loss to +1 for a win).
+AlphaZero has no handcrafted chess knowledge beyond the basic rules and learns entirely through self-play reinforcement learning. The network trains by minimizing a loss function $l$ via gradient descent, where $l$ combines two components @mastering[p.3]:
+- *Value Loss*: $(z - v)^2$, minimizing the mean-squared error between the predicted outcome $v$ and the actual game outcome $z$ (where $z = +1$ for win, $0$ for draw, $-1$ for loss)
+- *Policy Loss*: $-bold(pi)^T log bold(p)$, maximizing similarity between the network's policy $bold(p)$ and the search probabilities $bold(pi)$ generated by MCTS
+
+Notably, AlphaZero optimizes for expected outcome (accounting for draws as $0$), whereas its predecessor AlphaGo Zero treated draws as losses, optimizing only for win probability @mastering[p.3].
+
+=== Comparison with Traditional Engines
+
+This neural-guided MCTS approach differs fundamentally from traditional alpha-beta engines:
+
+#figure(
+  table(
+    columns: (auto, auto, auto),
+    align: left,
+    [*Aspect*], [*AlphaZero / MCTS*], [*Stockfish / Alpha-Beta*],
+    [Primary Algorithm], [Monte Carlo Tree Search], [Alpha-Beta Pruning],
+    [Evaluation], [Deep Neural Network], [HCE / NNUE],
+    [Knowledge Source], [Learned from self-play], [Handcrafted + tuning],
+    [Search Strategy], [Selective, focused on promising lines], [Broad, exhaustive within depth],
+    [Evaluation Speed], [~80,000 positions/second], [~70,000,000 positions/second],
+    [Search Depth], [Deeper in critical lines], [Uniform depth with extensions],
+    [Hardware], [GPU-optimized], [CPU-optimized],
+    [Training Cost], [Massive (thousands of TPU-hours)], [Incremental tuning],
+    [Interpretability], [Black box], [Transparent heuristics],
+  ),
+  caption: "Comparison of AlphaZero and Traditional Engine Approaches",
+)
+
+The most striking difference is evaluation speed: AlphaZero examines approximately 80,000 positions per second while Stockfish evaluates roughly 70 million—nearly 1,000 times faster. However, AlphaZero compensates for this speed disadvantage through superior selectivity, using its neural network to prioritize the most promising lines and achieving superior results despite searching significantly fewer positions @mastering[p.4]. This represents a fundamental trade-off: traditional engines rely on examining massive numbers of positions with simpler evaluation, while AlphaZero examines relatively few positions with sophisticated learned evaluation.
 
 
 #pagebreak()
