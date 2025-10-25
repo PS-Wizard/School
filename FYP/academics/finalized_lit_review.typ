@@ -25,7 +25,7 @@ The game of chess, like any two-player, zero-sum game, can be represented as a g
 
 
 === Minimax Formulation
-In the traditional minimax framework, two functions, $F(p)$ and $G(p)$, are defined from the perspective of the maximizing player (typically White) and the minimizing player (typically Black), respectively @knuth_1975_an[p. 4]. For a position $p$ with $d$ legal successor positions such that, $p_1, p_2,..., p_d$, represents all the valid reachable positions, the framework, as described by Knuth and Moore, is: 
+In the traditional minimax framework, two functions, $F(p)$ and $G(p)$, are defined from the perspective of the maximizing player (typically White) and the minimizing player (typically Black), respectively @knuth_1975_an[p. 4]. For a position $p$ with $d$ legal successor positions such that, $p_1, p_2,..., p_d$, represents all the valid reachable positions, the framework, as described by Knuth and Moore, is:
 
 - *Maximizing Function*: The function $F(p)$ represents the best value Max can guarantee from position $p$ when it is Max's turn to move. If $p$ is a terminal position ($d = 0$), then $F(p) = f(p)$, where $f(p)$ is an evaluation function defining the outcome (e.g., +1 for a win, 0 for a draw, -1 for a loss). If $d > 0$, then:
   $ F(p) = max(G(p_1), G(p_2), \ldots, G(p_d)) $
@@ -164,22 +164,22 @@ BitBoards represent board information using 64-bit integers, allowing logical op
 This representation generally uses different BitBoards for each piece type and each color. Thus, the entire board is the logical sum (bitwise `OR`) of all these separate boards:
 
 #figure(
-image("images/bitboard_representation.png"),
-caption: "Example Position Represented Using BitBoards",
+  image("images/bitboard_representation.png"),
+  caption: "Example Position Represented Using BitBoards",
 )
 
 It is worth noting that BitBoards aren't limited to representing piece occupancies; they can also represent attack patterns, which is the core idea behind pre-computed lookup tables for fast, constant-time move generation, with techniques such as PEXT or Magic Bitboards.
 
 
 === Hybrid Approaches
-Modern engines incorporate both BitBoards and a mailbox-style approach. Bitboards are used for filtering and move generation, while the mailbox is used for fast data access. This comes at a slightly larger memory cost and the overhead of having to incrementally update multiple data structures per move @tessaract[p.6-p.7] @bijl_2021_exploring[p.5], but the speed benefit's it offers are generally considered to be worth this overhead. 
+Modern engines incorporate both BitBoards and a mailbox-style approach. Bitboards are used for filtering and move generation, while the mailbox is used for fast data access. This comes at a slightly larger memory cost and the overhead of having to incrementally update multiple data structures per move @tessaract[p.6-p.7] @bijl_2021_exploring[p.5], but the speed benefit's it offers are generally considered to be worth this overhead.
 
 === Beyond Move Generation: Why BitBoards Dominate
-While sources universally agree that BitBoards are the preferred representation for competitive engines @alphadeepchess[p.30] @bijl_2021_exploring[p.5], the reasons behind this preference reveal an important nuance. 
+While sources universally agree that BitBoards are the preferred representation for competitive engines @alphadeepchess[p.30] @bijl_2021_exploring[p.5], the reasons behind this preference reveal an important nuance.
 
 Bijl & Tiet's findings challenge the conventional narrative: traditional array based representations like 0x88 boards can achieve comparable speeds to BitBoards in isolated move generation tasks (Perft tests) @bijl_2021_exploring[p.20]. This is surprising given that move generation, particularly through techniques like PEXT or Magic Bitboards, appeared to be the primary justification for adopting Bitboards.
 
-However, BitBoards are preferred for full-purpose engines not primarily because of move generation, but because they accelerate other aspects such as evaluation, which heavily relies on fast bitwise operations where array based methods struggle @tessaract[p.10] @bijl_2021_exploring[p.20]. This distinction is important as the common assumption that board representation performance matters primarily for move generation is incorrect. Both architectures perform adequately in move generation, but evaluation benefits significantly from bitboard representations @bijl_2021_exploring[p.20]. 
+However, BitBoards are preferred for full-purpose engines not primarily because of move generation, but because they accelerate other aspects such as evaluation, which heavily relies on fast bitwise operations where array based methods struggle @tessaract[p.10] @bijl_2021_exploring[p.20]. This distinction is important as the common assumption that board representation performance matters primarily for move generation is incorrect. Both architectures perform adequately in move generation, but evaluation benefits significantly from bitboard representations @bijl_2021_exploring[p.20].
 
 In Bijl & Tiet's complete engine tests, move generation accounted for only about 10% of processing time, with evaluation forming the primary bottleneck. Thus, BitBoards remain the optimal choice not solely due to move generation speed, but because of their performance advantages across the entire engine pipeline.
 
@@ -227,8 +227,8 @@ In a BitBoard, where `"a1"` is the LSB, the square `"e4"` corresponds to the $28
 \
 #line(length: 100%)
 ```rust
-// 
-// where the number 44272527353856, 
+//
+// where the number 44272527353856,
 // displayed in the form of a BitBoard, is:
 //
 8 . . . . . . . .
@@ -287,7 +287,7 @@ index = PEXT(blockers, ray_mask)
 ```
 
 ==== Magic vs. PEXT
-The distinction between Magic BitBoards and PEXT Bitboards represents a hardware-driven evolution rather than a purely algorithmic advancement. PEXT's theoritical superiority depends entirely on hardware support (machines running pre-Haswell for Intel and some pre-Excavator/pre-Zen for AMD dont support BMI2), making Magic Bitboards the essential fallback for platforms lacking this instruction @hash_funtions[p.10] @tessaract[p.10]. 
+The distinction between Magic BitBoards and PEXT Bitboards represents a hardware-driven evolution rather than a purely algorithmic advancement. PEXT's theoritical superiority depends entirely on hardware support (machines running pre-Haswell for Intel and some pre-Excavator/pre-Zen for AMD dont support BMI2), making Magic Bitboards the essential fallback for platforms lacking this instruction @hash_funtions[p.10] @tessaract[p.10].
 
 However, empirical testing reveals a surprising result. Based on 100 runs of Stockfish's benchmark suite, PEXT BitBoards provide only a 2.3% speedup over Magic Bitboards @hash_funtions[p.10], corroborated by Bijl & Tiet's findings @bijl_2021_exploring[p.20]. The choice between Magic and PEXT thus becomes less about raw performance and more about implementation tradeoffs: PEXT offers simpler code without magic number generation, while Magic provides broader hardware compatibility.
 
@@ -564,7 +564,7 @@ This optimization is particularly effective when applied with quiescence search,
 == Parallel Search
 As modern CPUs have evolved to include multiple cores, parallelizing the search has become the natural next step. The intuition is simple: if one core is fast, multiple cores should be faster. However, the reality is more nuanced. Alpha-beta search is inherently sequential; the results from searching one move provide critical information for pruning subsequent moves. When the work is distributed across threads to search different subtrees simultaneously, this pruning information is not immediately available across threads. Each thread ends up searching more nodes than would be examined in a sequential search, because they lack real-time access to each other's cutoff discoveries. This is why parallelization yields diminishing returns: a speedup of only 9.2x was observed on 22 processors, far short of the theoretical 22x @parallel_chess_searching[p. 3, p.78].
 
-To prevent threads from redundantly searching the same positions, shared data structures like the transposition table are employed. However, concurrent access to these global structures introduces its own costs; synchronization overhead from mutex locks or atomic operations can become significant. The tree size growth from parallelization overhead appears to be roughly linear @parallel_chess_searching[p. 78], meaning that the combined effect of sub-linear speedup and linear growth in nodes searched results in only modest time reductions when using many processors. At some point, adding more processors no longer translates to a meaningfully faster search. This section examines the two most common approaches to parallelizing chess search: Young Brothers Wait Concept (YBWC) and Lazy SMP. 
+To prevent threads from redundantly searching the same positions, shared data structures like the transposition table are employed. However, concurrent access to these global structures introduces its own costs; synchronization overhead from mutex locks or atomic operations can become significant. The tree size growth from parallelization overhead appears to be roughly linear @parallel_chess_searching[p. 78], meaning that the combined effect of sub-linear speedup and linear growth in nodes searched results in only modest time reductions when using many processors. At some point, adding more processors no longer translates to a meaningfully faster search. This section examines the two most common approaches to parallelizing chess search: Young Brothers Wait Concept (YBWC) and Lazy SMP.
 
 === Young Brothers Wait Concept (YBWC)
 The Young Brothers Wait Concept (YBWC) represents an early, theoretically principled approach to parallelizing alpha-beta search. The algorithm is straightforward: search the first child node sequentially with the main thread, then distribute the remaining "young brother" nodes among multiple threads for parallel evaluation. During the sequential phase, helper threads remain idle, waiting for the principal variation search to complete before they can begin their work @parallel_chess_searching[p.62] @alphadeepchess[p.55].
@@ -639,7 +639,7 @@ This neural-guided MCTS approach differs fundamentally from traditional alpha-be
   caption: "Comparison of AlphaZero and Traditional Engine Approaches",
 )
 
-The most striking difference is evaluation speed: AlphaZero examines approximately 80,000 positions per second while Stockfish evaluates roughly 70 million. However, AlphaZero compensates for this speed disadvantage through superior selectivity, using its neural network to prioritize the most promising lines and achieving superior results despite searching $~1000 times$ fewer positions @mastering[p.4]. 
+The most striking difference is evaluation speed: AlphaZero examines approximately 80,000 positions per second while Stockfish evaluates roughly 70 million. However, AlphaZero compensates for this speed disadvantage through superior selectivity, using its neural network to prioritize the most promising lines and achieving superior results despite searching $~1000 times$ fewer positions @mastering[p.4].
 
 While older MCTS implementations proved weaker than alpha-beta @mastering[p.12], coupling MCTS with deep neural networks achieved superiority, challenging the widespread belief that alpha-beta was inherently better suited for these domains. In head-to-head competition, using 64 threads and a hash size of 1GB, AlphaZero convincingly defeated all opponents, losing zero games to Stockfish @mastering[p.5].
 
@@ -694,7 +694,7 @@ After the feature transformer, the network passes through three smaller fully-co
 These layers use ClippedReLU activation functions, which clip values to a $[0,127]$ range. The smaller size of these layers means they contribute minimal computational cost compared to the feature transformer.
 
 === Quantization for Speed
-All network weights and intermediate values use quantized integer arithmetic rather than floating point calculations. The feature transformer uses 16 bit integers, while subsequent layers use 8 bit integers. This quantization enables efficient SIMD  operations using CPU instructions like AVX2, processing multiple values simultaneously. 
+All network weights and intermediate values use quantized integer arithmetic rather than floating point calculations. The feature transformer uses 16 bit integers, while subsequent layers use 8 bit integers. This quantization enables efficient SIMD  operations using CPU instructions like AVX2, processing multiple values simultaneously.
 
 === NNUE's Architectural Constraints and Research Gaps
 NNUE's architecture is fundamentally defined to provide fast evaluation within the tight performance loop of a high speed, single-threaded alpha-beta search engine @Stockfish2025NNUEWiki @Nasu2018NNUE. A quantitative gap exists in optimizing NNUE: developing superior feature sets beyond HalfKP / HalfKAv2 and refining the quantization and layer structure to achieve greater accuracy without sacrificing the necessary speed @Stockfish2025NNUEWiki. Additionally, sophisticated methods for automatically tuning complex sets of handcrafted heuristics (like advanced Texel tuning approaches) are still needed to close the gap between man made and machine learned evaluations further @bijl_2021_exploring[p.17].
@@ -703,9 +703,18 @@ NNUE's architecture is fundamentally defined to provide fast evaluation within t
 
 Neural network evaluation architecture changes drastically based on whether it targets traditional CPU-bound search or selective MCTS systems. NNUE is optimized for low-latency CPU inference within alpha-beta's tight performance loop, aiming for exhaustive search @Stockfish2025NNUEWiki @Nasu2018NNUE, while AlphaZero's CNNs are better suited for GPU/TPU acceleration and batch processing in MCTS @mastering.
 
-The integration of NNUE into Stockfish demonstrates a hybrid approach rather than complete replacement of alpha-beta search. Given that engines must maintain compatibility with consumer hardware, NNUE is often preferred despite MCTS potentially offering stronger evaluation @Stockfish2025NNUEWiki. 
+The integration of NNUE into Stockfish demonstrates a hybrid approach rather than complete replacement of alpha-beta search. Given that engines must maintain compatibility with consumer hardware, NNUE is often preferred despite MCTS potentially offering stronger evaluation @Stockfish2025NNUEWiki.
 
-Be that as it may, a core research gap remains in quantifying performance comparisons between highly optimized alpha beta engines with neural evaluations (like Stockfish/NNUE) versus pure neural network-guided MCTS systems, especially under varying time controls and hardware constraints. 
+Be that as it may, a core research gap remains in quantifying performance comparisons between highly optimized alpha beta engines with neural evaluations (like Stockfish/NNUE) versus pure neural network-guided MCTS systems, especially under varying time controls and hardware constraints.
+
+#pagebreak()
+
+= Real World Examples
+
+
+
+
+
+#pagebreak()
 
 #bibliography("refs.bib", style: "harvard-cite-them-right")
-
