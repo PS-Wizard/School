@@ -1,34 +1,56 @@
 #include <pthread.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <math.h>
 
-void* is_prime(void* num) {
-    int casted_num = *(int *)(num);
-    if (casted_num<2){
-        printf("%d is not prime\n", casted_num);
-        return NULL;
+typedef struct {
+    int start;
+    int end;
+}  Range;
+
+
+void* find_primes(void* arg) {
+    Range* range = (Range*) arg;
+
+    for (int n = range->start; n <= range->end; n++) {
+        if (n < 2) continue;
+
+        int lim = sqrt(n);
+        int is_prime = 1;
+        for (int i = 2; i <= lim; i++) {
+            if (n % i == 0) {
+                is_prime = 0;
+                break;
+            }
+        }
+
+        if (is_prime)
+            printf("%d is prime\n", n);
     }
 
-    int lim = (int)sqrt(casted_num);
-    for (int i = 2; i <= lim; i++) {
-        if (casted_num % i == 0) {
-            return NULL;
-        }
-    }
-    printf("The Number: %d, is prime\n", casted_num);
     return NULL;
 }
 
-
 int main(){
-    pthread_t t1,t2,t3;
-    int n1=4, n2=13, n3=22;
-    pthread_create(&t1, NULL, is_prime, &n1);
-    pthread_create(&t2, NULL, is_prime, &n2);
-    pthread_create(&t3, NULL, is_prime, &n3);
-    pthread_join(t1, NULL);
-    pthread_join(t2, NULL);
-    pthread_join(t3, NULL);
+    pthread_t threads[3];
+    Range ranges[3];
+
+    int numbers_per_thread = 10000 / 3;
+
+    for (int i = 0; i < 3; i++) {
+        ranges[i].start = i * numbers_per_thread + 1;
+        // If last thread, just take up the rest that's remaining
+        ranges[i].end = (i == 3 - 1)? 10000 : (i + 1) * numbers_per_thread;
+    }
+
+
+    for (int i = 0; i < 3; i++) {
+        pthread_create(&threads[i], NULL, find_primes, &ranges[i]);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
     return 0;
+
 }

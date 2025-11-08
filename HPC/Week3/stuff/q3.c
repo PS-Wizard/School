@@ -12,6 +12,9 @@ typedef struct {
 
 void* find_primes(void* arg) {
     Range* range = (Range*) arg;
+    int* count = malloc(sizeof(int));  
+    *count = 0;
+    
     for (int i = range->start; i <= range->end; i++) {
         int n = range->numbers[i];
         if (n < 2) continue;
@@ -23,10 +26,12 @@ void* find_primes(void* arg) {
                 break;
             }
         }
-        if (is_prime)
+        if (is_prime) {
             printf("Thread: %d found that the number %d is prime\n", range->thread_id, n);
+            (*count)++;
+        }
     }
-    return NULL;
+    pthread_exit((void*) count);
 }
 
 int main() {
@@ -37,7 +42,7 @@ int main() {
     scanf("%d", &number_of_threads);
     
     Range *ranges = malloc(number_of_threads * sizeof(Range));
-    int *numbers = malloc(number_of_numbers * sizeof(int));  // FIXED: allocate based on number_of_numbers
+    int *numbers = malloc(number_of_numbers * sizeof(int));  
     pthread_t *threads = malloc(number_of_threads * sizeof(pthread_t));
     
     for (int i = 0; i < number_of_numbers; i++) {
@@ -51,7 +56,7 @@ int main() {
     for (int i = 0; i < number_of_threads; i++) {
         int start = numbers_for_each_thread * i;
         int end = (i == number_of_threads - 1) ? number_of_numbers - 1 : numbers_for_each_thread * (i + 1) - 1;
-        ranges[i] = (Range){i, start, end, numbers};  // Pass the numbers array
+        ranges[i] = (Range){i, start, end, numbers};
     }
     
     // Assign Threads
@@ -59,9 +64,14 @@ int main() {
         pthread_create(&threads[i], NULL, find_primes, (void *) &ranges[i]);
     }
     
-    // Wait for em to finish
+    // Wait for em to finish and get the results
     for (int i = 0; i < number_of_threads; i++) {
-        pthread_join(threads[i], NULL);
+        int* count;
+        pthread_join(threads[i], (void**) &count);
+        printf("-------\n");
+        printf("Thread %d found %d prime numbers\n", i, *count);
+        printf("-------\n");
+        free(count);  
     }
     
     free(ranges);

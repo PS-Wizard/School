@@ -8,6 +8,7 @@
     TODO
   ],
 )
+
 #pagebreak()
 
 = Introduction
@@ -86,8 +87,8 @@ Formally, Knuth and Moore define it as,
 
 $
   F_2(p, alpha, beta) = cases(
-    F(p) & "if" alpha < F(p) < beta, \
-    <= alpha & "if" F(p) <= alpha, \
+    F(p) & "if" alpha < F(p) < beta,
+    <= alpha & "if" F(p) <= alpha,
     >= beta & "if" F(p) >= beta
   )
 $
@@ -252,7 +253,7 @@ Now, to filter out capturing friendly pawns, it's simply `knight_attacks[28] & !
 For sliding pieces like bishops, rooks, and queens, simple lookup tables do not suffice because their movement depends on the blocker configuration. The simplest approach is to iterate over the squares until the end of the board is reached, but this is inefficient. The evolution of techniques for handling sliding pieces represents a key advancement in chess programming: initial runtime calculations evolved to static table lookups facilitated first by complex hash techniques like Magic BitBoards, and then by the introduction of hardware-accelerated PEXT instructions @hash_funtions[p.10]. Thus, there are two main approaches to tackle this problem:
 
 ==== Magic BitBoards
-Magic BitBoards are an advanced optimization used in chess engines to efficiently generate pseudo-legal moves for sliding pieces. They convert the move generation problem into a lookup operation—essentially a hashing technique that uses the blocker configuration as a key to index the correct pseudo-legal attack bitboard. Before 2013, Magic Bitboards were considered the fastest practical solution @hash_funtions[p.26] @bijl_2021_exploring[p.8]. This technique consists of three key components:
+Magic BitBoards are an advanced optimization used in chess engines to efficiently generate pseudo-legal moves for sliding pieces. They convert the move generation problem into a lookup operation; essentially a hashing technique that uses the blocker configuration as a key to index the correct pseudo-legal attack bitboard. Before 2013, Magic Bitboards were considered the fastest practical solution @hash_funtions[p.26] @bijl_2021_exploring[p.8]. This technique consists of three key components:
 
 1. *Precomputing Phase*: At initialization, the engine first enumerates all possible blocker configurations for each square and piece type using the #link("https://groups.google.com/g/rec.games.chess/c/KnJvBnhgDKU/m/yCi5yBx18PQJ")[carry-rippler] or similar technique. Afterward, the engine calculates and stores the resulting pseudo-legal moves. This creates a large but manageable lookup table mapping blocker configurations to attack BitBoards @bijl_2021_exploring[p.7-p.8] @tessaract[p.10].
 
@@ -709,10 +710,201 @@ Be that as it may, a core research gap remains in quantifying performance compar
 
 #pagebreak()
 
-= Real World Examples
+= System Analysis & Architecture Patterns
+This section examines two chess engines, namely Stockfish and LC0 to examine how they translate the theoretical technique into working systems. These 2 engines were chosen because they effectively encapsualte all major techniques in chess programming:
+
+== The Classical Paradigm: Alpha-Beta + HCE
+The classical approach dominated the field of chess programming from the 1960s  until around 2017. This paradigm was fundamentally relied on exhaustive search to a fixed depth, and accelerated by alpha-beta pruning. It was guided by hand-crafted evaluation functions that were founded on the human chess principles. Engines like pre-2020 Stockfish were a testimant to this approach, acheiving very strong playing strength through years of incrementally refined heuristics and search optimizations.
+
+Stockfish, first released in 2008 as a fork of Glaurung, became the world's strongest chess engine through years of tedious, relentless optimization of the classical alpha-beta paradigm. Before the integration of NNUE in 2020, Stockfish represented the pinnacle of hand-crafted evalaution and highlighy optimized search functions
+
+The pre-NNUE Stockfish architecture consisted of several tightly coupled components, designed for maximum effeciency. The section below explores the architectural choices made int he development of Stockfish:
+
+==== Bitboard + Mailbox Hybrid Representation
+===== The Problem
+Bitboards are proven to be excellent at bulk operations and enable computing attacks with the help of magic bitboards or PEXT boards, but they are inefficient for random access queries of piece and type occupancy on the board.
+
+===== The Solution
+Thus, stockfish maintains both the bitboard and mailbox representations together to counter bitboard's limitation. Stockfish maintained 12 different bitboards, one for each piece type and color for effecient move generation and evaluation, and a 64-element array to provide `O(1)` piece lookups.
+
+===== Tradeoffs
+- *Memory Cost:* Approximately 2x representation overhead (12 bitboards + 64-byte mailbox + auxiliary data). The board can be represented with just 8 bitboards without the mailbox.
+- *Synchronization Cost:* Every move must update both representations
+- *Speed Gain:* Move generation benefits from bitboard operations (no need to filter piece type with white_pieces & rooks or black_pieces & rooks) while evaluation benefits from mailbox lookups
+
+Move generation uses bitboards with Magic BitBoards for sliding pieces, achieving constant-time lookup. Evaluation functions query the mailbox for piece-square table indexing. The hybrid approach enables both components to operate at peak efficiency rather than compromising one for the other.
+==== Move Generation
+
+===== The Problem
+Stockfish uses precomputed bitboards for non-sliding pieces, but generating moves for sliding pieces (bishops, rooks, queens) requires determining which squares are attacked based on the blocker configuration. This is computationally intensive and occurs millions of times per second.
+
+===== The Solution
+Stockfish implements both, Magic Bitboards and PEXT Boards to acheive constant-time generation of moves for sliding-pieces. It selects between them at compile-time based on the CPU's capabilities.
+
+===== Tradeoffs
+- *PEXT Benefits:* Simpler code (no magic number generation), slightly faster (2.3% speedup) @hash_funtions[p.10]
+- *PEXT Costs:* Requires Haswell+ (Intel 2013) or Zen+ (AMD 2018) CPUs; some AMD processors have slow PEXT implementation
+- *Magic Bitboards Benefits:* Universal compatibility, predictable performance
+- *Magic Bitboards Costs:* Complex initialization (finding magic numbers), more code complexity
+
+By maintaining both implementations, Stockfish achieves maximum performance on modern hardware while remaining functional on older systems. The compile-time detection ensures zero runtime overhead from abstraction.
+
+==== Lazy SMP for Parallelization
+Stockfish originally used Young Brothers Wait Concept (YBWC) for parallel search, but later #link("https://github.com/official-stockfish/Stockfish/commit/ecc5ff6693f116f4a8ae5f5080252f29b279c0a1")[switched to Lazy SMP] noting that it scales better than YBWC for high number of threads.
+
+===== Trade-offs
+- *Redundant Work:* Threads inevitably search some identical positions
+- *Implementation Simplicity:* No complex synchronization logic, no thread coordination overhead
+- *Scalability:* Near-linear speedup up to 8-16 cores, diminishing returns beyond
+
+===== Why YBWC "failed"
+Although no official explaination, the theoretical advantage of coordinated search was likely negated by:
+- Mutex contention on shared data structures
+- Thread creation/destruction overhead
+- Complexity in managing thread pools and work queues
+- Helper threads idling while waiting for principal variation
+
+==== Move Ordering Heuristics
+
+===== The problem
+It is established that Alpha-beta pruning's effectiveness depends critically on move ordering. Searching good moves first enables earlier cutoffs, potentially reducing the effective branching factor from 35 to under 6 in well-ordered trees.
+===== The Solution
+Stockfish implements a sophisticated multi-tiered move ordering system:
+1. *Transposition Table Move* (highest priority): If the position has been searched before, try that move first
+2. *Winning Captures* (MVV-LVA): Captures that win material, ordered by victim value minus aggressor value
+3. *Killer Moves* (two per ply): Non-captures that caused cutoffs in sibling positions
+4. *Counter Moves*: Moves that historically refuted the opponent's last move
+5. *History Heuristic*: Global statistics on which moves tend to cause cutoffs
+6. *Losing Captures*: Captures that lose material, searched last
+
+===== Trade-offs:
+- *Complexity:* Maintaining multiple overlapping heuristics increases code complexity
+- *Memory:* History and killer tables consume additional RAM
+- *Computation:* Move ordering itself takes time; as such it must be faster than searching misordered moves to make it a positive trade.
+
+==== Strength:
+- Estimated Elo: ~3450-3480 (depending on hardware and time controls)
+- Approximately 800 Elo above the best human players
+- Dominant in computer chess championships (TCEC, CCC)
+
+==== Limitations
+Despite it's dominance, Stockfish had one major fundamental constraint,it's understanding of a chess position, is ultimately constrainted by the extent to which humans could model their intuition.
+
+The handcrafted evaluation function, despite decades of refinement, was still fundamentally bounded by human understanding. Complex positional factors like long term piece coordination and king safety nuances in unusual positions were difficult to model in explicit heuristics. This limitation paved the way for the next generation of chess engines, ones powered by neural networks.
 
 
+== Neural Network Based: MCTS + Deep-Learning
 
+December 2017 marked a paradigm shift in the world of chess programming. AlphaZero, having learned the rules of chess through self-play over four hours, played 100 games against Stockfish, the strongest engine at that time. The results were remarkable: AlphaZero won 28 games, drew 72, and lost none.
+
+Neural network-based engines like AlphaZero employ Monte Carlo Tree Search which is guided by deep neural networks that are trained through self-play. This approach sacrifices speed, examining 80,000 positions per second compared to Stockfish's 70 million @mastering[p.4], in favor of evaluation accuracy and selectivity. This architecture is fundamentally dependent on GPU acceleration for neural network inference and represents a completely different philosophy than exhaustive search: search the most promising positions accurately rather than all positions efficiently.
+
+Leela Chess Zero emerged as the open-source implementation of this paradigm, enabling the broader chess programming community to experiment with neural MCTS approaches without the computational resources of DeepMind.
+
+=== Case Study: Leela Chess Zero (LC0)
+
+Leela Chess Zero, launched in 2018 as an open-source reimplementation of AlphaZero's approach, represents the neural network paradigm in chess programming. Unlike Stockfish's hand-crafted evaluation, LC0 learns position evaluation entirely through self-play, combining Monte Carlo Tree Search with deep neural networks trained via reinforcement learning.
+
+The LC0 architecture fundamentally inverts the classical approach: instead of fast, shallow evaluation of millions of positions, it performs slow, deep evaluation of thousands of carefully selected positions. This section examines the architectural decisions that enable this paradigm shift.
+
+==== Neural Network Architecture
+
+===== The Problem
+Traditional hand-crafted evaluation functions have a difficult time trying to capture the non-linear patterns that come with chess positions. Engines like Stockfish were seeing diminishing returns from their refinements because there is simply so much nuance that we can explicitly model in hand-crafted evaluation functions. This limitation made it so that traditional approaches struggled with long-term positional understanding and subtle tactical nuances that go beyond simple material or mobility metrics.
+
+===== The Solution
+LC0 and AlphaZero employ a deep residual convolutional neural network (ResNet) architecture, typically with 15-40 residual blocks. This neural network takes the board state as input (encoded in multiple planes representing piece positions, castling rights, en passant, etc.) and outputs two values:
+- *Policy Head:* A probability distribution over all legal moves
+- *Value Head:* A win/draw/loss evaluation of the position
+
+===== The Tradeoffs
+- *Training Costs:* This shoots up compared to traditional approaches. As these models require millions of self-play games and explicitly require GPUs to do so, these models aren't really viable for the average user.
+- *Inference Speed:* These models by their nature sacrifice the number of positions evaluated in favor of accuracy and selectivity, often evaluating hundreds of times fewer positions than their traditional counterpart.
+- *Evaluation Quality:* It balances out the low number of positions analyzed by learning subtle patterns over its self-play phase, which allows it to select the most promising lines and see qualities beyond what humans have explicitly modeled in their hand-crafted heuristics.
+- *Hardware Dependency:* Requires GPU for competitive performance; CPU-only inference is prohibitively slow.
+
+The network's depth allows it to find patterns in pawn structures, piece coordination, and king safety through entirely learned features rather than programmed rules.
+
+==== Monte Carlo Tree Search (MCTS)
+
+===== The Problem
+Traditional alpha-beta search assumes that each chess position can be accurately evaluated in isolation. However, positions in chess are often too complex for immediate evaluation, and the true value only emerges after exploring possible continuations. Although traditional architectures have also acknowledged this and attempt to counter this using techniques like quiescence search, MCTS takes a fundamentally different approach.
+
+===== The Solution
+LC0 implements a neural network-guided MCTS using the PUCT (Predictor + Upper Confidence Bounds for Trees) algorithm. Instead of random or exhaustive playouts, each node expansion consists of:
+1. Querying the neural network for policy (move probabilities) and value (position evaluation)
+2. Selecting moves to explore based on: Q(s,a) + U(s,a), where U balances exploitation and exploration
+3. Backpropagating the neural network's evaluation up the tree
+
+===== Tradeoffs
+- *Selectivity vs. Coverage:* MCTS explores promising variations deeply rather than all variations uniformly
+- *Uncertainty Handling:* Visit count-based exploration ensures underevaluated moves get reconsidered
+- *Time Distribution:* Spends more time on critical positions, less on trivial ones
+- *Search Instability:* Early search can dramatically shift as new variations are explored
+
+This approach allows MCTS to explore promising lines deeply rather than every line uniformly, growing the tree asymmetrically. Unlike alpha-beta's deterministic best-first search, MCTS is inherently a probabilistic model. It gradually converges toward optimal play but initially explores suboptimal branches. This makes its play style appear "human-like" initially while finding "unconventional" moves that prove to be extremely strong several moves later.
+
+==== Virtual Loss for Parallelization
+
+===== The Problem
+MCTS parallelization is challenging because multiple threads selecting moves simultaneously can all choose the same promising node, leading to redundant exploration and wasted computation.
+
+===== The Solution
+LC0 implements virtual loss: when a thread selects a node for exploration, it temporarily decreases that node's value as if it had lost. This discourages other threads from immediately exploring the same line. Once the neural network evaluation returns, the virtual loss is removed and replaced with the actual evaluation.
+
+===== Tradeoffs
+- *Exploration Diversity:* Threads naturally spread across different promising branches
+- *Overhead:* Atomic operations required for thread-safe virtual loss updates
+- *Tuning Sensitivity:* Virtual loss magnitude affects search behavior; too high causes over-diversification, too low causes redundant work
+- *Batch Efficiency:* Enables gathering multiple positions for GPU batch inference, dramatically improving throughput
+
+Virtual loss enables near-linear scaling up to 8-16 threads with a single GPU, with each thread exploring different variations. Combined with batched neural network inference (processing 256+ positions simultaneously), this achieves efficient GPU utilization.
+
+==== Training via Self-Play
+
+===== The Problem
+Supervised learning from human games would limit the engine to human-level understanding. To surpass human play, the engine must discover novel strategies through exploration.
+
+===== The Solution
+LC0 trains exclusively through self-play reinforcement learning:
+1. Generate games using the current network with added exploration noise
+2. Store positions, move probabilities, and game outcomes
+3. Train the network to predict both the move probabilities (policy target) and game result (value target)
+4. Deploy the improved network and repeat
+
+===== Tradeoffs
+- *Computational Cost:* Requires distributed infrastructure; LC0's training involved thousands of volunteers contributing GPU time
+- *Training Stability:* Networks can plateau or even regress; requires careful hyperparameter tuning and network evaluation
+- *Data Efficiency:* Learns from scratch without human knowledge, but requires millions of games to reach competitive strength
+- *Emergent Understanding:* Discovers opening theory, endgame techniques, and tactical patterns independently
+
+The distributed nature of LC0's training, with volunteers worldwide contributing self-play games, demonstrates both the power and challenge of this approach. Early networks (first few thousand games) play poorly, but strength improves dramatically as patterns emerge from accumulated experience.
+
+==== Strength
+- Estimated Elo: ~3500-3550 (with large networks on strong GPUs)
+- Approximately 50-100 Elo stronger than pre-NNUE Stockfish
+- Playing style characterized by deep positional understanding and long-term planning
+- Particularly strong in complex middlegames and closed positions
+
+==== Limitations
+Despite its strength, LC0/AlphaZero has several constraints:
+
+*Computational Requirements:* Due to their intrinsic model, these types of engines require high-end GPUs, making them inaccessible to many users. CPU-only inference is orders of magnitude slower.
+
+*Tactical Blindness:* The probabilistic nature of MCTS occasionally misses forcing tactical sequences that alpha-beta would find instantly through exhaustive search. LC0 can overlook short, critical variations if they initially appear unpromising.
+
+*Opening Book Dependency:* As these models converge, the early networks can struggle in sharp opening lines, requiring curated opening books to compensate and compete in tournaments.
+
+*Time Management:* MCTS's gradual convergence makes it perform relatively worse in fast time controls where immediate evaluation is beneficial rather than deep exploration.
+
+*Explainability:* The neural network's decision-making is opaque; unlike Stockfish's explicit evaluation terms, LC0 cannot explain why it prefers one move over another in human-understandable terms.
+
+These limitations highlight the complementary nature of the two paradigms: neural MCTS excels at strategic understanding and pattern recognition, while alpha-beta excels at tactical calculation and computational efficiency. This realization led to the next evolution in chess programming, and the current state of the art: a hybrid approach.
+
+== Hybrid Approach
+- NNUE (2018), enabling classical engines to adopt neural networks
+- Maintining CPU Effeciency & Neural Network benefits
+- Current State Of The Art
 
 
 #pagebreak()

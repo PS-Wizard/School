@@ -65,7 +65,7 @@
     }
 
     v(1%)
-    text(size: 13pt, weight: "bold", block([#number #it.body]))
+    text(size: 16pt, weight: "bold", block([#number #it.body]))
     v(0.5em)
   }
 
@@ -77,7 +77,7 @@
     }
 
     v(0.7%)
-    text(size: 12pt, fill: rgb("#404040"), weight: "bold", block([#number #it.body]))
+    text(size: 14pt, fill: rgb("#404040"), weight: "bold", block([#number #it.body]))
     v(0.3em)
   }
 
@@ -89,10 +89,15 @@
     }
 
     v(0.7%)
-    text(size: 11pt, fill: rgb("#404040"), weight: "bold", block([#number #it.body]))
+    text(size: 12pt, fill: rgb("#404040"), weight: "bold", block([#number #it.body]))
   }
 
   show heading.where(level: 4): it => {
+    v(0.7%)
+    text(size: 11pt, fill: rgb("#404040"), weight: "bold", block([#it.body]))
+  }
+
+  show heading.where(level: 5): it => {
     v(0.7%)
     text(size: 10pt, fill: rgb("#404040"), weight: "bold", block([#it.body]))
   }
