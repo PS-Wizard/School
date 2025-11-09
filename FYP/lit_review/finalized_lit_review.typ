@@ -902,10 +902,90 @@ Despite its strength, LC0/AlphaZero has several constraints:
 These limitations highlight the complementary nature of the two paradigms: neural MCTS excels at strategic understanding and pattern recognition, while alpha-beta excels at tactical calculation and computational efficiency. This realization led to the next evolution in chess programming, and the current state of the art: a hybrid approach.
 
 == Hybrid Approach
-- NNUE (2018), enabling classical engines to adopt neural networks
-- Maintining CPU Effeciency & Neural Network benefits
-- Current State Of The Art
+August of 2020 represents another paradigm shift, as it was the date when Stockfish officially intregated Effeciency Updatable Neural Networks (NNUE). This represented a combination of both traditional and neural network approaches, combining the computational effeciency of alpha-beta search with the pattern recognition capability of neural networks.  This hybrid allowed Stockfish to see a dramatic strength gain of ~100 Elo over it's previous implementation; the biggest jump it had seen in a long time. 
 
+Originally developed by Yu Nasu in 2018 specifically to counter the limitations of the previous approaches in the game of Shogi, for the engine #link("https://github.com/yaneurao/YaneuraOu")[YaneuraOu]. Unlike LeelaChess's ( LC0 ) and likewise AlphaZero's dependent on deep neural networks, NNUE uses a shallow but highly optimized architecture for CPU inference, and unlike the traditional hand crafted evaluation, it learns the evaluation through supervised learning from billions of positions. This results in an engine that searches with alpha-beta but evaluates with neural networks.
+
+==== NNUE Origination
+
+===== The Problem
+
+Deep neural networks, although powerful, require GPU acceleration and evaluate a significantly lower number of positions. Classical engines evaluate millions of positions but are limited by their hand-crafted evaluation functinos. The challenge thus was to create a neural network architecture that could run effeciently on CPUs while providing the superior evaluation metrics.
+
+===== The Solution
+The critical innovation of NNUE is incrementally updated accumulators. The NNUE network typically consists of:
+- Input Layer: 40,960 features (piece+square combinations)
+- Hidden Layer: 256-1024 neurons with ClippedReLU activation
+- Output Layers: Two small layers producing a single evaluation score
+
+But, instead of recomputing the entire network for each position, NNUE maintains an "accumulator" that tracks the hidden layer's state. As such, when a move is made, only the features affected by said move are updated, reducing the evaluation cost.
+
+===== The Tradeoffs
+- Evaluation Speed: ~10-100x slower than hand-crafted evaluation, but 100-1000x faster than GPU-based deep networks
+- Search Depth: Reduced by 1-2 plies compared to classical Stockfish due to slower evaluation, but has better position understanding
+- Memory Footprint: Network weights (~20-50MB) are small enough to fit in CPU cache
+- Training Requirements: Requires hundreds of billions of training positions, but training is one-time and can be done offline, furthemore implementation is simpler because these trained networks are available online, for anyone on sites like: #link("https://tests.stockfishchess.org/nns")[Stockfish's FishTest]
+
+==== Quantization and Optimization
+===== The Problem
+Even with incremental updates, NNUE evaluation consumes significant CPU time. Further optimization was needed to maintain competitive search speeds.
+===== The Solution
+The solution to this for Stockfish was to implement aggressive quantization and CPU-specific optimizations:
+
+- 8-bit Integer Quantization: Network weights and activations use 8-bit integers instead of 32-bit floats
+- SIMD Vectorization: AVX2/AVX-512 instructions process 16-32 neurons simultaneously
+- Weight Permutation: Network weights are reordered in memory to optimize cache access patterns
+- Sparse Input Optimization: Most input features are zero (only ~30 active pieces); computation skips zero inputs
+
+===== Tradeoffs
+
+- Accuracy Loss: Quantization introduces small evaluation errors (~5-10 Elo), but the speed gain is worth it
+- Portability: Optimizations are CPU-specific; different binaries for different architectures
+- Complexity: Low-level optimization code is difficult to maintain and debug
+- Speed Gain: Combined optimizations achieve ~3-5x speedup over naive implementation
+
+Modern Stockfish evaluates ~1-5 million positions per second with NNUE on high-end CPUs, compared to 50-70 million with classical evaluation. The 10-20x slowdown is acceptable because NNUE's superior evaluation quality means fewer positions need to be searched for the same playing strength.
+
+==== Strength and Impact
+===== Current Performance
+
+- Estimated Elo: ~3600-3650 (depending on hardware and time controls)
+- Improvement: ~150-200 Elo stronger than pre-NNUE Stockfish
+- Comparison to LC0: Roughly equal strength, with different stylistic characteristics
+- Dominance: Won TCEC Season 19 (November 2020) and has remained dominant in classical time controls
+
+==== The State of the art
+The NNUE integration succeeded where previous neural network attempts failed because it respected the constraints of CPU-based alpha-beta search:
+
+- Computational Efficiency: The shallow architecture and incremental updates keep evaluation fast enough for deep search. NNUE evaluates positions 100-1000x faster than LC0's deep networks while being only 10-20x slower than classical evaluation.
+
+- Training Efficiency: Supervised learning from engine positions converges in days rather than months, making iterative improvement practical. The community can experiment with new architectures and training techniques without requiring massive computational resources.
+
+- Incremental Adoption: Stockfish could integrate NNUE while preserving its existing search infrastructure, minimizing risk. The classical evaluation function remains as a fallback, and search tuning could be done gradually.
+
+- Hardware Accessibility: CPU-only execution means NNUE runs on commodity hardware, unlike LC0 which requires GPUs for competitive performance. This democratizes access to top-level chess engines.
+
+==== Limitations and Future Directions
+Despite its success, NNUE-based engines have limitations:
+- Evaluation Speed: Still 10-20x slower than classical evaluation, limiting search depth in very fast time controls (bullet, ultrabullet). In extremely short time controls, the depth loss outweighs evaluation quality gains.
+
+- Architecture Constraints: The shallow network architecture may be approaching its strength ceiling. Deeper networks would provide better evaluation but sacrifice too much speed. Research continues on architectures that balance depth and efficiency.
+
+- Training Data Quality: NNUE's strength depends on training data quality. Biased or low-quality training positions can introduce weaknesses. Generating high-quality training data remains an active research area.
+
+- Interpretability: Like all neural networks, NNUE's decisions are opaque. Unlike classical evaluation's explicit piece-square tables and mobility terms, NNUE cannot explain its evaluation.
+
+- Hardware Dependency: Peak performance requires modern CPUs with AVX2/AVX-512 support. Older hardware sees smaller improvements, creating a performance gap between hardware generations.
+
+==== The Current State of Chess Programming
+The hybrid approach has become the dominant paradigm in chess programming as of 2025:
+
+- Stockfish: Remains the strongest CPU-based engine, continuously improving through better NNUE architectures and training
+- LC0: Continues development with larger networks and improved MCTS algorithms, especially strong on GPUs
+- Other Engines: Dragon, Berserk, Koivisto, and others have adopted NNUE-like approaches
+- Convergence: Top engines are within 50-100 Elo of each other, with stylistic differences rather than clear strength hierarchies
+
+The success of NNUE demonstrates that the future of chess programming likely lies not in purely classical or purely neural approaches, but in carefully designed hybrids that leverage the strengths of both paradigms. Alpha-beta search computational efficiency, while neural networks provide positional understanding and pattern recognition. Together, they have pushed chess engine strength to levels that would have seemed impossible just a decade ago.
 
 #pagebreak()
 
