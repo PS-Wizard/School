@@ -3,9 +3,10 @@
 #show: academic-theme.with(
   title: "Techniques In Chess Programming: A Comprehensive Review",
   author: "Swoyam Pokharel",
-  date: "October 2025",
   abstract: [
-    TODO
+    This literature review explores the core techniques that have shaped modern chess programming. It begins by covering the mathematical foundations of game tree search, analyzing minimax, negamax, and alpha-beta pruning that form the backbone of traditional engines. After which, it explores the implementation approaches for board representation, different move generation techniques, and memory optimization through transposition tables and Zobrist hashing.
+
+    Furthermore, this paper covers the transition from classical evaluation methods to the recent shift toward neural networks. It examines search optimizations like iterative deepening, quiescence search, null move pruning, and move ordering heuristics, that enable engines to search deeper while maintaining efficiency. Finally, the paper evaluates the classical alpha-beta paradigm (Stockfish) with neural network-guided Monte Carlo Tree Search approaches (AlphaZero, Leela Chess Zero), analyzing their trade-offs and the current convergence toward hybrid systems. In essence, This paper establishes the current state of chess programming and identifies the techniques that have proven essential for competitive engine development.
   ],
 )
 
@@ -15,14 +16,14 @@
 
 The game of chess has served as a proving ground for artificial intelligence research for decades now. From Claude Shannon's foundational paper framing chess as a computational problem, to Deepmind's AlphaZero achieving extremely high strength through sheer self-play; chess has redefined the boundaries of algorithmic reasoning. Today, chess engines have far exceeded human capacity, with top engines like Stockfish and Leela Chess Zero estimated to operate at over 3500 Elo, approximately 800 Elo above the best humans to play chess.
 
-What started as theoretical curiosity, that if solved, would force us to create "mechanized thinking", has now transformed into a vast domain for algorithmic innovation. Shannon recognized early on that exhaustive search was not feasible a typical chess game lasting 40 moves, containing approximately $10^120$ possible position variations; a number that far exceeds the number of atoms in the observable universe @shannon_1950_programming[p. 4]. This fundamental constraint, paired with the well-defined rules and success criteria, made chess an ideal playground for developing selective search methods, heuristic evaluation, and other fundamental techniques in modern AI.
+What started as theoretical curiosity, that, if solved, would to create "mechanized thinking" has now transformed into a vast domain for algorithmic innovation. Shannon recognized early on that exhaustive search was not feasible, as a typical chess game lasting 40 moves, contains approximately $10^120$ possible position variations; a number that far exceeds the number of atoms in the observable universe @shannon_1950_programming[p. 4]. This fundamental constraint, paired with the well-defined rules and clear win criteria, made chess an ideal playground for developing selective search methods, heuristic evaluation, and other fundamental techniques in modern AI.
 
 = Foundations of Search
 The strength of a chess engine fundamentally depends on its ability to search through the game tree and identify a move that leads to the best position. This section reviews the mathematical and algorithmic foundations that underpin modern chess engines.
 
 
 == Minimax and Negamax Framework
-The game of chess, like any two-player, zero-sum game, can be represented as a game tree, where nodes represent legal board positions and edges represent legal moves. The foundation of searching for the best move is the determination of the minimax value, defined as the least upper bound on the score for the side to move, representing the true value of a position @marsland[p. 3]. This framework, first formalized in the 1950s, remains the foundational principle for search tree traversal in classical game AI, with universal consensus across modern implementations @marsland[p.3] @Brange[p.18] @parallel_chess_searching[p.24-p.26].
+The game of chess, like any two-player, zero-sum game, can be represented as a game tree, where nodes represent legal board positions and edges represent legal moves. The foundation of searching for the best move, is the calculation of the minimax value, defined as the least upper bound on the score for the side to move, that represents the true value of a position @marsland[p. 3]. This framework, first formalized in the 1950s, remains the foundational principle for search tree traversal in classical game AI, with universal consensus across modern implementations @marsland[p.3] @Brange[p.18] @parallel_chess_searching[p.24-p.26].
 
 
 === Minimax Formulation
@@ -40,9 +41,9 @@ The fundamental assumption is that both players play perfectly, with Max choosin
 
 
 === Negamax Simplification
-The name "negamax" comes from "negative maximum" and is a simplification of the minimax algorithm. Unlike minimax, negamax utilizes the zero-sum nature, so instead of using two functions $F(p)$ and $G(p)$, negamax uses a single function, $F(p)$, but one that is *defined from the perspective of the player to move* to maximize the negative of the opponent's score. This removes the need to oscillate between minimizing and maximizing, making the algorithm easier to implement, and as such is often preferred over minimax @marsland[p.5]. Similar to minimax, the game can be defined as a tree where nodes are positions ($p$) and the edges are legal moves ($d$) from position $p$ that lead to successor positions ($p_1, p_2, ... p_d$).
+The name "negamax" comes from "negative maximum" and is a simplification of the minimax algorithm. Unlike minimax, negamax utilizes the zero-sum nature, so instead of using two functions $F(p)$ and $G(p)$, negamax uses a single function, $F(p)$, but one that is *defined from the perspective of the player to move* to maximize the negative of the opponent's score. This removes the need to oscillate between minimizing and maximizing, making the algorithm easier to implement, and as such is often preferred over minimax for practical implementations @marsland[p.5]. Similar to minimax, the game can be defined as a tree where nodes are positions ($p$) and the edges are legal moves ($d$) from position $p$ that lead to successor positions ($p_1, p_2, ... p_d$).
 
-- *Value Function*: The value function $F(p)$ represents the best value that the *player to move* can guarantee from position $p$, with the assumptoin that both players play optimally.
+- *Value Function*: The value function $F(p)$ represents the best value that the *player to move* can guarantee from position $p$, with the assumption that both players play optimally.
 
   - If $p$ is a terminal position ($d = 0$): $ F(p) = f(p) $
     where $f(p)$ is an evaluation function that gives the outcome from the perspective of the player to move.
@@ -61,7 +62,7 @@ Hence, the current player chooses the move that maximizes $-F(p_i)$, the equival
 
 
 == Pruning
-A game of chess typically lasts $~40$ moves, and with a branching factor of 35, at that number there are $~10^24$ possible positions reachable just from the starting position. This, makes it unfeasible to do an exhaustive search, as the time complexity with just negamax is $O(b^d)$, where $b = "branching factor", d = "depth"$ @shannon_1950_programming[p. 4] @marsland[p. 4]. This computational constraint has driven the development of pruning techniques that maintain search accuracy while dramatically reducing the nodes examined.
+A game of chess typically lasts $~40$ moves, and has a branching factor of 35, meaning that each position offers roughly 35 legal moves. Even for a game lasting around 40 moves per player (80 plies), this yields a search space on the order of $10^40 - 10^100$. This, makes it unfeasible to do an exhaustive search, as the time complexity of a basic negamax (or minimax) search is $O(b^d)$, where $b = "branching factor", d = "depth"$ @shannon_1950_programming[p. 4] @marsland[p. 4]. This computational constraint has driven the development of pruning techniques that maintain search accuracy while dramatically reducing the nodes examined.
 
 
 === Branch-and-Bound Optimization
@@ -73,7 +74,7 @@ $
   )
 $
 
-The intuition behind $F_1$ is that when evaluating a position $p$ from the current player's perspective with a known bound that represents the best value achievable till now, $F_1$ computes and returns the value if it is less than the bound, or "$>= "bound"$" if it is equal or greater than the bound; simply put, once it determines that a position achieves a value atleast as good as the bound, the exact value is irrelevant since the opponent will avoid this line of play, allowing the branch to be pruned away.
+The intuition behind $F_1$ is that when evaluating a position $p$ from the current player's perspective with a known bound that represents the best value achievable till now, $F_1$ computes and returns the value if it is less than the bound, or "$>= "bound"$" if it is equal or greater than the bound; simply put, once it determines that a position achieves a value at least as good as the bound, the exact value is irrelevant since the opponent will avoid this line of play, allowing the branch to be pruned away.
 
 This reduces the number of nodes evaluated from $O(b^d)$, although the exact reduction depends on other factors such as move ordering and tree structure. This approach bridges the gap between the pure negamax approach $F$ and alpha-beta pruning.
 
@@ -93,7 +94,7 @@ $
   )
 $
 
-@knuth_1975_an[p.6]. Pruning happens when $alpha >= beta$, the intuition behind which is that the maximizing player already has an option $alpha$ that is at least as good as what the opponent will allow $beta$. Thus, the minimizing player will not allow reaching this position, because we assume optimal play, so we prune that branch @marsland[p.4].
+@knuth_1975_an[p.6]. Pruning happens when $alpha >= beta$; the intuition behind which is that the maximizing player already has an option $alpha$ that is at least as good as what the opponent will allow $beta$. Thus, the minimizing player will not allow reaching this position, because we assume optimal play, so we prune that branch @marsland[p.4].
 
 
 ==== Deep Cutoffs
@@ -107,11 +108,9 @@ In the best case, where the "best" move was examined first at every node, alpha-
 However, this performance is critically dependent on move ordering. When a computer plays chess, it rarely searches until the *true terminal* position; instead, they end at a certain depth and evaluate the position using heuristic evaluation functions. As such, to achieve performance closer to the theoretical best case, chess programs employ different move ordering heuristics like examining captures or checks first, or iteratively deepening to prioritize moves that performed well in shallower searches.
 
 ==== Challenging Alpha-Beta's Dominance
-While Knuth and Moore's proof established alpha-beta's theoretical optimality within the framework of brute-force minimax search, recent developments challenge whether this remains optimal. AlphaZero's success with Monte Carlo Tree Search (MCTS) guided by deep neural networks demonstrated that selective search based on learned policy estimates can outperform traditional alpha-beta approaches, despite examining $~1000times$ fewer positions @mastering[p.3-p.5]. This represents a paradigm shift, going from guaranteed pruning through mathematical bounds $[alpha-beta]$ to probabilistic selection through learned heuristics.
+While Knuth and Moore's proof established alpha-beta's theoretical optimality within the framework of brute-force minimax search, recent developments challenge whether this remains optimal. AlphaZero's success with Monte Carlo Tree Search (MCTs) guided by deep neural networks demonstrated that selective search based on learned policy estimates can outperform traditional alpha-beta approaches, despite examining $~1000times$ fewer positions @mastering[p.3-p.5]. This represents a paradigm shift, going from guaranteed pruning through mathematical bounds $[alpha-beta]$ to probabilistic selection through learned heuristics.
 
-Traditional alpha-beta engines work using brute-force with guaranteed pruning, while neural network guided MCTS engines seek efficiency through highly accurate selectivity learned from self-play @mastering[p.3-p.5]. While earlier MCTS implementations proved weaker than alpha-beta @mastering[p.12], coupling MCTS with deep neural networks achieved superiority, challenging the widespread belief that alpha-beta was inherently better suited for chess.
-
-However, the subsequent integration of NNUE / ƎUИИ into Stockfish suggests a hybrid approach rather than a full replacement; with modern engines combining alpha-beta's efficiency with neural evaluation @Stockfish2025NNUEWiki. A core research gap remains in definitively quantifying the performance comparison between these evolved approaches under varying time controls and hardware constraints.
+Traditional alpha-beta engines work using brute force with guaranteed pruning, while neural network guided MCTs engines seek efficiency through highly accurate selectivity learned from self-play @mastering[p.3-p.5]. While earlier MCTs implementations proved weaker than alpha-beta @mastering[p.12], coupling MCTs with deep neural networks achieved superiority, challenging the widespread belief that alpha-beta was inherently better suited for chess. Later sections of this review will examine these contrasting and converging approaches in greater depth, outlining the empirical and theoretical foundations behind these evolving techniques
 
 
 == The Horizon Effect
@@ -124,7 +123,7 @@ Shannon acknowledged the importance of evaluating only those positions that are 
 === Quiescence Search
 Quiescence search is the principal approach to solving the horizon effect problem, by ensuring that a position is stable before evaluation. Sources universally agree that Quiescence Search (QS) is critical for handling tactical volatility, extending search beyond the depth limit (horizon) to ensure evaluation occurs only in "quiet"  positions @marsland[p.7] @parallel_chess_searching[p.41] @bijl_2021_exploring[p.11]. QS is a type of search extension that continues evaluation of all the forcing moves until a "quiet" position is reached. Rather than terminating the search at a fixed depth regardless of the position's characteristics, quiescence search adapts, extending analysis in tactical positions.
 
-With that said, a consistent theoretical framework defining "true quiescence" remains undeveloped, forcing reliance on heuristic thresholds for when QS should stop @marsland[p.8]. This represents an ongoing research gap about what exactly is a "quiet" position means, with it's definition varying between implementations. As of now, no mathematical definition has emerged to replace the intuitive heuristics currently used.
+With that said, a consistent theoretical framework defining "true quiescence" remains undeveloped, forcing reliance on heuristic thresholds for when QS should stop @marsland[p.8]. This represents an ongoing research gap about what exactly is a "quiet" position objectively means, with it's definition varying between implementations. As of now, no mathematical definition has emerged to replace the intuitive heuristics currently used.
 
 ==== Performance Impact
 QS often comes with big performance impacts. When Tesseract added quiescence search to an engine already equipped with transposition tables, iterative deepening, and MVV-LVA move ordering, the results were:
@@ -155,7 +154,7 @@ But, its intuitiveness, this comes with performance costs. Most notably, indexin
 This representation mimics a physical board, generally using a single-dimensional array of 64 elements instead of a two two-dimensional one, where each index can either contain a piece or be empty. While simple, this representation is inefficient for move generation as it requires loops and conditional checks for things like off-board movement @sophie[p.15]. Thus, in practice, a more common approach is the `0x88`.
 
 ==== 0x88
-This is a variant of the mailbox approach that pads the array, resulting in a 16x8 array with sentinel values. This padding helps eliminate out-of-bounds checks, reducing them to a single sentinel value comparison @bijl_2021_exploring[p.4] @tessaract[p.6-p.7]. In performance tests, the 0x88 based approach was nearly equal to BitBoards in Perft speed, coming in at `46.496 Mn/s` @bijl_2021_exploring[p.19]. This finding challenges the conventional wisdom that bitboard's primary advantage lies solely in move generation speed.
+This is a variant of the mailbox approach that pads the array, resulting in a `16x8` array with sentinel values. This padding helps eliminate out-of-bounds checks, reducing them to a single sentinel value comparison @bijl_2021_exploring[p.4] @tessaract[p.6-p.7]. In performance tests, the 0x88 based approach was nearly equal to BitBoards in Perft speed, coming in at `46.496 Mn/s` @bijl_2021_exploring[p.19]. This finding challenges the conventional wisdom that BitBoard's primary advantage lies solely in move generation speed.
 
 
 === BitBoards
@@ -169,18 +168,18 @@ This representation generally uses different BitBoards for each piece type and e
   caption: "Example Position Represented Using BitBoards",
 )
 
-It is worth noting that BitBoards aren't limited to representing piece occupancies; they can also represent attack patterns, which is the core idea behind pre-computed lookup tables for fast, constant-time move generation, with techniques such as PEXT or Magic Bitboards.
+It is worth noting that BitBoards aren't limited to representing piece occupancies; they can also represent attack patterns, which is the core idea behind pre-computed lookup tables for fast, constant-time move generation, with techniques such as PEXT or Magic BitBoards.
 
 
 === Hybrid Approaches
-Modern engines incorporate both BitBoards and a mailbox-style approach. Bitboards are used for filtering and move generation, while the mailbox is used for fast data access. This comes at a slightly larger memory cost and the overhead of having to incrementally update multiple data structures per move @tessaract[p.6-p.7] @bijl_2021_exploring[p.5], but the speed benefit's it offers are generally considered to be worth this overhead.
+Modern engines incorporate both BitBoards and a mailbox-style approach. BitBoards are used for filtering and move generation, while the mailbox is used for fast data access. This comes at a slightly larger memory cost and the overhead of having to incrementally update multiple data structures per move @tessaract[p.6-p.7] @bijl_2021_exploring[p.5], but the speed benefit's it offers are generally considered to be worth this overhead.
 
-=== Beyond Move Generation: Why BitBoards Dominate
-While sources universally agree that BitBoards are the preferred representation for competitive engines @alphadeepchess[p.30] @bijl_2021_exploring[p.5], the reasons behind this preference reveal an important nuance.
+=== Why BitBoards Dominate
+While sources universally agree that BitBoards are the preferred representation for competitive engines @alphadeepchess[p.30] @bijl_2021_exploring[p.5], the reasons behind it reveal interesting nuances.
 
-Bijl & Tiet's findings challenge the conventional narrative: traditional array based representations like 0x88 boards can achieve comparable speeds to BitBoards in isolated move generation tasks (Perft tests) @bijl_2021_exploring[p.20]. This is surprising given that move generation, particularly through techniques like PEXT or Magic Bitboards, appeared to be the primary justification for adopting Bitboards.
+Bijl & Tiet's findings challenge the conventional narrative: traditional array based representations like 0x88 boards can achieve comparable speeds to BitBoards in isolated move generation tasks (Perft tests) @bijl_2021_exploring[p.20]. This is surprising given that move generation, particularly through techniques like PEXT or Magic BitBoards, appeared to be the primary justification for adopting BitBoards.
 
-However, BitBoards are preferred for full-purpose engines not primarily because of move generation, but because they accelerate other aspects such as evaluation, which heavily relies on fast bitwise operations where array based methods struggle @tessaract[p.10] @bijl_2021_exploring[p.20]. This distinction is important as the common assumption that board representation performance matters primarily for move generation is incorrect. Both architectures perform adequately in move generation, but evaluation benefits significantly from bitboard representations @bijl_2021_exploring[p.20].
+However, BitBoards are preferred for full-purpose engines not primarily because of move generation, but because they accelerate other aspects such as evaluation, which heavily relies on fast bitwise operations where array based methods struggle @tessaract[p.10] @bijl_2021_exploring[p.20]. This distinction is important as the common assumption that board representation performance matters primarily for move generation is incorrect. Both architectures perform adequately in move generation, but evaluation benefits significantly from BitBoard representations @bijl_2021_exploring[p.20].
 
 In Bijl & Tiet's complete engine tests, move generation accounted for only about 10% of processing time, with evaluation forming the primary bottleneck. Thus, BitBoards remain the optimal choice not solely due to move generation speed, but because of their performance advantages across the entire engine pipeline.
 
@@ -194,10 +193,10 @@ Engines approach generating legal moves differently. Some engines produce legal 
 A pseudo-legal move is one that follows the rules of how pieces typically move but does not account for whether the king is in check. If an engine takes this route, it is forced to check for legality afterward, generally by making that move on a copy of the board and verifying that it doesn't leave the king in check.
 
 ==== Legal Move Generation
-A legal move is a subset of pseudo-legal moves that accounts for the king being in check. This approach is more complex than pseudo-legal move generation as it needs to account for pinned pieces, checking pieces, and typically requires producing a checkmask that later filters the moves @sophie[p.65].
+A legal move is a subset of pseudo-legal moves that accounts for the king being in check. This approach is more complex than pseudo-legal move generation as it needs to account for pinned pieces, checking pieces, and typically requires producing a check-mask that later filters the moves @sophie[p.65].
 
 ==== Pseudo-Legal Vs Legal Move Generation
-Although pseudo-legal move generation adds to the running time of the move generation algorithm because of the need to check for legality during search @sophie[p.11], it tends to be preferred. During the search phase with pruning heuristics such as alpha-beta, if a cutoff occurs, the engine avoids wasting time generating or verifying the legality of moves that would have been pruned regardless @parallel_chess_searching[p.56] @bijl_2021_exploring[p.20]. As such, modern engines, including the highest-rated engine #link("https://stockfishchess.org/")[Stockfish], prefer the pseudo-legal move generation approach.
+Although pseudo-legal move generation adds to the running time of the move generation algorithm because of the need to check for legality during search @sophie[p.11], it tends to be preferred. During the search phase with pruning heuristics such as alpha-beta, if a cutoff occurs, the engine avoids wasting time generating or verifying the legality of moves that would have been pruned regardless @parallel_chess_searching[p.56] @bijl_2021_exploring[p.20]. As such, modern engines, including the highest-rated engine #link("https://Stockfishchess.org/")[Stockfish], prefer the pseudo-legal move generation approach.
 
 === Generating Moves For Non-Sliding Pieces
 
@@ -253,11 +252,11 @@ Now, to filter out capturing friendly pawns, it's simply `knight_attacks[28] & !
 For sliding pieces like bishops, rooks, and queens, simple lookup tables do not suffice because their movement depends on the blocker configuration. The simplest approach is to iterate over the squares until the end of the board is reached, but this is inefficient. The evolution of techniques for handling sliding pieces represents a key advancement in chess programming: initial runtime calculations evolved to static table lookups facilitated first by complex hash techniques like Magic BitBoards, and then by the introduction of hardware-accelerated PEXT instructions @hash_funtions[p.10]. Thus, there are two main approaches to tackle this problem:
 
 ==== Magic BitBoards
-Magic BitBoards are an advanced optimization used in chess engines to efficiently generate pseudo-legal moves for sliding pieces. They convert the move generation problem into a lookup operation; essentially a hashing technique that uses the blocker configuration as a key to index the correct pseudo-legal attack bitboard. Before 2013, Magic Bitboards were considered the fastest practical solution @hash_funtions[p.26] @bijl_2021_exploring[p.8]. This technique consists of three key components:
+Magic BitBoards are an advanced optimization used in chess engines to efficiently generate pseudo-legal moves for sliding pieces. They convert the move generation problem into a lookup operation; essentially a hashing technique that uses the blocker configuration as a key to index the correct pseudo-legal attack BitBoard. Before 2013, Magic BitBoards were considered the fastest practical solution @hash_funtions[p.26] @bijl_2021_exploring[p.8]. This technique consists of three key components:
 
-1. *Precomputing Phase*: At initialization, the engine first enumerates all possible blocker configurations for each square and piece type using the #link("https://groups.google.com/g/rec.games.chess/c/KnJvBnhgDKU/m/yCi5yBx18PQJ")[carry-rippler] or similar technique. Afterward, the engine calculates and stores the resulting pseudo-legal moves. This creates a large but manageable lookup table mapping blocker configurations to attack BitBoards @bijl_2021_exploring[p.7-p.8] @tessaract[p.10].
+1. *Pre-computing Phase*: At initialization, the engine first enumerates all possible blocker configurations for each square and piece type using the #link("https://groups.google.com/g/rec.games.chess/c/KnJvBnhgDKU/m/yCi5yBx18PQJ")[Carry-Rippler] or similar technique. Afterward, the engine calculates and stores the resulting pseudo-legal moves. This creates a large but manageable lookup table mapping blocker configurations to attack BitBoards @bijl_2021_exploring[p.7-p.8] @tessaract[p.10].
 
-2. *The Magic Number*: Magic BitBoards use multiplicative hashing with carefully chosen constants (magic numbers) that act as perfect hash functions, transforming the blocker configuration bitboard into unique indices. These magic numbers are found through brute force, generally done once during development, and then used as static values afterward.
+2. *The Magic Number*: Magic BitBoards use multiplicative hashing with carefully chosen constants (magic numbers) that act as perfect hash functions, transforming the blocker configuration BitBoard into unique indices. These magic numbers are found through brute force, generally done once during development, and then used as static values afterward.
 
 During runtime, the index is calculated as:
 ```rust
@@ -288,9 +287,10 @@ index = PEXT(blockers, ray_mask)
 ```
 
 ==== Magic vs. PEXT
-The distinction between Magic BitBoards and PEXT Bitboards represents a hardware-driven evolution rather than a purely algorithmic advancement. PEXT's theoritical superiority depends entirely on hardware support (machines running pre-Haswell for Intel and some pre-Excavator/pre-Zen for AMD dont support BMI2), making Magic Bitboards the essential fallback for platforms lacking this instruction @hash_funtions[p.10] @tessaract[p.10].
+The distinction between Magic BitBoards and PEXT BitBoards represents a hardware-driven evolution rather than a purely algorithmic advancement. PEXT's theoretical superiority depends entirely on hardware support (machines running pre-Haswell for Intel and some pre-Excavator/pre-Zen for AMD dont support BMI2), making Magic BitBoards the essential fallback for platforms lacking this instruction @hash_funtions[p.10] @tessaract[p.10].
 
-However, empirical testing reveals a surprising result. Based on 100 runs of Stockfish's benchmark suite, PEXT BitBoards provide only a 2.3% speedup over Magic Bitboards @hash_funtions[p.10], corroborated by Bijl & Tiet's findings @bijl_2021_exploring[p.20]. The choice between Magic and PEXT thus becomes less about raw performance and more about implementation tradeoffs: PEXT offers simpler code without magic number generation, while Magic provides broader hardware compatibility.
+
+However, empirical testing reveals a surprising result. Based on 100 runs of Stockfish's benchmark suite, PEXT BitBoards provide only a 2.3% speedup over Magic BitBoards @hash_funtions[p.10], corroborated by Bijl & Tiet's findings @bijl_2021_exploring[p.20]. The choice between Magic and PEXT thus becomes less about raw performance and more about implementation tradeoffs: PEXT offers simpler code without magic number generation, while Magic provides broader hardware compatibility.
 
 ==== Performance Implications Across Representations
 
@@ -309,12 +309,12 @@ Bijl & Tiet's study yielded the following results:
   caption: "Bijl & Tiet's findings comparing PERFT and Search Speed across representations",
 )
 
-In summary, their findings challenge the general consensus that the main advantage of BitBoards is move generation speed @tessaract[p.6, p.10] @sophie[p.4] @parallel_chess_searching[p.49]. This study shows that mailbox approaches like `0x88` can keep up in Perft tests. However, in terms of evaluation, Bitboards are significantly faster, yielding more nodes searched during actual gameplay. @bijl_2021_exploring[p.19].
+In summary, their findings challenge the general consensus that the main advantage of BitBoards is move generation speed @tessaract[p.6, p.10] @sophie[p.4] @parallel_chess_searching[p.49]. This study shows that mailbox approaches like `0x88` can keep up in Perft tests. However, in terms of evaluation, BitBoards are significantly faster, yielding more nodes searched during actual gameplay. @bijl_2021_exploring[p.19].
 
 === Move Representation
-When an engine employs PEXT or Magic BitBoards, what it ends up getting as pseudo-legal / legal moves is a raw bitboard. This will not be sufficient as special moves, such as en-passant, castling, captures, promotions etc., require updating multiple different Bitboards. As such, to contextualize the `make_move` function, we need to pack the raw moves into an efficient structure.
+When an engine employs PEXT or Magic BitBoards, what it ends up getting as pseudo-legal / legal moves is a raw BitBoard. This will not be sufficient as special moves, such as en-passant, castling, captures, promotions etc., require updating multiple different BitBoards. As such, to contextualize the `make_move` function, we need to pack the raw moves into an efficient structure.
 
-The fundamental information that this structure has to capture is the `from` and the `to` square. Following the tradition of using unsigned integers to represent the entities, representing moves requires us to have an integer that is at least 12 bits long at minimum, with each 6-bits representing the `from` and the `to` square.However, modern engines like #link("https://stockfishchess.org/")[Stockfish] use a 16 bit representation for the moves @tessaract[p.12] @shannon_1950_programming[p.10] @bijl_2021_exploring[p. 8-9].
+The fundamental information that this structure has to capture is the `from` and the `to` square. Following the tradition of using unsigned integers to represent the entities, representing moves requires us to have an integer that is at least 12 bits long at minimum, with each 6-bits representing the `from` and the `to` square.However, modern engines like #link("https://Stockfishchess.org/")[Stockfish] use a 16 bit representation for the moves @tessaract[p.12] @shannon_1950_programming[p.10] @bijl_2021_exploring[p. 8-9].
 ```
 0000 000000 000000
 ____ ______ ______
@@ -353,9 +353,9 @@ Because of the branching factor of chess, just 9 plies deep from the starting po
 #pagebreak()
 
 = Foundations Of Evaluation
-Shannon first introduced the concept of an approximate evaluation function $f(P)$ to guide chess engines in selecting the best move, as he recognized that searching the entire game tree ($10^{120}$) is unfeasible @alphadeepchess[p.18] @shannon_1950_programming[p. 4-6]. This foundational insight established evaluation as a critical component of chess programming, with sources consistently agreeing that evaluation must address both material balance and positional factors @marsland[p.3] @alphadeepchess[p.33] @shannon_1950_programming[p.17] @bijl_2021_exploring[p.12].
+Shannon first introduced the concept of an approximate evaluation function $f(P)$ to guide chess engines in selecting the best move, as he recognized that searching the entire game tree is unfeasible @alphadeepchess[p.18] @shannon_1950_programming[p. 4-6]. This foundational insight established evaluation as a critical component of chess programming, with sources consistently agreeing that evaluation must address both material balance and positional factors @marsland[p.3] @alphadeepchess[p.33] @shannon_1950_programming[p.17] @bijl_2021_exploring[p.12].
 
-Originally, Shannon described this evaluating function $f(P)$ as one based on a combination of various established chess concepts and general chess principles that approximates the long-term advantages of a position. He also noted that $f(P)$ would produce a continuous quality range that reflects the "quality" of a move, as no move in chess is completely wrong or right. Most notably, Shannon suggested that $f(P)$ should include material advantage, pawn formation, piece mobility, and king safety @shannon_1950_programming[p.5, p.17]. These classical components, proposed in 1950, formed the baseline that evolved into increasingly specialized and complex heuristics through the 1980s and 1990s @mastering[p.10].
+Originally, Shannon described this evaluating function $f(P)$ as one based on a combination of various established chess concepts and general chess principles that approximates the long-term advantages of a position. He also noted that $f(P)$ would produce a continuous quality range that reflects the "quality" of a move, as no move in chess is inherently wrong or right in the literal sense. Most notably, Shannon suggested that $f(P)$ should include material advantage, pawn formation, piece mobility, and king safety @shannon_1950_programming[p.5, p.17]. These classical components, proposed in 1950, formed the baseline that evolved into increasingly specialized and complex heuristics through the 1980s and 1990s @mastering[p.10].
 
 This section, taking basis from Shannon's work, covers the techniques concerned with evaluating a position that chess engines have implemented over the years.
 
@@ -375,7 +375,7 @@ $
    "Queen" & = 950
 $
 
-@marsland[p.3] @alphadeepchess[p.34]. Although these values are the de facto standard, Bijl & Tiet note a study from S. Droste and J. Furnkranz for assigning values to pieces using reinforcement learning that yielded the following @bijl_2021_exploring[p.12]:
+@marsland[p.3] @alphadeepchess[p.34]. Although these values are the de-facto standard, Bijl & Tiet also note a study from S. Droste and J. Furnkranz for assigning values to pieces using reinforcement learning that yielded the following @bijl_2021_exploring[p.12]:
 
 $
     "Pawn" & = 100 \
@@ -387,7 +387,7 @@ $
 
 === Positional and Strategic Heuristics
 
-Of course, in a game of chess, material is not everything; other factors such as king safety, mobility, and pawn structure determine whether a position is good or bad. Positional elements (Piece Square Tables/PSTs, mobility, pawn structure, king safety) are necessary for strong play @shannon_1950_programming[p.17] @marsland[p.2] @alphadeepchess[p.34]. As such, to encapsulate these factors, chess engines have employed various techniques:
+In a game of chess, material is not everything; other factors such as king safety, mobility, and pawn structure determine whether a position is good or bad. Positional elements ( mobility, pawn structure, king safety) are necessary for strong play @shannon_1950_programming[p.17] @marsland[p.2] @alphadeepchess[p.34]. As such, to encapsulate these factors, chess engines have employed various techniques:
 
 ==== Piece Square Tables (PSTs)
 
@@ -398,16 +398,16 @@ Piece Square Tables are piece-specific, precomputed tables that assign a bonus o
   caption: "A Position With Equal Material Count",
 )
 
-Although both sides have the same material count, the white knight is arguably better than black's as it is towards the center and covers more squares @alphadeepchess[p.35] @Brange[p.31] @tessaract[p.33].
+Although both sides have the same material count, the Black's Knight is arguably better than the White's Knight as it is towards the center and covers more squares @alphadeepchess[p.35] @Brange[p.31] @tessaract[p.33].
 
-Tesseract's performance analysis shows that the implementation of PSTs caused the evaluation to go from 5640 to 8255, the single biggest evaluation impact amongst other heuristics. He also concludes that the most important heuristics for the evaluation function were the material and positional scores @tessaract[p.38-p.39]. This empirical validation demonstrates PSTs' critical role in bridging the gap between pure material counting and nuanced positional understanding.
+Tesseract's performance analysis shows that the implementation of PSTs caused the evaluation to go from 5640 to 8255, the single biggest evaluation impact amongst other heuristics. He also concludes that the most important heuristics for the evaluation function were the material and positional scores @tessaract[p.38-p.39]. This validation demonstrates PSTs' critical role in bridging the gap between pure material counting and nuanced positional understanding.
 
 ==== Pawn Structure
 
 Another positional aspect is the pawn structure; isolated, doubled, or backwards pawns are weak. As such, engines penalize the evaluation of such positions @bijl_2021_exploring[p.15] @tessaract[p.36].
 
 ==== Mobility
-Mobility can be defined as the number of legal moves available to a piece @bijl_2021_exploring[p.14] @parallel_chess_searching[p.57]. This is typically calculated by using popcount on our final attack BitBoard. A higher mobility score yields a better evaluation compared to a lower one.
+Mobility can be defined as the number of legal moves available to a piece @bijl_2021_exploring[p.14] @parallel_chess_searching[p.57].  A higher mobility score yields a better positional score compared to a lower one.
 
 ==== King Safety
 The King is the most important piece, as such its safety matters very much. Engines often approximate this by accounting for the proximity of enemy pieces and that of the friendly pieces. The bonus or penalty is then applied as needed @alphadeepchess[p.53] @tessaract[p.34].
@@ -418,7 +418,7 @@ To account for the fact that a piece's value and its position are also dependent
 
 === Parameter Tuning
 
-Tuning these PSTs and values is a way to increase the efficiency of these techniques. Bijl & Tiet's sequential tuning resulted in an average win rate increase of 15%. Their study also revealed that search depth was an important factor that determined the value of a piece. They found that the optimal Knight Material Score decreased with increasing depth, but the bishop pair increased. Their study also shows that stacked rooks were ranked high across all iterations of tuning @bijl_2021_exploring[p.20]. This depth-dependent variation in piece values challenges the notion of fixed material scores and suggests that optimal evaluation is context-sensitive. The findings imply that S. Droste and J. Furnkranz's reinforcement learning-derived values might've been more accurate than traditional centipawn assignments @bijl_2021_exploring[p.12], though this remains an open question requiring further empirical validation.
+Tuning these PSTs and values is a way to increase the efficiency of these techniques. Bijl & Tiet's sequential tuning resulted in an average win rate increase of 15%. Their study also revealed that search depth was an important factor that determined the value of a piece. They found that the optimal Knight Material Score decreased with increasing depth, but the bishop pair increased. Their study also shows that stacked rooks were ranked high across all iterations of tuning @bijl_2021_exploring[p.20]. This depth-dependent variation in piece values challenges the notion of fixed material scores and suggests that optimal evaluation is context-sensitive. The findings imply that S. Droste and J. Furnkranz's reinforcement learning-derived values might have been more accurate than traditional centipawn assignments @bijl_2021_exploring[p.12], though this remains an open question requiring further validation.
 
 
 #pagebreak()
@@ -468,7 +468,7 @@ Since Transposition Tables are often fixed in size due to resource limitations @
 - Depth Preferred Replacement: This technique acknowledges that deeper searches are more valuable than the shallower ones, as such an entry is replaced only if the new entry is greater in depth than the currently stored one. This preserves the most computationally expensive searches, while still allowing updates where it is better.
 
 === Syzygy Tablebases
-Chess endgames with seven or fewer pieces have been completely solved through exhaustive retrograde analysis @parallel_chess_searching[p.11]. Engines can leverage tablebases, such as Ronald de Man's Syzygy tablebases, to achieve perfect endgame play @bijl_2021_exploring[p.21]. These tablebases work by analyzing positions backwards from known outcomes (checkmate, stalemate, or drawn positions) to determine the optimal move and outcome for every possible configuration.
+Chess endgames with seven or fewer pieces have been completely solved through exhaustive retrograde analysis @parallel_chess_searching[p.11]. Engines can leverage tablebases, such as #link("https://www.chessprogramming.org/Ronald_de_Man")[Ronald de Man's] Syzygy tablebases, to achieve perfect endgame play @bijl_2021_exploring[p.21]. These tablebases work by analyzing positions backwards from known outcomes (checkmate, stalemate, or drawn positions) to determine the optimal move and outcome for every possible configuration.
 
 However, the storage requirements are substantial. The complete Syzygy tablebases scale dramatically with piece count: 3-5 piece endgames require 939 MiB, 6-piece endgames expand to 149.2 GB, and the full 7-piece tablebase consumes 16.7 TiB of storage #link("https://www.chessprogramming.org/Syzygy_Bases")[source]. This massive data requirement echoes Shannon's original proposal for a "dictionary" storing optimal moves for all positions @shannon_1950_programming[p.4]; an idea he dismissed as impractical due to size constraints. While Shannon's vision of solving the entire game remains infeasible ($10^120$ positions), modern engines have realized a practical subset: perfect play for the simplified positions that matter most, once sufficient material has been traded off the board.
 
@@ -478,27 +478,27 @@ In chess, a refutation is a move that punishes the opponent's last move, proving
 Black plays: Nf6 (developing the knight)
 White responds: e5 (kicks the knight, "refutes" the idea)
 ```
-and if this refutation worked well, the engine remembers to try the same move next time. A refutation table is a lightweight data structure that stores these effective refutations and main continuations. It is much simpler than the transposition table employing arrays instead of hashes, and are often referred to as space-efficient alternatives to transposition tables. This table is often preferred for low end devices with memory constraints. For devices with no memory constraint, this technique is still used as an additional aid for the search @marsland[p.16].
+and if this refutation worked well, the engine remembers to try the same move next time. A refutation table is a lightweight data structure that stores these effective refutations and main continuations. It is much simpler than the transposition table employing arrays instead of hashes, and are often referred to as space-efficient alternative to transposition tables. This table is often preferred for low end devices with memory constraints. For devices with no memory constraint, this technique is still used as an additional aid for the search @marsland[p.16].
 
 == Iterative Deepening
 
-Iterative Deepening, also known as "iterated aspiration search" or "progressive deepening"; a term first coined by de Groot @deGroot1965, is an optimization technique that chess engines employ, especially those that implement alpha-beta pruning. All traditional engines employ Iterative Deepening as a standard procedure to manage search time and enhance performance by improving move ordering and hash table utility across increasing depths @marsland[p.19] @Brange[p.38] @bijl_2021_exploring[p.11] @tessaract[p.21]. The idea behind iterative deepening is that when a search is requested to $D$ plies, the search will first go 1-ply, then 2-ply, and so on until it reaches $D$. Although this may seem counter-intuitive, since it means we're repeating the same search over and over again in each iteration,which is true to some extent,engines use the information gained from these shallow searches to prioritize the best moves in deeper searches, which prunes a lot of branches right off the bat. If caches like transposition tables are also implemented, it's possible that iterative deepening searches faster than an immediate search to the same depth @bijl_2021_exploring[p.10] @alphadeepchess[p.32] @Brange[p.38].
+Iterative Deepening, also known as "iterated aspiration search" or "progressive deepening"; a term first coined by de Groot @deGroot1965, is an optimization technique that chess engines employ, especially those that implement alpha-beta pruning. All traditional engines employ Iterative Deepening as a standard procedure to manage search time and enhance performance by improving move ordering and hash table utility across increasing depths @marsland[p.19] @Brange[p.38] @bijl_2021_exploring[p.11] @tessaract[p.21]. The idea behind iterative deepening is that when a search is requested to $D$ plies, the search will first go 1-ply, then 2-ply, and so on until it reaches $D$. Although this may seem counter-intuitive, as we're repeating the same search over and over again in each iteration, engines use the information gained from these shallow searches to prioritize the best moves in deeper searches, which prunes a lot of branches. If caches like transposition tables are also implemented, it's is also possible that iterative deepening searches faster than an immediate search to the same depth @bijl_2021_exploring[p.10] @alphadeepchess[p.32] @Brange[p.38].
 
 === Benefits of Iterative Deepening
 
 ==== Time Management
 
-Iterative Deepening is perhaps the de facto standard for time management, as it ensures that if a search is interrupted (e.g., due to a time limit), we have the result from the previously completed depth. As such, the result from the previous shallower depth search can be used rather than the deeper but incomplete search @marsland[p.17] @parallel_chess_searching[p.39].
+Iterative Deepening is perhaps the de-facto standard for time management, as it ensures that if a search is interrupted (e.g., due to a time limit), we have the result from the previously completed depth. As such, the result from the previous shallower depth search can be used rather than the deeper but incomplete search @marsland[p.17] @parallel_chess_searching[p.39].
 
 ==== Move Ordering
 
-Iterative Deepening helps move ordering significantly. Generally, the promising moves from previous shallower searches are searched first, and as such, the likelihood of finding a good move goes up, causing more pruning. The overall efficiency of iterative deepening comes from the fact that it can use the information from the previous search to get the Principal Variation, and then use that information to reorder moves in the current deeper search.
-
-==== Aspiration Windows
-
-The search score from a previous position provides a strong approximation for the expected value of the current search. This can be utilized to set a tight aspiration window for the new search, thus leading to more cut-offs @tessaract[p.21] @parallel_chess_searching[p.33].
+Iterative Deepening helps move ordering significantly. Generally, the promising moves from previous shallower searches are searched first, and as such, the likelihood of finding a good move goes up, enabling more pruning. The overall efficiency of iterative deepening comes from the fact that it can use the information from the previous search to get the Principal Variation, and then use that information to reorder moves in the current deeper search.
 
 In an empirical analysis of the KLAS engine, Brange mentions that the use of Iterative Deepening along with PV-Ordering caused the average search time to decrease by 28.7% on average @Brange[p.47].
+
+==== Aspiration Windows
+The search score obtained from a previously evaluated position often serves as a good approximation for the expected value of the current search. By leveraging this information, the engine can initialize a narrow search window. This tighter bound significantly reduces the number of nodes that need to be explored, since it increases the likelihood of early cutoffs during alpha–beta pruning @tessaract[p.21] @parallel_chess_searching[p.33].
+
 
 == Advanced Alpha-Beta Variations
 
@@ -511,10 +511,10 @@ MTD(f), short for Memory-enhanced Test Driver with node f, takes a different app
 This approach performs less work per individual search since minimal windows produce more cutoffs, but it requires searching multiple times. As such, a strong transposition table is essential to avoid redundantly re-computing positions across multiple passes. In practice, MTD(f) can outperform PVS when combined with effective hashing @negascout. Despite its promise, PVS remains more widely adopted due to its simpler implementation and less strict dependency on transposition tables.
 
 == Move Ordering Heuristics
-Move ordering is critical for pruning effectiveness, as it establishes the threshold against which other positions are evaluated and thus subsequent inferior branches can be quickly ignored @parallel_chess_searching[p.31] @alphadeepchess[p.22]. Move ordering heuristics (Killer/History) were developed specifically to maximize alpha-beta's pruning capability @marsland[p.12]. Several heuristics exist to improve move ordering:
+Move ordering is critical for pruning effectiveness, as it establishes the threshold against which other positions are evaluated, allowing for subsequent, worse branches, to be ignored @parallel_chess_searching[p.31] @alphadeepchess[p.22]. Move ordering heuristics  were developed specifically to maximize alpha-beta's pruning capability @marsland[p.12].
 
 === Transposition Table Move (TT Move)
-The intuition behind the TT Move ordering is that the transposition table stores previously searched positions along with their best moves. So, when an engine encounters the same position, the table tells it what move was best last time. Depending on the depth, it's fair to assume that the same move is still probably very good since it's not just a heuristic guess from the evaluation function but a proven score from the search itself. This is the key idea behind prioritizing TT moves. Thus, transposition tables help both avoid re-computation and improve move ordering @parallel_chess_searching[p.37] @marsland[p.13].
+The intuition behind the TT Move ordering is that the transposition table stores previously searched positions along with their best moves. So, when an engine encounters the same position, the table tells it what move was best last time. Depending on the depth, it's fair to assume that the same move is still probably very good since it's not just a heuristic guess from the evaluation function but a proven score from the search itself. Thus, transposition tables help both avoid re-computation and improve move ordering @parallel_chess_searching[p.37] @marsland[p.13].
 
 === MVV-LVA
 The Most Valuable Victim - Least Valuable Aggressor (MVV-LVA) is a simple yet reasonably effective heuristic for ordering captures. It prioritizes positive material trades; for example, ordering a pawn capturing a queen ahead of a queen capturing a pawn. The idea is simple, winning material is good, and doing so without risking your valuable pieces is even better. This heuristic is fast to compute and works well because captures that win material often cause beta cutoffs @alphadeepchess[p.42] @mastering[p.11] @Brange[p.34]. In an assessment of the KLAS engine, MVV-LVA ordering resulted in the single biggest performance impact, decreasing execution time by 68.5% @Brange[p.45], which is evidence of its effectiveness.
@@ -529,7 +529,7 @@ The History Heuristic tracks how often a move causes a beta cutoff across the en
 These are mechanisms used in game-tree searching to strategically increase the search depth of certain moves, beyond the fixed depth @marsland[p.3]. The primary purpose of selective search extensions is to shape the game-tree so that "interesting" positions are explored more thoroughly and uninteresting ones aren't. Shannon categorizes this as a *type B* strategy @shannon_1950_programming[p.13]. However, these extensions need to be controlled as the tree can explode in size if done too frequently or extensively @parallel_chess_searching[p.43].
 
 === Check Extensions
-Checks are the most forceful type of move, as they limit the responses from the opponent. The rationale behind check extension is that, if an opponent is in check, it is reasonable to assume that it might lead to a checkmate, as such extending this might be beneficial. And since the opponent's responses are limited, it's not too computationally expensive. As such, check extensions are the most common type of extension heuristic. Check extensions differ from quiescence search in that they occur during the main alpha-beta search before the depth limit is reached, while quiescence search happens after the normal search depth is exhausted and continues until the position is tactically quiet @parallel_chess_searching[p.42].
+Checks are the most forceful type of move, as they limit the responses from the opponent. The rationale behind check extension is that, if an opponent is in check, it is reasonable to assume that it might lead to a checkmate, as such extending the analysis of this move might be beneficial. And since the opponent's responses are limited, it's not too computationally expensive. As such, check extensions are the most common type of extension heuristic. Check extensions differ from quiescence search in that they occur during the main alpha-beta search before the depth limit is reached, while quiescence search happens after the normal search depth is exhausted and continues until the position is tactically quiet @parallel_chess_searching[p.42].
 
 === Pawn Pushes
 In this mechanic, the search is extended if the pawn is near promotion, typically when a pawn is moved to the 7th (for white) or 2nd (for black) rank. Passed pawns advancing to these ranks create significant threats that can drastically alter the evaluation, making deeper analysis necessary to assess promotion threats and defensive resources accurately. This should optimally be added to quiescence search itself if possible @parallel_chess_searching[p.43] @marsland[p.8].
@@ -572,31 +572,32 @@ The Young Brothers Wait Concept (YBWC) represents an early, theoretically princi
 
 This design aligns with the structure of alpha-beta node types. In Type 1 (PV) nodes, where all children must be searched, YBWC's sequential first approach establishes tight alpha and beta bounds before parallelizing the remaining children @parallel_chess_searching[p. 78]. Similarly, for Type 2 (CUT) nodes with good move ordering, a cutoff typically occurs after searching the first child, meaning the young brothers never need to be searched at all,making the wait concept perfectly efficient @parallel_chess_searching[p. 62]. However, YBWC proves suboptimal for Type 3 (ALL) nodes, where all children must be searched regardless. Here, forcing the first child to be searched sequentially wastes potential parallelism, as all children could have been evaluated simultaneously from the start.
 
-Despite its theoretical soundness, YBWC has struggled in practice. The AlphaDeepChess project implemented YBWC for its multithreaded search but observed performance degradation rather than improvement. The decline was attributed to synchronization overhead, the costs of thread creation and destruction, and the implementation's inability to effectively leverage a shared transposition table for concurrent access @alphadeepchess[p.62]. These practical challenges have led modern engines, most notably Stockfish, to #link("https://github.com/official-stockfish/Stockfish/commit/ecc5ff6693f116f4a8ae5f5080252f29b279c0a1")[switch away from YBWC to Lazy SMP].
+Despite its theoretical soundness, YBWC has struggled in practice. The AlphaDeepChess project implemented YBWC for its multithreaded search but observed performance degradation rather than improvement. The decline was attributed to synchronization overhead, the costs of thread creation and destruction, and the implementation's inability to leverage a shared transposition table for concurrent access @alphadeepchess[p.62]. These practical challenges have led modern engines, most notably Stockfish, to #link("https://github.com/official-Stockfish/Stockfish/commit/ecc5ff6693f116f4a8ae5f5080252f29b279c0a1")[switch away from YBWC to Lazy SMP].
 
 === Lazy SMP
 Lazy Symmetric MultiProcessing (Lazy SMP) takes a very different approach to parallelization. Rather than carefully coordinating threads, it spawns independent threads that each perform a complete search autonomously, sharing information only through the transposition table @Brange[p.39] @tessaract[p.27].
 
 This "lazy" technique; allowing threads to redundantly search similar positions instead of enforcing perfect work distribution, sounds counterintuitive, yet proves remarkably effective in practice. To prevent threads from exploring identical lines simultaneously, implementations employ randomized move ordering at the root node, ensuring each thread's search diverges early @Brange[p.39] @tessaract[p.27].
 
-In practice, Lazy SMP achieved a 33.1% reduction in average execution time on a four-core system in the KLAS engine @Brange[p.58] and a 40% speedup in Tesseract @tessaract[p.27]. However, these gains come with tradeoffs; memory usage increases substantially, and garbage collection overhead can become significant, as noted in the KLAS implementation @Brange[p.58]. Nevertheless, despite these costs and its inherently wasteful nature, Lazy SMP remains the dominant multithreaded search method in modern chess engines, outcompeting more theoretically sophisticated alternatives through sheer simplicity and effectiveness.
+In practice, Lazy SMP achieved a 33.1% reduction in average execution time on a four-core system in the KLAS engine @Brange[p.58] and a 40% speedup in Tesseract @tessaract[p.27]. However, these gains come with tradeoffs; memory usage increases substantially, and garbage collection overhead can become significant, as noted in the KLAS implementation @Brange[p.58]. Nevertheless, despite these costs and its inherently wasteful nature, Lazy SMP remains the dominant multithreaded search method in modern chess engines, outcompeting more theoretically sound alternatives through sheer simplicity.
 
-A research gap still remains in determining the optimal way to integrate modern parallel processing techniques into the core alpha-beta algorithm to maximize parallel scaling benefits.
+However, a research gap still remains in determining the optimal way to integrate modern parallel processing techniques into the core alpha-beta algorithm to maximize parallel scaling benefits.
 
 
 
 = Evaluation Optimizations & Enhancements
 
-Despite their historical dominance and continued utility, HCE functions face a fundamental limitation: they rely on human domain expertise and are bounded by the strategies and heuristics humans can explicitly model @mastering[p.2] @shannon_1950_programming[p.5]. This means that even the best HCE is theoretically limited to the level of the best human player's explicit understanding. This limitation becomes particularly apparent when modeling complex, non-linear positional relationships where intuition guides understanding, but precise formalization remains elusive @mastering[p.12] @Nasu2018NNUE[p.1].
-This gap has paved the way for the shift toward neural network-based evaluation, which leverages machine learning to capture patterns that evade explicit human definition, resulting in demonstrably stronger evaluations. These days, the standard approach to counteract HCE's limitations is NNUE, which we explore in the following sections.
+Despite their historical dominance and continued utility, HCE functions face a fundamental limitation: they rely on human domain expertise and are bounded by the strategies and heuristics humans can explicitly model @mastering[p.2] @shannon_1950_programming[p.5]. This means that even the best HCE is theoretically limited to the level of the best human player's explicit understanding. This limitation becomes apparent when trying to explicitly model non-linear relationships, that are guided by human intuition @mastering[p.12] @Nasu2018NNUE[p.1].
+
+This gap has paved the way for the shift toward neural network-based evaluation, which leverages machine learning to capture patterns that go beyond human definition, resulting in demonstrably stronger evaluations.
 
 == Monte Carlo Tree Search and Neural Network Engines
 
-Moving away from traditional alpha-beta architectures, engines like AlphaZero and Leela Chess Zero employ Monte Carlo Tree Search (MCTS), a fundamentally different approach to finding the best move. Unlike alpha-beta search which aims for exhaustive coverage within a depth limit, MCTS grows its tree asymmetrically, concentrating computational effort on the most promising variations @mastering[p.3]. This represents the paradigm shift identified in the search algorithms literature: traditional high performance chess engines like Stockfish relied heavily on refined, hand-crafted heuristics guiding highly efficient alpha-beta search, while AlphaZero's algorithm entirely replaced alpha-beta search with a general purpose MCTS guided by a deep neural network, demonstrating that selective search based on learned policy value estimates can surpass the brute-force efficiency of alpha-beta search @mastering[p.3-p.5].
+Moving away from traditional alpha-beta architectures, engines like AlphaZero and Leela Chess Zero employ Monte Carlo Tree Search (MCTs), a fundamentally different approach to finding the best move. Unlike alpha-beta search which aims for exhaustive coverage within a depth limit, MCTs grows its tree asymmetrically, concentrating computational effort on the most promising variations @mastering[p.3]. This represents the paradigm shift in the search algorithms: traditional high performance chess engines like pre-NNUE Stockfish relied heavily on refined, hand-crafted heuristics guiding highly efficient alpha-beta search, while AlphaZero's algorithm entirely replaced alpha-beta search with a general purpose MCTs guided by a deep neural network, demonstrating that selective search based on learned policy value estimates can surpass the brute-force efficiency of alpha-beta search @mastering[p.3-p.5].
 
-=== MCTS Algorithm
+=== MCTs Algorithm
 
-MCTS operates through four iterative phases that build the search tree incrementally:
+MCTs operates through four iterative phases that build the search tree incrementally:
 + *Selection*: Starting from the root position, traverse the tree by selecting moves that balance exploring new possibilities with exploiting known strong lines, guided by the UCB1 (Upper Confidence Bound) formula.
 + *Expansion*: When reaching an unvisited position, add it to the tree as a new node.
 + *Simulation*: Evaluate the new position to estimate its value (traditionally via random playouts, but in AlphaZero using neural network evaluation).
@@ -604,9 +605,9 @@ MCTS operates through four iterative phases that build the search tree increment
 
 This process repeats thousands of times per move, gradually building confidence about which moves are strongest.
 
-=== AlphaZero's Neural-Guided MCTS
+=== AlphaZero's Neural-Guided MCTs
 
-In AlphaZero, MCTS is guided by a deep neural network $f_theta (s)$ that takes the board position $s$ as input and outputs two critical values @mastering[p.2]:
+In AlphaZero, MCTs is guided by a deep neural network $f_theta (s)$ that takes the board position $s$ as input and outputs two critical values @mastering[p.2]:
 + *Policy ($bold(p)$)*: A probability distribution indicating which moves are most promising.
 + *Value ($v$)*: An estimate of the expected game outcome from this position (ranging from -1 for a loss to +1 for a win).
 
@@ -614,19 +615,19 @@ AlphaZero has no handcrafted chess knowledge beyond the basic rules and learns e
 
 - *Value Loss*: $(z - v)^2$, minimizing the mean-squared error between the predicted outcome $v$ and the actual game outcome $z$ (where $z = +1$ for win, $0$ for draw, $-1$ for loss)
 
-- *Policy Loss*: $-bold(pi)^T log bold(p)$, maximizing similarity between the network's policy $bold(p)$ and the search probabilities $bold(pi)$ generated by MCTS
+- *Policy Loss*: $-bold(pi)^T log bold(p)$, maximizing similarity between the network's policy $bold(p)$ and the search probabilities $bold(pi)$ generated by MCTs
 
 Notably, AlphaZero optimizes for expected outcome (accounting for draws as $0$), whereas its predecessor AlphaGo Zero treated draws as losses, optimizing only for win probability @mastering[p.3].
 
 === Comparison with Traditional Engines
 
-This neural-guided MCTS approach differs fundamentally from traditional alpha-beta engines:
+This neural-guided MCTs approach differs fundamentally from traditional alpha-beta engines:
 
 #figure(
   table(
     columns: (auto, auto, auto),
     align: left,
-    [*Aspect*], [*AlphaZero / MCTS*], [*Stockfish / Alpha-Beta*],
+    [*Aspect*], [*AlphaZero / MCTs*], [*Stockfish / Alpha-Beta*],
     [Primary Algorithm], [Monte Carlo Tree Search], [Alpha-Beta Pruning],
     [Evaluation], [Deep Neural Network], [HCE / NNUE],
     [Knowledge Source], [Learned from self-play], [Handcrafted + tuning],
@@ -634,7 +635,6 @@ This neural-guided MCTS approach differs fundamentally from traditional alpha-be
     [Evaluation Speed], [~80,000 positions/second], [~70,000,000 positions/second],
     [Search Depth], [Deeper in critical lines], [Uniform depth with extensions],
     [Hardware], [GPU-optimized], [CPU-optimized],
-    [Training Cost], [Massive (thousands of TPU-hours)], [Incremental tuning],
     [Interpretability], [Black box], [Transparent heuristics],
   ),
   caption: "Comparison of AlphaZero and Traditional Engine Approaches",
@@ -642,14 +642,14 @@ This neural-guided MCTS approach differs fundamentally from traditional alpha-be
 
 The most striking difference is evaluation speed: AlphaZero examines approximately 80,000 positions per second while Stockfish evaluates roughly 70 million. However, AlphaZero compensates for this speed disadvantage through superior selectivity, using its neural network to prioritize the most promising lines and achieving superior results despite searching $~1000 times$ fewer positions @mastering[p.4].
 
-While older MCTS implementations proved weaker than alpha-beta @mastering[p.12], coupling MCTS with deep neural networks achieved superiority, challenging the widespread belief that alpha-beta was inherently better suited for these domains. In head-to-head competition, using 64 threads and a hash size of 1GB, AlphaZero convincingly defeated all opponents, losing zero games to Stockfish @mastering[p.5].
+While older MCTs implementations proved weaker than alpha-beta @mastering[p.12], coupling MCTs with deep neural networks achieved superiority, challenging the widespread belief that alpha-beta was inherently better suited for these domains. In head-to-head competition, using 64 threads and a hash size of 1GB, AlphaZero convincingly defeated all opponents, losing zero games to Stockfish @mastering[p.5].
 
 == NNUE ( ƎUИИ Efficiently Updatable Neural Networks )
-The Efficiently Updatable Neural Network (NNUE) represents a major shift in how chess engines particularly, approach evaluation functions. Originally proposed by Yu Nasu @Nasu2018NNUE for computer shogi, NNUE introduces a hybrid paradigm that merges the pattern recognition strength of neural networks with the speed and deterministic precision of handcrafted linear evaluators. The shift towards neural networks began in specialized fields like Shogi (Sankoma-Kankei models) @Nasu2018NNUE, accelerating quickly with the successes of AlphaZero (2017) @mastering. The later creation of the NNUE architecture (2018-2019) enabled top alpha-beta engines like Stockfish to successfully migrate to neural network evaluation without sacrificing the speed of alpha-beta search, representing the current state of the art @Stockfish2025NNUEWiki. The architecture was first integrated into Stockfish in 2019, and a #link("https://www.chessprogramming.org/File:NNEUOneYearEloGain.png")[big performance leap] was observed.
+The Efficiently Updatable Neural Network (NNUE) represents a major shift in how chess engines, particularly, approach evaluation functions. Originally proposed by Yu Nasu @Nasu2018NNUE for computer shogi, NNUE introduces a hybrid paradigm that merges the pattern recognition strength of neural networks with the speed of traditional handcrafted evaluators. The shift towards neural networks began in specialized fields like Shogi (Sankoma-Kankei models) @Nasu2018NNUE, accelerating quickly with the successes of AlphaZero (2017) @mastering. The later creation of the NNUE architecture (2018-2019) enabled top alpha-beta engines like Stockfish to successfully migrate to neural network evaluation without sacrificing the speed of alpha-beta search, representing the current state of the art @Stockfish2025NNUEWiki. The architecture was first integrated into Stockfish in 2019, and a #link("https://www.chessprogramming.org/File:NNEUOneYearEloGain.png")[big performance leap] was observed.
 
 Unlike deep convolutional or reinforcement-learning models such as AlphaZero, NNUE is designed explicitly for CPU execution rather than GPU acceleration. It uses a fully connected, shallow neural network, optimized for rapid, low-precision inference, which enables the network to update evaluations incrementally after each move, rather than recalculating from scratch. @Nasu2018NNUE
 
-A distinctive component of NNUE is its difference, based mechanism, where the system maintains an internal accumulator. When a piece moves, only the relevant features, encoded through HalfKP relationships, are updated. This allows near instantaneous position evaluation while preserving the expressive nonlinearity of a neural network. Furthermore, quantization of weights and activations into integer domains (often 8–16 bits) allows the network to leverage SIMD instructions for massive speed-ups on standard CPUs.
+A distinctive component of NNUE is its, difference based mechanism, where the system maintains an accumulator. When a piece moves, only the relevant features, encoded through HalfKP (depending on the version) relationships, are updated. This allows near instantaneous position evaluation. Furthermore, quantization of weights and activations into integer domains (often 8–16 bits) allows the network to leverage SIMD instructions for better speed on standard CPUs.
 
 NNUE's introduction bridged the gap between hand engineered heuristics (HCE) and learned evaluation. It's implementation into major engines such as Stockfish and Komodo Dragon resulted in strength gains exceeding 100 Elo, demonstrating that lightweight neural architectures can coexist with traditional search algorithms without the computational demands of deep learning frameworks. @Stockfish2025NNUEWiki @Nasu2018NNUE.
 
@@ -666,7 +666,7 @@ The NNUE architecture consists of four layers designed for efficient evaluation 
 
 The input layer uses a sparse binary representation called HalfKP (or HalfKAv2 in modern versions), where features represent the presence of specific pieces on specific squares relative to each king's position. The network processes two "halves" simultaneously, one for each king, with each half containing information about all pieces on the board relative to that king's position.
 
-In the original HalfKP architecture, each half receives 41,024 binary inputs (64 king positions × 641 inputs per position), where each input indicates whether a particular piece occupies a particular square or not. These inputs connect to a 256 neuron hidden layer per half, resulting in over 10 million weights in this feature transformer. This massive overparameterization allows the network to learn complex position dependent patterns.
+In the original HalfKP architecture, each half receives 41,024 binary inputs (64 king positions × 641 inputs per position), where each input indicates whether a particular piece occupies a particular square or not. These inputs connect to a 256 neuron hidden layer per half, resulting in over 10 million weights in this feature transformer. This massive overparameterization allows the network to learn complex patterns.
 
 The modern HalfKAv2 architecture improves upon this by using 45,056 inputs per side (11 piece types × 64 squares × 64 king positions) mapped to a 512 neuron feature transformer per side. This version eliminates redundancy by considering that the king's own square doesn't need to be encoded as a separate feature.
 
@@ -698,15 +698,15 @@ These layers use ClippedReLU activation functions, which clip values to a $[0,12
 All network weights and intermediate values use quantized integer arithmetic rather than floating point calculations. The feature transformer uses 16 bit integers, while subsequent layers use 8 bit integers. This quantization enables efficient SIMD  operations using CPU instructions like AVX2, processing multiple values simultaneously.
 
 === NNUE's Architectural Constraints and Research Gaps
-NNUE's architecture is fundamentally defined to provide fast evaluation within the tight performance loop of a high speed, single-threaded alpha-beta search engine @Stockfish2025NNUEWiki @Nasu2018NNUE. A quantitative gap exists in optimizing NNUE: developing superior feature sets beyond HalfKP / HalfKAv2 and refining the quantization and layer structure to achieve greater accuracy without sacrificing the necessary speed @Stockfish2025NNUEWiki. Additionally, sophisticated methods for automatically tuning complex sets of handcrafted heuristics (like advanced Texel tuning approaches) are still needed to close the gap between man made and machine learned evaluations further @bijl_2021_exploring[p.17].
+NNUE's architecture is fundamentally defined to provide fast evaluation within the tight performance loop of a high speed, single-threaded alpha-beta search engine @Stockfish2025NNUEWiki @Nasu2018NNUE. A quantitative gap exists in optimizing NNUE: developing superior feature sets other than HalfKP / HalfKAv2 and refining the quantization and layer structure to achieve greater accuracy without sacrificing the speed @Stockfish2025NNUEWiki. Additionally, sophisticated methods for automatically tuning complex sets of handcrafted heuristics (like advanced Texel tuning approaches) are still needed to close the gap between man made and machine learned evaluations further @bijl_2021_exploring[p.17].
 
 == The State Of Neural Network Based Engines
 
-Neural network evaluation architecture changes drastically based on whether it targets traditional CPU-bound search or selective MCTS systems. NNUE is optimized for low-latency CPU inference within alpha-beta's tight performance loop, aiming for exhaustive search @Stockfish2025NNUEWiki @Nasu2018NNUE, while AlphaZero's CNNs are better suited for GPU/TPU acceleration and batch processing in MCTS @mastering.
+Neural network evaluation architecture changes drastically based on whether it targets traditional CPU-bound search or selective MCTs systems. NNUE is optimized for CPU based low-latency with alpha-beta's, aiming for exhaustive search @Stockfish2025NNUEWiki @Nasu2018NNUE, while AlphaZero's CNNs are better suited for GPU/TPU acceleration and batch processing in MCTs @mastering.
 
-The integration of NNUE into Stockfish demonstrates a hybrid approach rather than complete replacement of alpha-beta search. Given that engines must maintain compatibility with consumer hardware, NNUE is often preferred despite MCTS potentially offering stronger evaluation @Stockfish2025NNUEWiki.
+The integration of NNUE into Stockfish demonstrates a hybrid approach rather than complete replacement of alpha-beta search for future engines. Given that engines must maintain compatibility with consumer hardware, NNUE is often preferred despite MCTs potentially offering stronger evaluation @Stockfish2025NNUEWiki.
 
-Be that as it may, a core research gap remains in quantifying performance comparisons between highly optimized alpha beta engines with neural evaluations (like Stockfish/NNUE) versus pure neural network-guided MCTS systems, especially under varying time controls and hardware constraints.
+Be that as it may, a core research gap remains in quantifying performance comparisons between highly optimized alpha beta engines with neural evaluations (like Stockfish/NNUE) versus pure neural network-guided MCTs systems, especially under varying time controls and hardware constraints.
 
 #pagebreak()
 
@@ -720,37 +720,37 @@ Stockfish, first released in 2008 as a fork of Glaurung, became the world's stro
 
 The pre-NNUE Stockfish architecture consisted of several tightly coupled components, designed for maximum effeciency. The section below explores the architectural choices made int he development of Stockfish:
 
-==== Bitboard + Mailbox Hybrid Representation
+==== BitBoard + Mailbox Hybrid Representation
 ===== The Problem
-Bitboards are proven to be excellent at bulk operations and enable computing attacks with the help of magic bitboards or PEXT boards, but they are inefficient for random access queries of piece and type occupancy on the board.
+BitBoards are proven to be excellent at bulk operations and enable computing attacks with the help of magic BitBoards or PEXT boards, but they are inefficient for random access queries of piece and type occupancy on the board.
 
 ===== The Solution
-Thus, stockfish maintains both the bitboard and mailbox representations together to counter bitboard's limitation. Stockfish maintained 12 different bitboards, one for each piece type and color for effecient move generation and evaluation, and a 64-element array to provide `O(1)` piece lookups.
+Thus, Stockfish maintains both the BitBoard and mailbox representations together to counter BitBoard's limitation. Stockfish maintained 12 different BitBoards, one for each piece type and color for effecient move generation and evaluation, and a 64-element array to provide `O(1)` piece lookups.
 
 ===== Tradeoffs
-- *Memory Cost:* Approximately 2x representation overhead (12 bitboards + 64-byte mailbox + auxiliary data). The board can be represented with just 8 bitboards without the mailbox.
+- *Memory Cost:* Approximately 2x representation overhead (12 BitBoards + 64-byte mailbox + auxiliary data). The board can be represented with just 8 BitBoards without the mailbox.
 - *Synchronization Cost:* Every move must update both representations
-- *Speed Gain:* Move generation benefits from bitboard operations (no need to filter piece type with white_pieces & rooks or black_pieces & rooks) while evaluation benefits from mailbox lookups
+- *Speed Gain:* Move generation benefits from BitBoard operations (no need to filter piece type with white_pieces & rooks or black_pieces & rooks) while evaluation benefits from mailbox lookups
 
-Move generation uses bitboards with Magic BitBoards for sliding pieces, achieving constant-time lookup. Evaluation functions query the mailbox for piece-square table indexing. The hybrid approach enables both components to operate at peak efficiency rather than compromising one for the other.
+Move generation uses BitBoards with Magic BitBoards for sliding pieces, achieving constant-time lookup. Evaluation functions query the mailbox for piece-square table indexing. The hybrid approach enables both components to operate at peak efficiency rather than compromising one for the other.
 ==== Move Generation
 
 ===== The Problem
-Stockfish uses precomputed bitboards for non-sliding pieces, but generating moves for sliding pieces (bishops, rooks, queens) requires determining which squares are attacked based on the blocker configuration. This is computationally intensive and occurs millions of times per second.
+Stockfish uses precomputed BitBoards for non-sliding pieces, but generating moves for sliding pieces (bishops, rooks, queens) requires determining which squares are attacked based on the blocker configuration. This is computationally intensive and occurs millions of times per second.
 
 ===== The Solution
-Stockfish implements both, Magic Bitboards and PEXT Boards to acheive constant-time generation of moves for sliding-pieces. It selects between them at compile-time based on the CPU's capabilities.
+Stockfish implements both, Magic BitBoards and PEXT Boards to acheive constant-time generation of moves for sliding-pieces. It selects between them at compile-time based on the CPU's capabilities.
 
 ===== Tradeoffs
 - *PEXT Benefits:* Simpler code (no magic number generation), slightly faster (2.3% speedup) @hash_funtions[p.10]
 - *PEXT Costs:* Requires Haswell+ (Intel 2013) or Zen+ (AMD 2018) CPUs; some AMD processors have slow PEXT implementation
-- *Magic Bitboards Benefits:* Universal compatibility, predictable performance
-- *Magic Bitboards Costs:* Complex initialization (finding magic numbers), more code complexity
+- *Magic BitBoards Benefits:* Universal compatibility, predictable performance
+- *Magic BitBoards Costs:* Complex initialization (finding magic numbers), more code complexity
 
 By maintaining both implementations, Stockfish achieves maximum performance on modern hardware while remaining functional on older systems. The compile-time detection ensures zero runtime overhead from abstraction.
 
 ==== Lazy SMP for Parallelization
-Stockfish originally used Young Brothers Wait Concept (YBWC) for parallel search, but later #link("https://github.com/official-stockfish/Stockfish/commit/ecc5ff6693f116f4a8ae5f5080252f29b279c0a1")[switched to Lazy SMP] noting that it scales better than YBWC for high number of threads.
+Stockfish originally used Young Brothers Wait Concept (YBWC) for parallel search, but later #link("https://github.com/official-Stockfish/Stockfish/commit/ecc5ff6693f116f4a8ae5f5080252f29b279c0a1")[switched to Lazy SMP] noting that it scales better than YBWC for high number of threads.
 
 ===== Trade-offs
 - *Redundant Work:* Threads inevitably search some identical positions
@@ -793,13 +793,13 @@ Despite it's dominance, Stockfish had one major fundamental constraint,it's unde
 The handcrafted evaluation function, despite decades of refinement, was still fundamentally bounded by human understanding. Complex positional factors like long term piece coordination and king safety nuances in unusual positions were difficult to model in explicit heuristics. This limitation paved the way for the next generation of chess engines, ones powered by neural networks.
 
 
-== Neural Network Based: MCTS + Deep-Learning
+== Neural Network Based: MCTs + Deep-Learning
 
 December 2017 marked a paradigm shift in the world of chess programming. AlphaZero, having learned the rules of chess through self-play over four hours, played 100 games against Stockfish, the strongest engine at that time. The results were remarkable: AlphaZero won 28 games, drew 72, and lost none.
 
 Neural network-based engines like AlphaZero employ Monte Carlo Tree Search which is guided by deep neural networks that are trained through self-play. This approach sacrifices speed, examining 80,000 positions per second compared to Stockfish's 70 million @mastering[p.4], in favor of evaluation accuracy and selectivity. This architecture is fundamentally dependent on GPU acceleration for neural network inference and represents a completely different philosophy than exhaustive search: search the most promising positions accurately rather than all positions efficiently.
 
-Leela Chess Zero emerged as the open-source implementation of this paradigm, enabling the broader chess programming community to experiment with neural MCTS approaches without the computational resources of DeepMind.
+Leela Chess Zero emerged as the open-source implementation of this paradigm, enabling the broader chess programming community to experiment with neural MCTs approaches without the computational resources of DeepMind.
 
 === Case Study: Leela Chess Zero (LC0)
 
@@ -813,11 +813,11 @@ The LC0 architecture fundamentally inverts the classical approach: instead of fa
 Traditional hand-crafted evaluation functions have a difficult time trying to capture the non-linear patterns that come with chess positions. Engines like Stockfish were seeing diminishing returns from their refinements because there is simply so much nuance that we can explicitly model in hand-crafted evaluation functions. This limitation made it so that traditional approaches struggled with long-term positional understanding and subtle tactical nuances that go beyond simple material or mobility metrics.
 
 ===== The Solution
-LC0 and AlphaZero employ a deep residual convolutional neural network (ResNet) architecture, typically with 15-40 residual blocks. This neural network takes the board state as input (encoded in multiple planes representing piece positions, castling rights, en passant, etc.) and outputs two values:
+LC0 and AlphaZero employ a deep residual convolutional neural network (ResNet) architecture, typically with 15-40 residual blocks. This neural network takes the board state as input (encoded in multiple planes representing piece positions, castling rights, en-passant, etc.) and outputs two values:
 - *Policy Head:* A probability distribution over all legal moves
 - *Value Head:* A win/draw/loss evaluation of the position
 
-===== The Tradeoffs
+===== The Trade-offs
 - *Training Costs:* This shoots up compared to traditional approaches. As these models require millions of self-play games and explicitly require GPUs to do so, these models aren't really viable for the average user.
 - *Inference Speed:* These models by their nature sacrifice the number of positions evaluated in favor of accuracy and selectivity, often evaluating hundreds of times fewer positions than their traditional counterpart.
 - *Evaluation Quality:* It balances out the low number of positions analyzed by learning subtle patterns over its self-play phase, which allows it to select the most promising lines and see qualities beyond what humans have explicitly modeled in their hand-crafted heuristics.
@@ -825,29 +825,29 @@ LC0 and AlphaZero employ a deep residual convolutional neural network (ResNet) a
 
 The network's depth allows it to find patterns in pawn structures, piece coordination, and king safety through entirely learned features rather than programmed rules.
 
-==== Monte Carlo Tree Search (MCTS)
+==== Monte Carlo Tree Search (MCTs)
 
 ===== The Problem
-Traditional alpha-beta search assumes that each chess position can be accurately evaluated in isolation. However, positions in chess are often too complex for immediate evaluation, and the true value only emerges after exploring possible continuations. Although traditional architectures have also acknowledged this and attempt to counter this using techniques like quiescence search, MCTS takes a fundamentally different approach.
+Traditional alpha-beta search assumes that each chess position can be accurately evaluated in isolation. However, positions in chess are often too complex for immediate evaluation, and the true value only emerges after exploring possible continuations. Although traditional architectures have also acknowledged this and attempt to counter this using techniques like quiescence search, MCTs takes a fundamentally different approach.
 
 ===== The Solution
-LC0 implements a neural network-guided MCTS using the PUCT (Predictor + Upper Confidence Bounds for Trees) algorithm. Instead of random or exhaustive playouts, each node expansion consists of:
+LC0 implements a neural network-guided MCTs using the PUCT (Predictor + Upper Confidence Bounds for Trees) algorithm. Instead of random or exhaustive play, each node expansion consists of:
 1. Querying the neural network for policy (move probabilities) and value (position evaluation)
 2. Selecting moves to explore based on: Q(s,a) + U(s,a), where U balances exploitation and exploration
-3. Backpropagating the neural network's evaluation up the tree
+3. Back propagating the neural network's evaluation up the tree
 
 ===== Tradeoffs
-- *Selectivity vs. Coverage:* MCTS explores promising variations deeply rather than all variations uniformly
-- *Uncertainty Handling:* Visit count-based exploration ensures underevaluated moves get reconsidered
+- *Selectivity vs. Coverage:* MCTs explores promising variations deeply rather than all variations uniformly
+- *Uncertainty Handling:* Visit count-based exploration ensures under-evaluated moves get reconsidered
 - *Time Distribution:* Spends more time on critical positions, less on trivial ones
 - *Search Instability:* Early search can dramatically shift as new variations are explored
 
-This approach allows MCTS to explore promising lines deeply rather than every line uniformly, growing the tree asymmetrically. Unlike alpha-beta's deterministic best-first search, MCTS is inherently a probabilistic model. It gradually converges toward optimal play but initially explores suboptimal branches. This makes its play style appear "human-like" initially while finding "unconventional" moves that prove to be extremely strong several moves later.
+This approach allows MCTs to explore promising lines deeply rather than every line uniformly, growing the tree asymmetrically. Unlike alpha-beta's deterministic best-first search, MCTs is inherently a probabilistic model. It gradually converges toward optimal play but initially explores suboptimal branches. This makes its play style appear "human-like" initially while finding "unconventional" moves that prove to be extremely strong several moves later.
 
 ==== Virtual Loss for Parallelization
 
 ===== The Problem
-MCTS parallelization is challenging because multiple threads selecting moves simultaneously can all choose the same promising node, leading to redundant exploration and wasted computation.
+MCTs parallelization is challenging because multiple threads selecting moves simultaneously can all choose the same promising node, leading to redundant exploration and wasted computation.
 
 ===== The Solution
 LC0 implements virtual loss: when a thread selects a node for exploration, it temporarily decreases that node's value as if it had lost. This discourages other threads from immediately exploring the same line. Once the neural network evaluation returns, the virtual loss is removed and replaced with the actual evaluation.
@@ -884,25 +884,25 @@ The distributed nature of LC0's training, with volunteers worldwide contributing
 - Estimated Elo: ~3500-3550 (with large networks on strong GPUs)
 - Approximately 50-100 Elo stronger than pre-NNUE Stockfish
 - Playing style characterized by deep positional understanding and long-term planning
-- Particularly strong in complex middlegames and closed positions
+- Particularly strong in complex middle-games and closed positions
 
 ==== Limitations
 Despite its strength, LC0/AlphaZero has several constraints:
 
 *Computational Requirements:* Due to their intrinsic model, these types of engines require high-end GPUs, making them inaccessible to many users. CPU-only inference is orders of magnitude slower.
 
-*Tactical Blindness:* The probabilistic nature of MCTS occasionally misses forcing tactical sequences that alpha-beta would find instantly through exhaustive search. LC0 can overlook short, critical variations if they initially appear unpromising.
+*Tactical Blindness:* The probabilistic nature of MCTs occasionally misses forcing tactical sequences that alpha-beta would find instantly through exhaustive search. LC0 can overlook short, critical variations if they initially appear unpromising.
 
 *Opening Book Dependency:* As these models converge, the early networks can struggle in sharp opening lines, requiring curated opening books to compensate and compete in tournaments.
 
-*Time Management:* MCTS's gradual convergence makes it perform relatively worse in fast time controls where immediate evaluation is beneficial rather than deep exploration.
+*Time Management:* MCTs's gradual convergence makes it perform relatively worse in fast time controls where immediate evaluation is beneficial rather than deep exploration.
 
 *Explainability:* The neural network's decision-making is opaque; unlike Stockfish's explicit evaluation terms, LC0 cannot explain why it prefers one move over another in human-understandable terms.
 
-These limitations highlight the complementary nature of the two paradigms: neural MCTS excels at strategic understanding and pattern recognition, while alpha-beta excels at tactical calculation and computational efficiency. This realization led to the next evolution in chess programming, and the current state of the art: a hybrid approach.
+These limitations highlight the complementary nature of the two paradigms: neural MCTs excels at strategic understanding and pattern recognition, while alpha-beta excels at tactical calculation and computational efficiency. This realization led to the next evolution in chess programming, and the current state of the art: a hybrid approach.
 
 == Hybrid Approach
-August of 2020 represents another paradigm shift, as it was the date when Stockfish officially intregated Effeciency Updatable Neural Networks (NNUE). This represented a combination of both traditional and neural network approaches, combining the computational effeciency of alpha-beta search with the pattern recognition capability of neural networks.  This hybrid allowed Stockfish to see a dramatic strength gain of ~100 Elo over it's previous implementation; the biggest jump it had seen in a long time. 
+August of 2020 represents another paradigm shift, as it was the date when Stockfish officially integrated Efficiently Updatable Neural Networks (NNUE). This represented a combination of both traditional and neural network approaches, combining the computational efficiency of alpha-beta search with the pattern recognition capability of neural networks.  This hybrid allowed Stockfish to see a dramatic strength gain of ~100 Elo over it's previous implementation; the biggest jump it had seen in a long time.
 
 Originally developed by Yu Nasu in 2018 specifically to counter the limitations of the previous approaches in the game of Shogi, for the engine #link("https://github.com/yaneurao/YaneuraOu")[YaneuraOu]. Unlike LeelaChess's ( LC0 ) and likewise AlphaZero's dependent on deep neural networks, NNUE uses a shallow but highly optimized architecture for CPU inference, and unlike the traditional hand crafted evaluation, it learns the evaluation through supervised learning from billions of positions. This results in an engine that searches with alpha-beta but evaluates with neural networks.
 
@@ -910,7 +910,7 @@ Originally developed by Yu Nasu in 2018 specifically to counter the limitations 
 
 ===== The Problem
 
-Deep neural networks, although powerful, require GPU acceleration and evaluate a significantly lower number of positions. Classical engines evaluate millions of positions but are limited by their hand-crafted evaluation functinos. The challenge thus was to create a neural network architecture that could run effeciently on CPUs while providing the superior evaluation metrics.
+Deep neural networks, although powerful, require GPU acceleration and evaluate a significantly lower number of positions. Classical engines evaluate millions of positions but are limited by their hand-crafted evaluation functions. The challenge thus was to create a neural network architecture that could run efficiently on CPUs while providing the superior evaluation metrics.
 
 ===== The Solution
 The critical innovation of NNUE is incrementally updated accumulators. The NNUE network typically consists of:
@@ -924,7 +924,7 @@ But, instead of recomputing the entire network for each position, NNUE maintains
 - Evaluation Speed: ~10-100x slower than hand-crafted evaluation, but 100-1000x faster than GPU-based deep networks
 - Search Depth: Reduced by 1-2 plies compared to classical Stockfish due to slower evaluation, but has better position understanding
 - Memory Footprint: Network weights (~20-50MB) are small enough to fit in CPU cache
-- Training Requirements: Requires hundreds of billions of training positions, but training is one-time and can be done offline, furthemore implementation is simpler because these trained networks are available online, for anyone on sites like: #link("https://tests.stockfishchess.org/nns")[Stockfish's FishTest]
+- Training Requirements: Requires hundreds of billions of training positions, but training is one-time and can be done offline. Furthermore, implementation is simpler because these trained networks are available online, for anyone on sites like: #link("https://tests.Stockfishchess.org/nns")[Stockfish's FishTest]
 
 ==== Quantization and Optimization
 ===== The Problem
@@ -981,7 +981,7 @@ Despite its success, NNUE-based engines have limitations:
 The hybrid approach has become the dominant paradigm in chess programming as of 2025:
 
 - Stockfish: Remains the strongest CPU-based engine, continuously improving through better NNUE architectures and training
-- LC0: Continues development with larger networks and improved MCTS algorithms, especially strong on GPUs
+- LC0: Continues development with larger networks and improved MCTs algorithms, especially strong on GPUs
 - Other Engines: Dragon, Berserk, Koivisto, and others have adopted NNUE-like approaches
 - Convergence: Top engines are within 50-100 Elo of each other, with stylistic differences rather than clear strength hierarchies
 
