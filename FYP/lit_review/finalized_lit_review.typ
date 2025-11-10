@@ -587,7 +587,7 @@ However, a research gap still remains in determining the optimal way to integrat
 
 = Evaluation Optimizations & Enhancements
 
-Despite their historical dominance and continued utility, HCE functions face a fundamental limitation: they rely on human domain expertise and are bounded by the strategies and heuristics humans can explicitly model @mastering[p.2] @shannon_1950_programming[p.5]. This means that even the best HCE is theoretically limited to the level of the best human player's explicit understanding. This limitation becomes apparent when trying to explicitly model non-linear relationships, that are guided by human intuition @mastering[p.12] @Nasu2018NNUE[p.1].
+Despite their historical dominance and continued utility, HCE functions face a fundamental limitation: they rely on human domain expertise and are bounded by the strategies and heuristics humans can explicitly model @mastering[p.2] @shannon_1950_programming[p.5]. This means that even the best HCE is theoretically limited to the level of the best human player's explicit understanding. This limitation becomes apparent when trying to explicitly model non-linear relationships, that are guided by human intuition @mastering[p.12] @Nasu2018NNUE[p.1] @Nasu2018NNUEOriginal.
 
 This gap has paved the way for the shift toward neural network-based evaluation, which leverages machine learning to capture patterns that go beyond human definition, resulting in demonstrably stronger evaluations.
 
