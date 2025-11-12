@@ -113,7 +113,7 @@
         *Name:* #author \
         *Student Number:* 2431342 \
         *Supervisor:* Prakriti Regmi \
-        *Reader:* Simon Giri
+        *Reader:* Siman Giri
       ]
     ]
     #v(0.5em)
