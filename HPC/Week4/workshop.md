@@ -1,4 +1,9 @@
-## Write a multithreaded C program to print out all the prime numbers between 1 to 10000. Use exactly 3 threads.
+### **Write a multithreaded C program to print out all the prime numbers between 1 to 10000. Use exactly 3 threads.**
+We:
+- Divide the number 10000 into 3 threads, with the first 2 taking (10000/3) and the last one taking the remaining threads
+- We create a range using that division, and each thread calls the `is_prime` function. 
+- The `is_prime` function checks if a number is prime, returns `1` if true, else `0`
+    - If true, the thread that called the function `is_prime` prints the number
 
 ```c
 #include <stdio.h>
@@ -53,8 +58,14 @@ int main() {
 
 ---
 
-## Convert this program to prompt the user for a number and then to create the number of threads the user has specified to find the prime numbers.
-
+### **Convert this program to prompt the user for a number and then to create the number of threads the user has specified to find the prime numbers.**
+We:
+- Ask the user for a maximum number to check for primes and the number of threads they want to use.
+- Divide the range `1..max` into `n` chunks based on the number of threads.
+- Each chunk is (max / n) numbers, except the last thread gets any remainder.
+- Each thread runs `check_range`, calling `is_prime `for each number in its chunk.
+- If a number is prime, the thread prints it.
+- All threads run concurrently, then main waits for all of them to finish with `pthread_join`.
 
 ```c
 #include <stdio.h>
@@ -114,8 +125,15 @@ int main() {
 
 ---
 
-## Convert the program in (2) so that each thread returns the number of prime numbers that it has found using pthread_exit() and for main program to print out the number of prime number that each thread has found.
+### **Convert the program in (2) so that each thread returns the number of prime numbers that it has found using pthread_exit() and for main program to print out the number of prime number that each thread has found.**
+We:
 
+- Same setup as (2), but now each thread keeps a count of the prime numbers it finds.
+- The thread allocates an int on the heap for the count (malloc) so it can safely return it.
+- For every prime it finds, it prints the number and increments its counter.
+- The thread exits with `pthread_exit(count)` returning its prime count to main.
+- main collects each thread’s count via `pthread_join` and prints how many primes each thread found.
+- We free the memory allocated by each thread after reading the count.
 
 ```c
 #include <stdio.h>
@@ -188,7 +206,17 @@ int main() {
 
 ---
 
-## Convert the program in (3) to use pthread_cancel() to cancel all threads as soon as the 5th prime number has been found.
+### **Convert the program in (3) to use pthread_cancel() to cancel all threads as soon as the 5th prime number has been found.**
+
+We:
+
+- Use a global counter `global_prime_count` with a mutex to track the total number of primes found.
+- Each thread is cancellable (`pthread_setcancelstate`) and checks for cancellation at safe points (`pthread_testcancel`).
+- Each thread loops through its assigned range, calling `is_prime`.
+- When a thread finds a prime:
+    - It locks the mutex, increments the global count, and prints the prime.
+    - If the global count hits 5, it cancels all other threads and exits.
+- main waits for all threads to finish (`pthread_join`) and prints the final global prime count.
 
 ```c
 #include <stdio.h>
@@ -281,10 +309,29 @@ int main() {
 }
 ```
 
+```bash
+[wizard@archlinux stuff]$ gcc e.c -lm
+[wizard@archlinux stuff]$ ./a.out
+Enter max number: 100
+Enter number of threads: 3
+Thread 0 found prime 2 (global count = 1)
+Thread 1 found prime 37 (global count = 2)
+Thread 1 found prime 41 (global count = 3)
+Thread 1 found prime 43 (global count = 4)
+Thread 2 found prime 67 (global count = 5)
+Final global prime count: 5
+[wizard@archlinux stuff]$
+```
 ---
 
-## In a banking system, multiple users can access and modify their accounts concurrently. Each user has a balance, and they can deposit or withdraw money. Modify the code below to use a mutex to prevent race conditions during balance updates and ensure that multiple users can't simultaneously update the balance of the same account.
+### **In a banking system, multiple users can access and modify their accounts concurrently. Each user has a balance, and they can deposit or withdraw money. Modify the code below to use a mutex to prevent race conditions during balance updates and ensure that multiple users can't simultaneously update the balance of the same account.**
+We:
 
+- Each account has a pthread_mutex_t lock to prevent simultaneous updates.
+- When a thread deposits or withdraws:
+    - It locks the account’s mutex, updates the balance, then unlocks.
+    - This ensures no race conditions even when multiple threads operate on the same account.
+- main initializes accounts and mutexes, runs multiple threads for deposits and withdrawals, waits for all threads, prints final balances, and destroys mutexes.
 ```c
 typedef struct {
     int accountNumber;
@@ -394,8 +441,14 @@ int main() {
 ```
 ---
 
-## A printer is shared among multiple users. Each user can either print a document or wait if the printer is in use. There are only 2 printers in the office. Use semaphores to manage the printer access, ensuring that no more than 2 users can print at the same time.
-
+### **A printer is shared among multiple users. Each user can either print a document or wait if the printer is in use. There are only 2 printers in the office. Use semaphores to manage the printer access, ensuring that no more than 2 users can print at the same time.**
+We:
+- There are 2 printers, controlled by a semaphore `printer_sem` initialized to 2.
+- Each user (thread) waits on the semaphore (`sem_wait`) before printing.
+- When a user starts printing, they hold a printer. Printing is simulated with sleep.
+- After finishing, the user releases the printer (`sem_post`).
+- This ensures no more than 2 users can print at the same time.
+- main creates multiple user threads, waits for them all (pthread_join), then destroys the semaphore.
 
 ```c
 #include <stdio.h>
@@ -442,3 +495,31 @@ int main() {
     return 0;
 }
 ```
+
+```bash
+[wizard@archlinux stuff]$ gcc f.c
+[wizard@archlinux stuff]$ ./a.out
+User 0 is using a printer...
+User 1 is using a printer...
+User 0 finished printing.
+User 1 finished printing.
+User 2 is using a printer...
+User 3 is using a printer...
+User 3 finished printing.
+User 2 finished printing.
+User 4 is using a printer...
+User 5 is using a printer...
+User 4 finished printing.
+User 5 finished printing.
+User 7 is using a printer...
+User 8 is using a printer...
+User 8 finished printing.
+User 7 finished printing.
+User 6 is using a printer...
+User 9 is using a printer...
+User 6 finished printing.
+User 9 finished printing.
+[wizard@archlinux stuff]$ ^C
+[wizard@archlinux stuff]$
+```
+
