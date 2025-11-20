@@ -315,8 +315,7 @@ public class GridRoadPainter : EditorWindow
         GameObject prefab = null;
         int rotation = 0;
         
-        if (connectionCount == 0)
-        {
+        if (connectionCount == 0) {
             prefab = streetDeadend;
             rotation = 0;
         }
