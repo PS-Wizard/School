@@ -14,7 +14,7 @@
     number-align: end,
   )
   set text(
-    font: "EB Garamond",
+    font: "Times New Roman",
     size: 12pt,
     lang: "en",
     hyphenate: false,
