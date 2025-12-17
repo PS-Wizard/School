@@ -1,3 +1,0 @@
-# Pthread Detach
-
-## Basic Pthreads

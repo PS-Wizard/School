@@ -35,6 +35,7 @@ In the traditional minimax framework, two functions, $F(p)$ and $G(p)$, are defi
 
 - *Minimizing Function*: The function $G(p)$ represents the best value Min can guarantee (in terms of Max's outcome) from position $p$ when it is Min's turn to move. If $p$ is a terminal position ($d = 0$), then $G(p) = g(p) = -f(p)$. If $d > 0$, then:
   $ G(p) = min(F(p_1), F(p_2), \ldots, F(p_d)) $
+
   where $F(p_i)$ is the value of position $p_i$ from Max's perspective.
 
 The fundamental assumption is that both players play perfectly, with Max choosing the move that maximizes $F(p)$ and Min choosing the move that minimizes $G(p)$. This ensures that $F(p)$ and $G(p)$ reflect the best possible outcome for each player against a perfectly playing opponent. The zero-sum property guarantees $G(p) = -F(p)$ for all positions $p$ @knuth_1975_an[p. 3].
