@@ -1,0 +1,62 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 113  of event 'cycles:Pu'
+# Event count (approx.): 36885269
+#
+# Overhead  Command  Shared Object         Symbol                   
+# ........  .......  ....................  .........................
+#
+    16.32%  a.out    a.out                 [.] insert_word_into_trie
+    13.08%  a.out    libc.so.6             [.] 0x00000000000a4f15
+    11.37%  a.out    libc.so.6             [.] 0x000000000009b9fc
+     7.03%  a.out    a.out                 [.] read_words_from_file
+     5.82%  a.out    libc.so.6             [.] malloc
+     5.27%  a.out    libc.so.6             [.] _IO_fgets
+     4.58%  a.out    libc.so.6             [.] pthread_mutex_lock
+     4.13%  a.out    libc.so.6             [.] 0x000000000018d60c
+     3.74%  a.out    libc.so.6             [.] _IO_getline_info
+     3.29%  a.out    libc.so.6             [.] 0x000000000017d4ef
+     2.61%  a.out    libc.so.6             [.] 0x000000000018d6d8
+     2.47%  a.out    libc.so.6             [.] cfree
+     2.20%  a.out    libc.so.6             [.] 0x00000000000a6431
+     2.18%  a.out    libc.so.6             [.] 0x000000000017d4c4
+     2.17%  a.out    a.out                 [.] main
+     2.09%  a.out    [unknown]             [k] 0xffffffff89401280
+     2.00%  a.out    libc.so.6             [.] 0x00000000000a686c
+     1.91%  a.out    libc.so.6             [.] 0x0000000000180da8
+     1.21%  a.out    libc.so.6             [.] 0x0000000000186de8
+     1.09%  a.out    libc.so.6             [.] 0x0000000000180da2
+     1.00%  a.out    libc.so.6             [.] 0x000000000009b9f0
+     0.93%  a.out    libc.so.6             [.] 0x00000000000a643d
+     0.83%  a.out    a.out                 [.] count_words_in_thread
+     0.83%  a.out    libc.so.6             [.] __strdup
+     0.81%  a.out    libc.so.6             [.] 0x0000000000186e37
+     0.69%  a.out    libc.so.6             [.] 0x000000000018d68f
+     0.20%  a.out    ld-linux-x86-64.so.2  [.] 0x0000000000014dbd
+     0.04%  a.out    libc.so.6             [.] 0x00000000000a418d
+     0.03%  a.out    libc.so.6             [.] 0x00000000000a6441
+     0.03%  a.out    libc.so.6             [.] 0x00000000000a6e82
+     0.03%  a.out    ld-linux-x86-64.so.2  [.] 0x0000000000014787
+     0.02%  a.out    libc.so.6             [.] 0x00000000000a6aed
+     0.00%  a.out    libc.so.6             [.] 0x0000000000065404
+     0.00%  a.out    ld-linux-x86-64.so.2  [.] 0x000000000001f70a
+     0.00%  a.out    libc.so.6             [.] 0x0000000000186dd3
+     0.00%  a.out    libc.so.6             [.] 0x000000000005b56d
+     0.00%  a.out    libc.so.6             [.] 0x0000000000186d84
+     0.00%  a.out    libc.so.6             [.] 0x00000000001803b0
+     0.00%  a.out    libc.so.6             [.] __ctype_init
+     0.00%  a.out    libc.so.6             [.] 0x0000000000180380
+     0.00%  a.out    libc.so.6             [.] 0x000000000009676c
+     0.00%  a.out    libc.so.6             [.] 0x00000000000966e0
+     0.00%  a.out    libc.so.6             [.] 0x000000000011aa00
+     0.00%  a.out    ld-linux-x86-64.so.2  [.] 0x000000000001eb43
+     0.00%  a.out    ld-linux-x86-64.so.2  [.] 0x000000000001f6ab
+     0.00%  a.out    libc.so.6             [.] 0x000000000011aa07
+
+
+#
+# (Tip: System-wide collection from all CPUs: perf record -a)
+#
