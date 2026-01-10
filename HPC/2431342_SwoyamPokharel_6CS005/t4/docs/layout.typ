@@ -15,11 +15,12 @@
   )
   set text(
     font: "Geist",
-    size: 12pt,
+    size: 10pt,
     lang: "en",
     hyphenate: false,
   )
-  show math.equation: set text(weight: 400)
+  show math.equation: set text(weight: 400, font: "DejaVu Math TeX Gyre")
+  show heading: set text(font: "Geist", weight: "medium")
 
   set page(
     header: context {
@@ -52,7 +53,7 @@
       h(7pt, weak: true)
     }
     v(1%)
-    text(size: 16pt, weight: "bold", block([#number #it.body]))
+    text(size: 16pt, block([#number #it.body]))
     v(0.5em)
   }
   // Level 2: 12pt bold, gray
@@ -62,7 +63,7 @@
       h(7pt, weak: true)
     }
     v(0.7%)
-    text(size: 14pt, fill: rgb("#404040"), weight: "bold", block([#number #it.body]))
+    text(size: 14pt, fill: rgb("#404040"), block([#number #it.body]))
     v(0.3em)
   }
   // Level 3: 11pt bold, gray
@@ -72,19 +73,20 @@
       h(7pt, weak: true)
     }
     v(0.7%)
-    text(size: 12pt, fill: rgb("#404040"), weight: "bold", block([#number #it.body]))
+    text(size: 12pt, fill: rgb("#404040"), block([#number #it.body]))
+    v(1.7%)
   }
   show heading.where(level: 4): it => {
     v(0.7%)
-    text(size: 11pt, fill: rgb("#404040"), weight: "bold", block([#it.body]))
+    text(size: 11pt, fill: rgb("#404040"), block([#it.body]))
   }
   show heading.where(level: 5): it => {
     v(0.7%)
-    text(size: 10pt, fill: rgb("#404040"), weight: "bold", block([#it.body]))
+    text(size: 10pt, fill: rgb("#404040"), block([#it.body]))
   }
 
   // Text formatting
-  show strong: set text(weight: "bold")
+  show strong: set text(weight: "medium", font: "Geist")
   show emph: set text(style: "italic")
 
   // Quotes
@@ -104,25 +106,19 @@
 
   align(center)[
     #v(1.5in)
-    #text(size: 28pt, weight: "bold")[#title]
+    #text(size: 28pt, weight: "medium", font: "Geist")[#title]
     #v(2em)
 
     // Student information
     #align(left)[
-      #text(size: 12pt)[
+      #text(size: 12pt, font: "Geist")[
         *Name:* #author \
         *Student Number:* 2431342 \
         *Tutor:* Bijaya Ghimire\
-      ]
-    ]
-    #v(0.5em)
-
-    // Submission date
-    #align(left)[
-      #text(size: 12pt)[
         *Submitted On:* #if date != none { date } else { datetime.today().display("[month repr:long] [day], [year]") }
       ]
     ]
+    #v(0.5em)
   ]
   pagebreak()
 

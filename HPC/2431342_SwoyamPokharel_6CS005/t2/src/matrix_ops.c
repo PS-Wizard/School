@@ -1,6 +1,6 @@
 #include "matrix_ops.h"
 #include <stdlib.h>
-#include <omp.h>
+#include <omp.h> 
 
 double** allocMatrix(int r, int c) {
     if (r <= 0 || c <= 0) {

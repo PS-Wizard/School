@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "matrix_ops.h"
 #include "file_ops.h"
 
 int main(int argc, char* argv[]) {

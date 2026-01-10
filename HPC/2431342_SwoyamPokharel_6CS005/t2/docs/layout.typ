@@ -14,7 +14,7 @@
     number-align: end,
   )
   set text(
-    font: "EB Garamond",
+    font: "Geist",
     size: 12pt,
     lang: "en",
     hyphenate: false,
