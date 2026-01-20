@@ -2,9 +2,6 @@
 #show: academic-theme.with(
   title: "Efficiency vs Generality: Analyzing the Trade-offs Between NNUE and AlphaZero-like Deep Networks",
   author: "Swoyam Pokharel",
-  student-number: 2431342,
-  tutor: "Jeshmi Rajak",
-
   abstract: [
     This review aims to examine the fundamental trade-offs between NNUE and AlphaZero-style architectures in chess AI, analyzing their performance characteristics, computational requirements, and accessibility barriers. Based on the analysis of recent papers in this domain, this paper demonstrates how domain-optimized efficiency differs with general-purpose learning, and aims to inform architectural decisions for practical chess engine development targeting consumer hardware deployment.
   ],
@@ -147,8 +144,6 @@ Alternatively, AlphaZero-style systems represent "intuition engines" @competing_
 \
 
 Furthermore, this computational divide extends to accessibility: NNUE implementations like Stockdory demonstrate functional performance without mentioning scalability barriers @implemeting_chess_engine_using_nnue_with_negamax_algorithm[p.5], while AlphaZero replication remains practical only for organizations with massive resources @krakovsky_chess_engine[p.10]. This also bleeds into availability for potential end users, as consumer hardware simply cannot support AlphaZero-style engines that require TPU arrays or high-end GPUs, whereas NNUE maintains CPU efficiency @neural_network-for_chess[p.193].
-
-#pagebreak()
 
 = Conclusion
 

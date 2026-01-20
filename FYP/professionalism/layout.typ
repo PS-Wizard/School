@@ -5,6 +5,7 @@
   abstract: none,
   doc,
 ) = {
+
   set document(title: title, author: author)
   set page(
     paper: "a4",
@@ -34,6 +35,7 @@
         grid(
           columns: (1fr, 10fr, 1fr),
           align: (left, center, right),
+          if calc.even(i) [#i], if calc.even(i) { author_text } else { title }, if calc.odd(i) [#i],
         )
       }
       align(center, line(length: 50%, stroke: 0.5pt))
@@ -110,7 +112,8 @@
       #text(size: 12pt)[
         *Name:* #author \
         *Student Number:* 2431342 \
-        *Tutor:* Jeshmi Rajak \
+        *Supervisor:* Prakriti Regmi \
+        *Reader:* Siman Giri
       ]
     ]
     #v(0.5em)
