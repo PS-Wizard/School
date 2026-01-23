@@ -14,7 +14,7 @@
     number-align: end,
   )
   set text(
-    font: "Times New Roman",
+    // font: "Times New Roman",
     size: 12pt,
     lang: "en",
     hyphenate: false,

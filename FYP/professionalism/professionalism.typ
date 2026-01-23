@@ -161,3 +161,20 @@ Since the engine is completely opensource, this enables collective security revi
 
 #pagebreak()
 
+= References
+
+Chess Programming Wiki. (2024). *Main Page*. Available at: https://www.chessprogramming.org/ [Accessed: 23 January 2026].
+
+Free Software Foundation. (2007). *GNU General Public License, version 3*. Available at: https://www.gnu.org/licenses/gpl-3.0.html [Accessed: 23 January 2026].
+
+Knuth, D. E. and Moore, R. W. (1975). An analysis of alpha-beta pruning. *Artificial Intelligence*, 6(4), pp. 293-326.
+
+Nasu, Y. (2018). Efficiently Updatable Neural-Network-based Evaluation Functions for Computer Shogi. *The 28th World Computer Shogi Championship Appeal Document*.
+
+Open Source Initiative. (2024). *The MIT License*. Available at: https://opensource.org/licenses/MIT [Accessed: 23 January 2026].
+
+Rust Foundation. (2024). *Rust Programming Language*. Available at: https://www.rust-lang.org/ [Accessed: 23 January 2026].
+
+Shannon, C. E. (1950). Programming a computer for playing chess. *Philosophical Magazine*, 41(314), pp. 256-275.
+
+Stockfish Team. (2024). *Stockfish - Open Source Chess Engine*. Available at: https://stockfishchess.org/ [Accessed: 23 January 2026].
