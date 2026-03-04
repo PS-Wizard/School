@@ -1,0 +1,24 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+sequenceDiagram
+    participant GUI as UCI GUI
+    participant Engine as UciEngine run
+    participant Pos as Position
+    participant TT as TT-Table
+    participant Search as search::search
+
+    GUI->>Engine: uci
+    Engine-->>GUI: id + options + uciok
+
+    GUI->>Engine: isready
+    Engine-->>GUI: readyok
+
+    GUI->>Engine: position startpos moves ...
+    Engine->>Pos: new position and apply move list
+
+    GUI->>Engine: setoption name Hash value N
+    Engine->>TT: recreate TT with hash size N
+
+    GUI->>Engine: go wtime btime winc binc
+    Engine->>Search: search(position, limits, tt, threads)
+    Search-->>Engine: SearchInfo(best_move)
+    Engine-->>GUI: bestmove uci_move

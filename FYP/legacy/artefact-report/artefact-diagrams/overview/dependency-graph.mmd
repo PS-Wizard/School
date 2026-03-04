@@ -1,0 +1,28 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+    OOPS[oops_mate crate]
+    STR[strikes crate]
+    UTL[utilities crate]
+    NNU[nnuebie crate]
+
+    OOPS --> STR
+    OOPS --> UTL
+    STR --> UTL
+    NNU -. standalone crate in repo .- OOPS
+
+    subgraph Internal OopsMate Modules
+        POS[position]
+        MVG[movegen]
+        SRCH[search + qsearch]
+        EVAL[evaluate]
+        TPT[tpt]
+        UCI[uci]
+    end
+
+    OOPS --> POS
+    OOPS --> MVG
+    OOPS --> SRCH
+    OOPS --> EVAL
+    OOPS --> TPT
+    OOPS --> UCI
+    MVG --> STR

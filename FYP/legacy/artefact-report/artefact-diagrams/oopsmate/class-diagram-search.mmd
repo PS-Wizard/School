@@ -1,0 +1,66 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+classDiagram
+    class SearchStats {
+        +nodes: u64
+        +tt_hits: u64
+        +stop_signal: StopSignal
+        +new(stop_sig) SearchStats
+        +should_stop() bool
+    }
+
+    class SearchInfo {
+        +best_move: Move
+        +score: i32
+        +depth: u8
+        +nodes: u64
+        +time_ms: u64
+        +tt_hits: u64
+    }
+
+    class SearchAPI {
+        +search(...) SearchInfoOpt
+        +print_uci_info(...)
+        +should_stop(...) bool
+        +to_uci(Move) String
+    }
+
+    class AlphaBeta {
+        +negamax(...)
+        +search_root(...)
+        +search_move(...)
+        +try_iid(...)
+    }
+
+    class QSearch {
+        +qsearch(...) i32
+    }
+
+    class Ordering {
+        +KillerTable
+        +HistoryTable
+        +MoveHistory
+        +score_move(...)
+        +pick_next_move(...)
+    }
+
+    class Pruning {
+        +try_probcut(...)
+        +try_null_move(...)
+        +try_razoring(...)
+        +reduce_lmr(...)
+        +calc_lmr(...)
+        +use_futility(...)
+    }
+
+    class Parallel {
+        +search_driver(...)
+        +search_aspiration(...)
+    }
+
+    SearchAPI --> Parallel
+    Parallel --> AlphaBeta
+    AlphaBeta --> QSearch
+    AlphaBeta --> Ordering
+    AlphaBeta --> Pruning
+    AlphaBeta --> SearchStats
+    SearchAPI --> SearchInfo

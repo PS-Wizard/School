@@ -1,0 +1,23 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+flowchart LR
+    UCI[uci.rs - UciEngine] --> POS[position.rs - Position]
+    UCI --> TC[time_control.rs]
+    UCI --> SRCH[search/mod.rs]
+
+    SRCH --> AB[search/alphabeta.rs]
+    SRCH --> PAR[search/parallel.rs]
+    AB --> QS[qsearch.rs]
+    AB --> ORD[search/ordering.rs]
+    AB --> PRN[search/pruning.rs]
+    AB --> TPT[tpt.rs - TT-Table]
+
+    AB --> MVG[movegen.rs]
+    AB --> EVAL[evaluate.rs]
+    QS --> EVAL
+    QS --> MVG
+    MVG --> STR[strikes crate]
+    MVG --> POS
+    POS --> ZOB[zobrist.rs]
+    POS --> TYP[types.rs]
+    MVG --> TYP
+    EVAL --> TYP

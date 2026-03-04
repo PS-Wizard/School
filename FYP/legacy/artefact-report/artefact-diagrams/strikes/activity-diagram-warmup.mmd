@@ -1,0 +1,12 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+    subgraph R1[ ]
+        direction LR
+        A[warmup_attack_tables] --> B[Init lazy attack tables] --> C[Touch masks and leaper tables]
+    end
+    subgraph R2[ ]
+        direction LR
+        D[Iterate bishop and rook tables] --> E[Compute pext index and xor sink] --> F[black_box sink]
+    end
+
+    C --> D

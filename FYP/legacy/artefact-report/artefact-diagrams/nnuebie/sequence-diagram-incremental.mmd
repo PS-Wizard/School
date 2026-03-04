@@ -1,0 +1,20 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+sequenceDiagram
+    participant Probe as NNUEProbe
+    participant Stack as AccStack
+    participant State as DirtyPiece
+    participant Acc as Accumulator
+    participant Finny as FinnyTables
+
+    Probe->>Probe: make_move(from,to,piece)
+    Probe->>State: dirty.add_change up to 3 changes
+    Probe->>Stack: push(dirty, rule50)
+    Stack->>Stack: find_last_usable_accumulator
+    alt King unchanged and source computed
+        Stack->>Acc: update_inc_perspective(prev, added, removed, ksq)
+    else King moved / no usable accumulator
+        Stack->>Finny: update_refresh_cache(...)
+        Finny-->>Stack: refreshed accumulator for perspective
+        Stack->>Stack: backward_fill_incremental gaps
+    end
+    Probe->>Probe: evaluate(side_to_move)

@@ -1,0 +1,19 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+    subgraph R1[ ]
+        direction LR
+        A[Board pieces and king squares] --> B[Feature indexing make_index] --> C[Accumulator update]
+    end
+
+    C --> C1[Incremental path]
+    C --> C2[Refresh path]
+    C1 --> D[FeatureTransformer output]
+    C2 --> D
+
+    subgraph R2[ ]
+        direction LR
+    D --> E[Dense stack FC0 to FC2] --> F[Residual combine plus scale]
+    end
+
+    F --> G[Add PSQT and positional terms]
+    G --> H[Final NNUE score with rule50]

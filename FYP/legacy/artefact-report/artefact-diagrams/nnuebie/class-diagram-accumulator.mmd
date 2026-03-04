@@ -1,0 +1,42 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+classDiagram
+    class DirtyPiece {
+        +dirty_num: usize
+        +from: [usize;3]
+        +to: [usize;3]
+        +piece_from: [usize;3]
+        +piece_to: [usize;3]
+        +add_change(...)
+        +reset()
+    }
+
+    class AccumulatorSize {
+        +accumulation: [AccI16;2]
+        +psqt_accumulation: [Psqt;2]
+        +computed: [bool;2]
+        +refresh(...)
+        +update_incremental(...)
+        +update_inc_perspective(...)
+    }
+
+    class AccumulatorState {
+        +acc_big: AccBig
+        +acc_small: AccSmall
+        +dirty_piece: DirtyPiece
+        +computed: [bool;2]
+        +rule50: i32
+    }
+
+    class AccStack {
+        -stack: AccStateVec
+        -current_idx: usize
+        +push(dirty,rule50)
+        +pop()
+        +latest() AccumulatorState
+        +update_incremental(...)
+        +reset_with_refresh(...)
+    }
+
+    AccumulatorState *-- DirtyPiece
+    AccumulatorState *-- AccumulatorSize
+    AccStack *-- AccumulatorState

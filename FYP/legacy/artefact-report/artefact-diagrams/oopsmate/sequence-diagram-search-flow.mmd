@@ -1,0 +1,29 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+sequenceDiagram
+    participant Client as UCI go
+    participant Search as search
+    participant Root as search_root
+    participant Nega as negamax
+    participant TT as TT-Table
+    participant Driver as search_driver
+    participant Q as qsearch
+
+    Client->>Search: search(pos, depth, limits, tt, threads)
+    Search->>TT: new_search()
+    Search->>Driver: iterative deepening loop
+    Driver->>Root: search_root(...)
+    Root->>Nega: iterate root legal moves
+    loop each move
+        Root->>Nega: negamax(depth-1, -beta, -alpha)
+        Nega->>TT: probe(hash)
+        alt depth == 0
+            Nega->>Q: qsearch(...)
+            Q->>Q: stand pat plus capture search
+        else depth > 0
+            Nega->>Nega: generate moves + static eval
+            Nega->>TT: store(best move, score, depth, flag)
+        end
+    end
+    Root-->>Driver: best move at depth d
+    Driver-->>Search: final SearchInfo
+    Search-->>Client: bestmove uci_move

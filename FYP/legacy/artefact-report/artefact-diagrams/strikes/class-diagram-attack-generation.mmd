@@ -1,0 +1,27 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+classDiagram
+    direction TB
+    class PawnGen {
+        +gen_pawn_attacks()
+    }
+
+    class KnightGen {
+        +gen_knight_attacks()
+    }
+
+    class BishopGen {
+        +gen_bishop_masks()
+        +gen_bishop_attacks(sq,occ) u64
+    }
+
+    class RookGen {
+        +gen_rook_masks()
+        +gen_rook_attacks(sq,occ) u64
+    }
+
+    class Builder {
+        +build_table(gen,masks)
+    }
+
+    Builder --> BishopGen
+    Builder --> RookGen

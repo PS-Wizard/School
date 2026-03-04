@@ -1,0 +1,10 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+flowchart TD
+    GUI[UCI GUI/CLI] --> OOPS[OopsMate Engine]
+    OOPS --> CORE[Core module bundle]
+    CORE --> STR[Strikes crate: attacks and paths]
+    CORE --> UTL[Utilities crate: notation and board print]
+    OOPS -. optional bridge .-> NN[nnuebie crate: NNUE inference]
+    NN --> NET[NN layers plus feature transformer]
+    NN --> ACC[Accumulator stack plus Finny cache]
+    UTL --> STR

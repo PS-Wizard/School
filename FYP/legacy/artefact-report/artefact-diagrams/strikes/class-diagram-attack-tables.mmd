@@ -1,0 +1,42 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+classDiagram
+    direction TB
+    class StrikesLib {
+        +PAWN_ATTACKS: PawnTbl
+        +KNIGHT_ATTACKS: KnightTbl
+        +KING_ATTACKS: KingTbl
+        +ROOK_MASKS: SliderMasks
+        +BISHOP_MASKS: SliderMasks
+        +ROOK_ATTACKS: LazyTbl
+        +BISHOP_ATTACKS: LazyTbl
+        +BETWEEN: BetweenTbl
+        +THROUGH: ThroughTbl
+    }
+
+    class Pawns {
+        +gen_pawn_attacks()
+    }
+    class Knights {
+        +gen_knight_attacks()
+    }
+    class Kings {
+        +gen_king_attacks()
+    }
+    class Rooks {
+        +gen_rook_masks()
+        +gen_rook_attacks(sq,occ)
+    }
+    class Bishops {
+        +gen_bishop_masks()
+        +gen_bishop_attacks(sq,occ)
+    }
+    class TableBuilder {
+        +build_table(gen,masks)
+    }
+
+    StrikesLib --> Pawns
+    StrikesLib --> Knights
+    StrikesLib --> Kings
+    StrikesLib --> Rooks
+    StrikesLib --> Bishops
+    StrikesLib --> TableBuilder

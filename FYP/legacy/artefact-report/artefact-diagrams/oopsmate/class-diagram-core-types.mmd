@@ -1,0 +1,79 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+classDiagram
+    class Bitboard {
+        +u64 0
+        +new() Bitboard
+        +from_raw(u64) Bitboard
+        +set(idx)
+        +clear(idx)
+        +is_empty() bool
+    }
+
+    class Color {
+        <<enum>>
+        White
+        Black
+        +flip() Color
+    }
+
+    class Piece {
+        <<enum>>
+        Pawn
+        Knight
+        Bishop
+        Rook
+        Queen
+        King
+    }
+
+    class CastleRights {
+        +u8 0
+        +NONE
+        +can_castle_king(Color) bool
+        +can_castle_queen(Color) bool
+        +remove_color(Color)
+        +remove_rook(sq)
+    }
+
+    class MoveType {
+        <<enum>>
+        Quiet
+        DoublePush
+        Castle
+        EnPassant
+        Capture
+        PromoKnight
+        PromoBishop
+        PromoRook
+        PromoQueen
+        CapPromoKnight
+        CapPromoBishop
+        CapPromoRook
+        CapPromoQueen
+    }
+
+    class Move {
+        +u16 0
+        +new(from,to,kind) Move
+        +from() usize
+        +to() usize
+        +move_type() MoveType
+        +is_capture() bool
+        +is_promotion() bool
+    }
+
+    class MoveCollector {
+        -moves: [Move;256]
+        -count: usize
+        +new() MoveCollector
+        +push(Move)
+        +len() usize
+        +is_empty() bool
+        +clear()
+        +get(index) Move
+        +as_slice() [Move]
+    }
+
+    CastleRights --> Color
+    Move --> MoveType
+    MoveCollector --> Move

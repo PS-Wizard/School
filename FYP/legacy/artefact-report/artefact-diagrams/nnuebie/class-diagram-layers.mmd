@@ -1,0 +1,38 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "JetBrains Mono", "fontSize": "10px"}, "htmlLabels": false, "flowchart": {"htmlLabels": false}}}%%
+classDiagram
+    class LayerTrait {
+        <<trait>>
+        +propagate(input,output)
+        +read_parameters(reader)
+    }
+
+    class AffineTransform {
+        +biases: AlignedI32
+        +weights: AlignedI8
+        +input_dims: usize
+        +output_dims: usize
+        +padded_input_dims: usize
+    }
+
+    class AffineTransformSparseInput {
+        +biases: AlignedI32
+        +weights: AlignedI8
+        +input_dims: usize
+        +output_dims: usize
+        +padded_input_dims: usize
+    }
+
+    class ClippedReLU {
+        +dims: usize
+        +propagate(i32->u8)
+    }
+
+    class SqrClippedReLU {
+        +dims: usize
+        +propagate(i32->u8, squared)
+    }
+
+    LayerTrait <|.. AffineTransform
+    LayerTrait <|.. AffineTransformSparseInput
+    LayerTrait <|.. ClippedReLU
+    LayerTrait <|.. SqrClippedReLU
