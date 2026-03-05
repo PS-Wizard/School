@@ -54,4 +54,23 @@ The integration design allows an engine to provide piece-square state while the 
   "Sequence of operations for incremental evaluation update",
   w: 90%,
 )
+
+=== Current Performance:
+
+```
+[wizard@nixos:~/Projects/nnuebie]$ ./target/release/benchmark
+Loading networks...
+Benchmarking with 13 FENs...
+Full Refresh (FEN corpus): 529751.91 evals/sec (1999998 evals, 3.78s)
+Incremental (mixed moves): 1620089.73 evals/sec (12000000 evals, 7.41s)
+King Refresh (toggle): 1805664.43 evals/sec (5000000 evals, 2.77s)
+
+Summary:
+- Full Refresh (FEN corpus): 529751.91 evals/sec
+- Incremental (mixed moves): 1620089.73 evals/sec
+- King Refresh (toggle): 1805664.43 evals/sec
+
+[wizard@nixos:~/Projects/nnuebie]$
+```
+
 ]

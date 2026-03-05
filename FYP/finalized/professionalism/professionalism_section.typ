@@ -1,13 +1,13 @@
 == Social Aspects
 === Accessibility and Democratization
 
-The Oops!Mate chess engine is developed as an open-source project, which significantly contributes to accessibility in chess programming. Open-source software removes financial barriers and allows developers from any geographic or economic background to study, modify, and learn from the codebase. 
+The OopsMate chess engine is developed as an open-source project, which significantly contributes to accessibility in chess programming. Open-source software removes financial barriers and allows developers from any geographic or economic background to study, modify, and learn from the codebase. 
 
 By making the engine's source code freely available, this project helps democratize knowledge about advanced algorithmic techniques including bitboards, magic bitboards, NNUE evaluation, and alpha-beta pruning. Open-source projects promote a collaborative environment where knowledge flows freely, enabling innovation and learning opportunities that would otherwise be restricted.
 
 === Educational Impact
 
-The primary educational contribution of this project lies in its comprehensive documentation and transparent development process. Unlike production chess engines such as Stockfish, which have evolved over decades with contributions from thousands of developers, Oops!Mate is built from scratch with each component carefully documented and explained.
+The primary educational contribution of this project lies in its comprehensive documentation and transparent development process. Unlike production chess engines such as Stockfish, which have evolved over decades with contributions from thousands of developers, OopsMate is built from scratch with each component carefully documented and explained.
 
 This approach directly addresses a gap in chess programming education. While engines like Stockfish and Leela Chess Zero are open source, their massive codebases and complex architectures can be overwhelming for newcomers. 
 
@@ -27,11 +27,11 @@ The project's contribution lies more in adding one more accessible learning reso
 
 A significant ethical concern with any chess engine is its potential misuse for cheating in online chess platforms. Chess.com and Lichess have reported increasing incidents of computer assisted cheating, where players use engines during games to gain unfair advantages.
 
-Oops!Mate, once it reaches its target strength of 1800 Elo or higher, could be misused in this manner. However, several factors mitigate this concern:
+OopsMate, once it reaches its target strength of 1800 Elo or higher, could be misused in this manner. However, several factors mitigate this concern:
 
 1. *Detection mechanisms*: Major chess platforms employ sophisticated statistical analysis and behavioral detection systems to identify engine assistance.
 
-2. *Relative strength*: With a target Elo of 1800, Oops!Mate would be significantly weaker than existing engines like Stockfish (3600+ Elo), making it a less attractive tool for cheating compared to readily available alternatives.
+2. *Relative strength*: With a target Elo of 1800, OopsMate would be significantly weaker than existing engines like Stockfish (3600+ Elo), making it a less attractive tool for cheating compared to readily available alternatives.
 
 3. *Educational purpose*: The project's transparent documentation and educational focus may actually help chess platforms and anti-cheat researchers understand engine behavior better.
 
@@ -39,7 +39,7 @@ Once the engine is fully complete, it will also include a disclaimer against une
 
 === Transparency and Open Source Development
 
-The decision to develop Oops!Mate as an open-source project aligns with ethical principles of transparency in AI development. Unlike proprietary engines where evaluation methods and search algorithms remain opaque, open-source engines allow complete insight of decision-making processes 
+The decision to develop OopsMate as an open-source project aligns with ethical principles of transparency in AI development. Unlike proprietary engines where evaluation methods and search algorithms remain opaque, open-source engines allow complete insight of decision-making processes 
 
 This transparency serves multiple ethical purposes:
 
@@ -81,7 +81,7 @@ The project does not incorporate any proprietary algorithms or patented techniqu
 
 === Third-Party Dependencies
 
-The Rust implementation of Oops!Mate has minimal external dependencies. The primary dependency is the `rand` crate, used for random number generation in certain engine features. The `rand` crate is licensed under MIT/Apache 2.0, which permits use in both open-source and commercial projects without legal restrictions.
+The Rust implementation of OopsMate has minimal external dependencies. The primary dependency is the `rand` crate, used for random number generation in certain engine features. The `rand` crate is licensed under MIT/Apache 2.0, which permits use in both open-source and commercial projects without legal restrictions.
 
 Rust itself, as the programming language, is dual-licensed under MIT and Apache 2.0 licenses, ensuring no legal barriers to distribution.
 
@@ -93,11 +93,11 @@ There are no known legal implications of implementing UCI in an open-source engi
 
 === Code Attribution and Originality
 
-All code in Oops!Mate is written from scratch. The project properly cites all algorithmic techniques in its literature review and documentation, attributing ideas to their original researchers (e.g., Shannon for minimax, Knuth and Moore for alpha-beta, Nasu for NNUE). This follows academic standards for intellectual attribution while maintaining code originality.
+All code in OopsMate is written from scratch. The project properly cites all algorithmic techniques in its literature review and documentation, attributing ideas to their original researchers (e.g., Shannon for minimax, Knuth and Moore for alpha-beta, Nasu for NNUE). This follows academic standards for intellectual attribution while maintaining code originality.
 
 === Trademark Considerations
 
-A preliminary search for "OopsMate" or "Oops!Mate" revealed minimal existing use:
+A preliminary search for "OopsMate" or "OopsMate" revealed minimal existing use:
 
 1. One YouTube channel with 73 subscribers uses "OopsMate" as its name.
 2. No registered trademarks were found in the UK Intellectual Property Office database nor any other sources.
@@ -129,7 +129,7 @@ Although Rust does not provide automatic garbage collection. Instead, it uses de
 
 === Denial of Service Prevention
 
-Unlike networked chess engines, Oops!Mate operates entirely locally without internet connectivity or network interfaces. This eliminates common DoS attack vectors:
+Unlike networked chess engines, OopsMate operates entirely locally without internet connectivity or network interfaces. This eliminates common DoS attack vectors:
 
 1. *Network floods*: Not applicable as the engine does not open network sockets.
 2. *Resource exhaustion*: The engine can only consume resources on the local machine where it's executed.

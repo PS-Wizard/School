@@ -1,17 +1,17 @@
 #import "@preview/hetvid:0.1.0": *
 
 #show: hetvid.with(
-  title: [OopsMate: A Chess Engine],
-  author: "Swoyam Pokharel",
-  affiliation: "BSc (Hons) Computer Science",
-  header: "Final Year Project Report",
-  date-created: "2026-03-03",
+  title: [OopsMate: A Chess Engine.],
+  author: "Prakriti Regmi - Siman Giri",
+  affiliation: "Swoyam Pokharel",
+  header: "FYP Report Draft.",
+  date-created: "2026-02-23",
   date-modified: datetime.today().display(),
   abstract: [],
   toc: false,
   body-font: ("Libertinus Serif", "New Computer Modern", "FreeSerif"),
   heading-font: ("New Computer Modern", "Libertinus Serif", "FreeSans"),
-  raw-font: ("DejaVu Sans Mono", "JetBrains Mono"),
+  raw-font: ("DejaVu Sans Mono", "JetBrainsMono NF"),
   math-font: ("New Computer Modern Math"),
   emph-font: ("Libertinus Serif", "New Computer Modern"),
   bib-style: (
@@ -75,11 +75,6 @@ The artefact is decomposed into four technical units:
 - `utilities`: notation parsing and helper utilities.
 - `nnuebie`: NNUE inference crate intended for engine-side integration.
 
-#figure(
-  image("artefact-report/artefact-diagrams/overview/architecture-overview.svg", width: 95%),
-  caption: [OopsMate's architecture overview],
-)
-
 == Academic Question
 
 How do different techniques involved in chess programming affect a chess engine's playing strength and efficiency?
@@ -90,7 +85,7 @@ This project focuses on a CPU-based engine using classical search (the alpha-bet
 
 == Report Structure
 
-This report follows the final report template. [TODO: add stuff here]
+This report follows the final report template. [TODO]
 
 #pagebreak()
 
@@ -105,7 +100,7 @@ This report follows the final report template. [TODO: add stuff here]
 The project adopts an incremental development approach: each new technique is implemented as a seperate version so its effect can be measured. This suits chess engine development because the rules and correctness criteria don't change, while performance and strength improvements emerge from iteratively adding and tuning optimizations.
 
 
-For task management, a Kanban board supports continuous tracking of implementation work, bug fixing, and overall development. [TODO: add stuff here]
+For task management, a Kanban board supports continuous tracking of implementation work, bug fixing, and overall development. [TODO]
 
 #pagebreak()
 
@@ -126,28 +121,28 @@ This section justifies the technical stack used to build and evaluate the artefa
 = Conclusion
 
 [TODO]
-#lorem(50)
+// #lorem(50)
 
 #pagebreak()
 
 = Critical Evaluation Of Project
 
 [TODO]
-#lorem(50)
+// #lorem(50)
 
 #pagebreak()
 
 = Professionalism Report
 [TODO: Contribution of `nnuebie` and `strikes`]
 
-#include "professionalism/professionalism_section.typ"
+// #include "professionalism/professionalism_section.typ"
 
 #pagebreak()
 
 = Evidence Of Project Management
 [Todo: logsheets & Trello]
 
-#lorem(50)
+// #lorem(50)
 
 #pagebreak()
 
@@ -157,4 +152,4 @@ This section justifies the technical stack used to build and evaluate the artefa
 
 = Appendices
 
-#lorem(50)
+// #lorem(50)

@@ -59,20 +59,36 @@ Testing methodology employed multiple complementary approaches:
 1. *PERFT (Performance Test)*: Validation of move generation by comparing computed node counts against known values at various depths. This is the standard way to verify move generation correctness. OopsMate's values were tested against: https://www.chessprogramming.org/Perft_Results
 
 2. *Position Validation*: Testing against established test suites including:
-   - Start Position (standard opening)
-   - KiwiPete (tactical positions)
-   - Giuoco Piano (middlegame structure)
-   - Rook+Pawn endgame scenarios
-   - WAC-2 (Win at Chess) tactical puzzles
+  - Start Position (standard opening)
+  - KiwiPete (tactical positions)
+  - Giuoco Piano (middlegame structure)
+  - Rook+Pawn endgame scenarios
+  - WAC-2 (Win at Chess) tactical puzzles
 
 3. *Self-Play Testing*: Each new version is tested against previous versions to measure Elo improvement.
 
 4. *Engine vs. Engine Matching*: Competitive testing against established engines including:
-   - Stockfish with UCI Elo limiting (calibrated to FIDE scale)
-   - Sayuri (1807 CCRL rated)
+  - Stockfish with UCI Elo limiting (calibrated to FIDE scale)
+  - Sayuri (1807 CCRL rated)
 
 5. *Performance Profiling*: Using `perf` to identify CPU hotspots and optimize critical code paths.
-
+All tests were conducted in a machine with the following specification:
+```
+[wizard@nixos ~/Projects/school/FYP/finalized] -> lscpu
+Architecture:            x86_64
+CPU(s):                  16
+  Thread(s) per core:    2
+  Core(s) per socket:    8
+Vendor ID:               AuthenticAMD
+  Model name:            AMD Ryzen 7 8845HS w/ Radeon 780M Graphics
+  CPU max MHz:           5102.7129
+  CPU min MHz:           416.5480
+Caches (sum of all):
+  L1d:                   256 KiB (8 instances)
+  L1i:                   256 KiB (8 instances)
+  L2:                    8 MiB (8 instances)
+  L3:                    16 MiB (1 instance)
+```
 === Tools Used
 
 - *Programming Language*: Rust (no external dependencies)
@@ -84,6 +100,8 @@ Testing methodology employed multiple complementary approaches:
   - Rust Analyzer (LSP)
   - Perf (Linux profiling)
   - Git (version control)
+  - Nix Flakes (reproducible, declarative development environment)
+
 - *Testing Infrastructure*:
   - CuteChess (GUI wrapper for engine communication)
   - CuteChess-CLI (automated match execution)
