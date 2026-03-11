@@ -6,7 +6,20 @@
   header: "Mid-Year Progress Report",
   // abstract: [Abstract here],
   toc: true,
+  body-font: ("Libertinus Serif", "New Computer Modern", "FreeSerif"),
+  heading-font: ("New Computer Modern", "Libertinus Serif", "FreeSans"),
+  raw-font: ("DejaVu Sans Mono", "JetBrainsMono NF"),
+  math-font: "New Computer Modern Math",
+  emph-font: ("Libertinus Serif", "New Computer Modern"),
+  bib-style: (
+    en: "harvard-cite-them-right",
+    zh: "gb-7714-2015-numeric",
+  ),
 )
+
+#line(length: 100%, stroke: 0.4pt + luma(160))
+
+#pagebreak()
 
 = Project Overview
 OopsMate is a chess engine developed in Rust with the primary objective of benchmarking various techniques employed in modern chess programming to quantify their impact on playing strength. The project serves dual purposes: advancing understanding of algorithmic improvements in game-playing systems and providing a modular framework for evaluating chess engine components.
@@ -172,7 +185,7 @@ A comprehensive literature review was conducted, examining 18 sources comprising
     year        = 1997,
     month       = jan,
     url = {https://arxiv.org/pdf/1404.1511}
-    
+
 }
 
 
@@ -211,11 +224,11 @@ The project scope was refined to include three primary deliverables: the main en
 
 Unlike conventional software projects that require database schemas or user interface wireframes, chess engine development focuses on algorithmic architecture and data structure design. The codebase was structured into modular components to facilitate maintainability and testing:
 
-- **Core Position Representation**: The `position` module handles game state management, including piece placement, turn management, castling rights, and en passant squares.
-- **Move Generation (`strikes` crate)**: A dedicated crate providing pre-computed attack tables using magic bitboard techniques for efficient sliding piece move generation.
-- **Evaluation (`evaluate` module)**: Implements position evaluation using piece-square tables with tapered evaluation for smooth transition between game phases.
-- **Search Algorithm (`search` module)**: Contains alpha-beta search with iterative deepening, various pruning techniques, and move ordering heuristics.
-- **Neural Network Evaluation (`nnuebie` crate)**: Work in progress crate implementing Stockfish's NNUE architecture for advanced position evaluation.
+- *Core Position Representation*: The `position` module handles game state management, including piece placement, turn management, castling rights, and en passant squares.
+- *Move Generation (`strikes` crate)*: A dedicated crate providing pre-computed attack tables using magic bitboard techniques for efficient sliding piece move generation.
+- *Evaluation (`evaluate` module)*: Implements position evaluation using piece-square tables with tapered evaluation for smooth transition between game phases.
+- *Search Algorithm (`search` module)*: Contains alpha-beta search with iterative deepening, various pruning techniques, and move ordering heuristics.
+- *Neural Network Evaluation (`nnuebie` crate)*: Work in progress crate implementing Stockfish's NNUE architecture for advanced position evaluation.
 
 The design prioritizes performance through aggressive compiler optimizations, including link-time optimization (LTO), single codegen unit compilation, and fat LTO settings in release builds.
 
@@ -227,85 +240,83 @@ The design prioritizes performance through aggressive compiler optimizations, in
   cargo 1.93.0 (083ac5135 2025-12-15)
   ```
 - Git for version control with GitHub hosting
-- Neovim text editor with Tmux terminal multiplexer for development workflow
-- Additional tools: clippy for linting, rust_analyzer Language Server Protocol (LSP) implementation, and perf for performance profiling
 
 === Implemented Features
 
 The following search and evaluation techniques have been implemented and benchmarked across 16 released versions:
 
 *Search Optimizations:*
-- **Alpha-Beta Pruning**: Fundamental minimax enhancement that eliminates irrelevant branches in the game tree.
-- **Iterative Deepening**: Repeatedly searches to increasing depths, improving move ordering and enabling time management.
-- **Transposition Table with Zobrist Hashing**: Enables detection of previously evaluated positions, avoiding redundant search.
-- **Quiescence Search**: Extends search to capture sequences, preventing horizon effects from obscuring tactical positions.
-- **Principal Variation Search (PVS)**: Optimizes search by assuming a best move exists and exploiting this assumption.
-- **Null Move Pruning**: Exploits the intuition that having an extra move provides positional advantage.
-- **Late Move Reductions (LMR)**: Reduces search depth for moves likely to be poor, focusing computation on promising lines.
-- **Futility Pruning**: Prunes moves that cannot improve the search result based on positional evaluation.
-- **Reverse Futility Pruning**: Prunes positions that are clearly winning, allowing deeper search in winning branches.
-- **Razoring**: Reduces search depth when a position appears worse than a shallow search threshold.
-- **Check Extension**: Extends search depth when checking moves are found, improving tactical accuracy.
-- **Aspiration Windows**: Narrows alpha-beta bounds based on previous search results, improving efficiency.
-- **Internal Iterative Deepening (IID)**: Performs shallow searches to improve move ordering in principal variation nodes.
-- **ProbCut**: A probabilistic enhancement to futility pruning based on shallow search results.
-- **Singular Extensions**: Extends moves that are significantly better than alternatives.
-- **Dynamic Null Move Pruning**: Adaptive null move pruning based on remaining depth and position characteristics.
-- **Lazy SMP (Symmetric Multi-Processing)**: Parallel search using multiple threads with shared transposition table.
-- **Internal Mate Detection**: Recognition of checkmate patterns during search.
+- *Alpha-Beta Pruning*: Fundamental minimax enhancement that eliminates irrelevant branches in the game tree.
+- *Iterative Deepening*: Repeatedly searches to increasing depths, improving move ordering and enabling time management.
+- *Transposition Table with Zobrist Hashing*: Enables detection of previously evaluated positions, avoiding redundant search.
+- *Quiescence Search*: Extends search to capture sequences, preventing horizon effects from obscuring tactical positions.
+- *Principal Variation Search (PVS)*: Optimizes search by assuming a best move exists and exploiting this assumption.
+- *Null Move Pruning*: Exploits the intuition that having an extra move provides positional advantage.
+- *Late Move Reductions (LMR)*: Reduces search depth for moves likely to be poor, focusing computation on promising lines.
+- *Futility Pruning*: Prunes moves that cannot improve the search result based on positional evaluation.
+- *Reverse Futility Pruning*: Prunes positions that are clearly winning, allowing deeper search in winning branches.
+- *Razoring*: Reduces search depth when a position appears worse than a shallow search threshold.
+- *Check Extension*: Extends search depth when checking moves are found, improving tactical accuracy.
+- *Aspiration Windows*: Narrows alpha-beta bounds based on previous search results, improving efficiency.
+- *Internal Iterative Deepening (IID)*: Performs shallow searches to improve move ordering in principal variation nodes.
+- *ProbCut*: A probabilistic enhancement to futility pruning based on shallow search results.
+- *Singular Extensions*: Extends moves that are significantly better than alternatives.
+- *Dynamic Null Move Pruning*: Adaptive null move pruning based on remaining depth and position characteristics.
+- *Lazy SMP (Symmetric Multi-Processing)*: Parallel search using multiple threads with shared transposition table.
+- *Internal Mate Detection*: Recognition of checkmate patterns during search.
 
 *Evaluation Enhancements:*
-- **Tapered Evaluation**: Smooth interpolation between middlegame and endgame evaluation values.
-- **Piece-Square Tables (PeSTO Values)**: Position-dependent evaluation using empirically tuned piece-square tables.
-- **Static Exchange Evaluation (SEE)**: Evaluates the material outcome of capture sequences without performing full search.
-- **History Heuristic**: Records move history to improve move ordering based on previous search successes.
-- **Killer Move Heuristic**: Preserves good capture and check moves for potential reuse.
-- **Transposition Table Move Ordering**: Prioritizes moves that have previously produced good results.
+- *Tapered Evaluation*: Smooth interpolation between middlegame and endgame evaluation values.
+- *Piece-Square Tables (PeSTO Values)*: Position-dependent evaluation using empirically tuned piece-square tables.
+- *Static Exchange Evaluation (SEE)*: Evaluates the material outcome of capture sequences without performing full search.
+- *History Heuristic*: Records move history to improve move ordering based on previous search successes.
+- *Killer Move Heuristic*: Preserves good capture and check moves for potential reuse.
+- *Transposition Table Move Ordering*: Prioritizes moves that have previously produced good results.
 
 *Move Generation:*
-- **Magic Bitboards**: Efficient sliding piece attack calculation using pre-computed tables.
-- **MVV-LVA (Most Valuable Victim - Least Valuable Attacker)**: Captures ordering based on material trade calculations.
-- **Make/Unmake Architecture**: Efficient position update mechanism enabling full move history.
+- *Magic Bitboards*: Efficient sliding piece attack calculation using pre-computed tables.
+- *MVV-LVA (Most Valuable Victim - Least Valuable Attacker)*: Captures ordering based on material trade calculations.
+- *Make/Unmake Architecture*: Efficient position update mechanism enabling full move history.
 
 *Interface:*
-- **UCI (Universal Chess Interface)**: Standard protocol for communication with chess GUIs.
+- *UCI (Universal Chess Interface)*: Standard protocol for communication with chess GUIs.
 
 === Testing
 
 Testing methodology employed multiple complementary approaches:
 
-1. **PERFT (Performance Test)**: Validation of move generation correctness by comparing computed node counts against known values at various depths. This ensures fundamental move generation accuracy.
+1. *PERFT (Performance Test)*: Validation of move generation correctness by comparing computed node counts against known values at various depths. This ensures fundamental move generation accuracy.
 
-2. **Position Validation**: Testing against established test suites including:
-   - Start Position (standard opening)
-   - KiwiPete (tactical positions)
-   - Giuoco Piano (middlegame structure)
-   - Rook+Pawn endgame scenarios
-   - WAC-2 (Win at Chess) tactical puzzles
+2. *Position Validation*: Testing against established test suites including:
+  - Start Position (standard opening)
+  - KiwiPete (tactical positions)
+  - Giuoco Piano (middlegame structure)
+  - Rook+Pawn endgame scenarios
+  - WAC-2 (Win at Chess) tactical puzzles
 
-3. **Self-Play Testing**: Each new version is tested against previous versions to measure Elo improvement.
+3. *Self-Play Testing*: Each new version is tested against previous versions to measure Elo improvement.
 
-4. **Engine vs. Engine Matching**: Competitive testing against established engines including:
-   - Stockfish with UCI Elo limiting (calibrated to FIDE scale)
-   - Sayuri (1807 CCRL rated)
-   - Goldfish (reference engine)
+4. *Engine vs. Engine Matching*: Competitive testing against established engines including:
+  - Stockfish with UCI Elo limiting (calibrated to FIDE scale)
+  - Sayuri (1807 CCRL rated)
+  - Goldfish (reference engine)
 
-5. **Performance Profiling**: Using `perf` to identify CPU hotspots and optimize critical code paths.
+5. *Performance Profiling*: Using `perf` to identify CPU hotspots and optimize critical code paths.
 
-6. **Manual Verification**: Position-by-position analysis using chess databases and theoretical knowledge.
+6. *Manual Verification*: Position-by-position analysis using chess databases and theoretical knowledge.
 
 === Tools Used
 
-- **Programming Language**: Rust (no external dependencies)
-- **Project Management**: Trello
-- **Development Tools**:
+- *Programming Language*: Rust (no external dependencies)
+- *Project Management*: Trello
+- *Development Tools*:
   - Neovim (text editor)
   - Tmux (terminal multiplexer)
   - Clippy (linting)
   - Rust Analyzer (LSP)
-  - Perf (Linux profiling)
+  - Perf (CPU profiling)
   - Git (version control)
-- **Testing Infrastructure**:
+- *Testing Infrastructure*:
   - CuteChess (GUI wrapper for engine communication)
   - CuteChess-CLI (automated match execution)
   - Ordo (Elo rating calculation with anchored ratings)
@@ -316,7 +327,7 @@ Testing methodology employed multiple complementary approaches:
 
 === Performance (Search Speed)
 
-The benchmark results demonstrate substantial search performance across various positions:
+The search performance across various positions:
 
 ```
 // Summary (Single-Threaded Metrics)
@@ -446,12 +457,12 @@ cutechess-cli \
 
 = Challenges Faced
 
-- **Magic Bitboard Comprehension**: Initial difficulty in understanding the mathematical foundations underlying magic bitboard attack table generation. The implementation was subsequently migrated to PEXT-based attack generation, simplifying the approach.
-- **Project Management**: Maintaining task tracking proved challenging; completed tasks were sometimes not logged, and additional features were implemented beyond the original scope.
-- **Rust Proficiency**: Despite initial concerns, Rust's borrow checker proved manageable due to the nature of chess programming using bitboards, where copying is inexpensive and aliasing patterns are well-structured.
-- **Algorithm Understanding**: Each newly implemented technique required significant study to understand both the theoretical foundations and practical implementation considerations.
-- **NNUE Implementation**: The most significant challenge has been understanding the neural network evaluation approach. Documentation provides insufficient detail for implementing Stockfish's NNUE evaluation function. Progress continues, as exact matching with Stockfish's evaluation has been achieved; however, the computational bottleneck introduced by the current implementation has necessitated optimization work.
-- **CPU Intrinsics**: Working with low-level CPU instructions (AVX2, AVX512, PEXT, prefetching) presented a learning curve, as this was the first project requiring such optimizations.
+- *Magic Bitboard Comprehension*: Initial difficulty in understanding the mathematical foundations underlying magic bitboard attack table generation. The implementation was subsequently migrated to PEXT-based attack generation, simplifying the approach.
+- *Project Management*: Maintaining task tracking proved challenging; completed tasks were sometimes not logged, and additional features were implemented beyond the original scope.
+- *Rust Proficiency*: Despite initial concerns, Rust's borrow checker proved manageable due to the nature of chess programming using bitboards, where copying is inexpensive and aliasing patterns are well-structured.
+- *Algorithm Understanding*: Each newly implemented technique required significant study to understand both the theoretical foundations and practical implementation considerations.
+- *NNUE Implementation*: The most significant challenge has been understanding the neural network evaluation approach. Documentation provides insufficient detail for implementing Stockfish's NNUE evaluation function. Progress continues, as exact matching with Stockfish's evaluation has been achieved; however, the computational bottleneck introduced by the current implementation has necessitated optimization work.
+- *CPU Intrinsics*: Working with low-level CPU instructions (AVX2, AVX512, PEXT, prefetching) presented a learning curve, as this was the first project requiring such optimizations.
 
 = Remaining Work
 
@@ -505,23 +516,17 @@ The next phase involves implementing AVX512 and VNNI (Vector Neural Network Inst
 
 = Meeting Summary
 
-- Number of Meetings Held: 15
-- Number of Feedback Points Received: 23
-- Number of Actions Implemented: 21 (91% implementation rate)
+I have been present in most of the meetings that took place, with the exception of a couple ( ~3 ). 
 
-Feedback categories included:
-- Technical guidance on search algorithm implementation (8 points)
-- Evaluation function optimization strategies (5 points)
-- Project management and documentation (4 points)
-- Testing methodology and benchmarking approaches (4 points)
-- NNUE implementation guidance (2 points)
 
 = Self Assessment
-
 - Progress: Slightly Behind Schedule
-- Confidence: High - Core engine functionality is complete; remaining work focuses on NNUE optimization and integration
-- The project has achieved substantial progress with 16 released versions demonstrating systematic improvement in playing strength through methodical implementation of search and evaluation techniques.
+  - Releases can be found at: (https://github.com/PS-Wizard/OopsMate/releases). 
+  - `nnuebie`'s source can be found at : (https://github.com/PS-Wizard/nnuebie/). 
+  - If testing, it is recommended to compile from source as these binaries have been compiled targeting my native cpu's features to maximize performance on *my machine.*
+- Confidence: High - Core engine functionality is complete; remaining work focuses on NNUE optimization and integration. 
 
 #line(length: 100%, stroke: 0.4pt + luma(160))
 
 *I confirm that the work reported above is my own and accurately reflects my project progress to date*
+
