@@ -16,15 +16,11 @@
     zh: "gb-7714-2015-numeric",
   ),
 )
-
 == Exercise 2.1
-
 Compare how you added the above data and how it differs from INSERT records in a relational database.
-
 In MongoDB, data is inserted as JSON-like documents into collections, so each record can be more flexible in structure and can include fields such as `_id` directly in the document. In a relational database, `INSERT` statements add rows into a fixed table schema with predefined columns and stronger structural constraints.
 
 Add Department 30.
-
 ```javascript
 db.dept.insertOne({
   _id: 30,
@@ -33,13 +29,15 @@ db.dept.insertOne({
   loc: "CHICAGO"
 })
 ```
-
 This command adds one new document to the `dept` collection. `insertOne` stores the department details as a single MongoDB document, with each key-value pair becoming a field in that record.
 
+*Output:*
+```
+{ "acknowledged" : true, "insertedId" : 30 }
+```
+
 == Exercise 2.2
-
 Add the employees for Department 30.
-
 ```javascript
 db.emp.insertMany([
   {
@@ -102,29 +100,79 @@ db.emp.insertMany([
   }
 ])
 ```
-
 This uses `insertMany` to add several employee documents in one operation. Each object in the array becomes its own document, which makes bulk insertion faster and more convenient than adding employees one by one.
 
+*Output:*
+```
+BulkWriteResult({
+  "writeErrors"       : [ ],
+  "writeConcernErrors": [ ],
+  "nInserted"         : 6,
+  "nUpserted"         : 0,
+  "nMatched"          : 0,
+  "nModified"         : 0,
+  "nRemoved"          : 0,
+  "upserted"          : [ ]
+})
+```
+
 == Exercise 2.4
-
 Update the name of department 40 to COMPUTING.
-
 ```javascript
 db.dept.updateOne(
   { deptno: 40 },
   { $set: { dname: "COMPUTING" } }
 )
 ```
-
 Here, `updateOne` finds the department whose `deptno` is `40`. The `$set` operator changes only the `dname` field, so the rest of the document stays unchanged.
 
-Update the salary of employee number 7788 in department 20 to 3500.
+*Output:*
+```
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+```
 
+We can verify the change with:
+```javascript
+db.dept.find({ deptno: 40 }).pretty()
+```
+*Output:*
+```
+{
+  "_id"    : 40,
+  "deptno" : 40,
+  "dname"  : "COMPUTING",
+  "loc"    : "WOLVERHAMPTON"
+}
+```
+
+Update the salary of employee number 7788 in department 20 to 3500.
 ```javascript
 db.emp.updateOne(
   { empno: 7788, deptno: 20 },
   { $set: { sal: 3500 } }
 )
 ```
-
 This command updates a single employee document by matching both `empno` and `deptno`. Using both conditions makes sure the correct employee is selected, and `$set` replaces the old salary with `3500`.
+
+*Output:*
+```
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+```
+
+We can verify the change with:
+```javascript
+db.emp.find({ empno: 7788 }).pretty()
+```
+*Output:*
+```
+{
+  "_id"     : ObjectId("5a09e79ac536e890d5a7a672"),
+  "empno"   : 7788,
+  "ename"   : "SCOTT",
+  "job"     : "ANALYST",
+  "mgr"     : 7566,
+  "hiredate": ISODate("2015-10-16T00:00:00Z"),
+  "sal"     : 3500,
+  "deptno"  : 20
+}
+```
