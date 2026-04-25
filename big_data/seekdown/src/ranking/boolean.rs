@@ -1,21 +1,13 @@
-use crate::index::types::Index;
+use crate::index::types::{Index, TermId};
+use crate::ranking::{deduplicate_query_term_ids, ScoredDocument};
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct ScoredDocument {
-    pub doc_id: u32,
-    pub score: f32,
-}
-
-pub fn search(index: &Index, query_terms: &[String]) -> Vec<ScoredDocument> {
+pub fn search(index: &Index, query_term_ids: &[TermId]) -> Vec<ScoredDocument> {
+    let query_term_ids = deduplicate_query_term_ids(query_term_ids);
     let mut scores = vec![0_u32; index.document_count()];
     let mut seen = Vec::new();
 
-    for term in query_terms {
-        let Some(term_index) = index.terms.iter().position(|candidate| candidate == term) else {
-            continue;
-        };
-
-        let postings = &index.postings[term_index];
+    for term_id in query_term_ids {
+        let postings = &index.postings[term_id as usize];
         for &doc_id in &postings.doc_ids {
             let entry = &mut scores[doc_id as usize];
             if *entry == 0 {
@@ -71,7 +63,8 @@ mod tests {
             },
         ]);
 
-        let results = search(&index, &[String::from("rust"), String::from("install")]);
+        let query_term_ids = [index.term_id("rust").unwrap(), index.term_id("install").unwrap()];
+        let results = search(&index, &query_term_ids);
         assert_eq!(results[0].doc_id, 0);
     }
 }

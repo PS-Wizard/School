@@ -3,6 +3,7 @@ use std::path::Path;
 
 use crate::output::print_results;
 use crate::query::{search_dataset, LoadMode, SearchOptions};
+use crate::ranking::RankingModel;
 
 pub fn run() {
     let args: Vec<String> = env::args().collect();
@@ -29,6 +30,7 @@ fn try_run(args: &[String]) -> Result<(), String> {
     let query = &args[3];
 
     let mut mode = LoadMode::Section;
+    let mut ranking_model = RankingModel::Boolean;
     let mut top_k = 5_usize;
     let mut chunk_size = 120_usize;
 
@@ -39,6 +41,12 @@ fn try_run(args: &[String]) -> Result<(), String> {
                 index += 1;
                 let value = args.get(index).ok_or_else(|| String::from("missing value for --mode"))?;
                 mode = LoadMode::parse(value).ok_or_else(|| format!("invalid mode: {value}"))?;
+            }
+            "--model" => {
+                index += 1;
+                let value = args.get(index).ok_or_else(|| String::from("missing value for --model"))?;
+                ranking_model = RankingModel::parse(value)
+                    .ok_or_else(|| format!("invalid model: {value}"))?;
             }
             "--top-k" => {
                 index += 1;
@@ -59,6 +67,7 @@ fn try_run(args: &[String]) -> Result<(), String> {
         dataset_dir,
         query,
         mode,
+        ranking_model,
         top_k,
         chunk_size,
     })
@@ -69,5 +78,7 @@ fn try_run(args: &[String]) -> Result<(), String> {
 }
 
 fn print_usage() {
-    eprintln!("usage: seekdown search <dataset_dir> <query> [--mode section|chunk] [--top-k N] [--chunk-size N]");
+    eprintln!(
+        "usage: seekdown search <dataset_dir> <query> [--mode section|chunk] [--model boolean|tfidf|bm25|bm25plus|pivoted] [--top-k N] [--chunk-size N]"
+    );
 }

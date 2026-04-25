@@ -1,13 +1,9 @@
+use std::collections::HashMap;
+
 use crate::load::LoadedDocument;
 
 pub type DocId = u32;
 pub type TermId = u32;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Posting {
-    pub doc_id: DocId,
-    pub term_freq: u32,
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PostingList {
@@ -26,16 +22,43 @@ pub struct DocumentMeta {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Lexicon {
+    pub terms: Vec<String>,
+    pub term_to_id: HashMap<String, TermId>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CorpusStats {
+    pub document_count: u32,
+    pub total_terms: u64,
+    pub average_doc_length: f32,
+    pub document_frequencies: Vec<u32>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Index {
     pub documents: Vec<DocumentMeta>,
     pub doc_lengths: Vec<u32>,
-    pub terms: Vec<String>,
+    pub lexicon: Lexicon,
     pub postings: Vec<PostingList>,
+    pub stats: CorpusStats,
 }
 
 impl Index {
     pub fn document_count(&self) -> usize {
         self.documents.len()
+    }
+
+    pub fn term_id(&self, term: &str) -> Option<TermId> {
+        self.lexicon.term_to_id.get(term).copied()
+    }
+
+    pub fn term(&self, term_id: TermId) -> Option<&str> {
+        self.lexicon.terms.get(term_id as usize).map(String::as_str)
+    }
+
+    pub fn document_frequency(&self, term_id: TermId) -> Option<u32> {
+        self.stats.document_frequencies.get(term_id as usize).copied()
     }
 }
 

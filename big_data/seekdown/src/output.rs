@@ -8,7 +8,7 @@ pub fn print_results(results: &[SearchResult]) {
 
     for (index, result) in results.iter().enumerate() {
         println!(
-            "{}. score={} {} [{}] lines {}-{}",
+            "{}. score={:.4} {} [{}] lines {}-{}",
             index + 1,
             result.score,
             result.path,
